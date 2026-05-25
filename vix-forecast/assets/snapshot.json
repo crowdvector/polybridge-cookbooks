@@ -1,0 +1,187 @@
+{
+  "generated_at": "2026-05-25T14:06:38Z",
+  "api_base_url": "https://api.polybridge.ai",
+  "forecast_endpoint": "https://api.polybridge.ai/v1/forecast",
+  "questions": [
+    {
+      "question": "Will VIX close above 30 in the next 42 days?",
+      "probability": 0.08,
+      "probability_percent": 8.0,
+      "confidence": 0.34,
+      "source_market_count": 4,
+      "source_markets": [
+        {
+          "source": "polymarket",
+          "question": "Will the S&P 500 Index gain at least 5% on any day in Q1?",
+          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-gain-at-least-5-on-any-day-in-q1"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the number of unemployment rate exceeds 10% (monthly BLS); S&P 500 declines more than 30% from its closing level on Issuance; Zillow Home Value Index declines more than 10% YoY in any of: NYC, LA, San Francisco, Chicago, Houston, Phoenix; labor share of gross domestic income (GDI) first-release value for any quarter falls below 50%; CPI-U (All items, not seasonally-adjusted) YoY falls below 0% in any monthly release during before July 2028 be above 2?",
+          "url": "https://kalshi.com/markets/KXCITRINI-28JUL01"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will the S&P 500 Index lose at least 3% on any day in Q1?",
+          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-3-on-any-day-in-q1"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will the S&P 500 Index lose at least 5% on any day in Q1?",
+          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-5-on-any-day-in-q1"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.05,
+        "upper": 0.15
+      },
+      "reasoning": "The market-implied probability for a VIX spike above 30 in the next 42 days is estimated at 8% (5-15% range). There is no direct market for this specific VIX threshold. We rely on proxy evidence from S&P 500 volatility markets, which currently show extremely low expectations for significant downside moves (e.g., <1% probability of 5% daily losses). The low liquidity and lack of direct instruments necessitate a cautious, low-confidence forecast."
+    },
+    {
+      "question": "Will crude oil settle above $90 in June 2026?",
+      "probability": 0.505,
+      "probability_percent": 50.5,
+      "confidence": 0.58,
+      "source_market_count": 6,
+      "source_markets": [
+        {
+          "source": "polymarket",
+          "question": "Will Crude Oil (CL) settle over $90 on the final trading day of June 2026?",
+          "url": "https://polymarket.com/event/cl-over-under-jun-2026/cl-above-90-jun-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will Crude Oil (CL) settle over $60 on the final trading day of June 2026?",
+          "url": "https://polymarket.com/event/cl-over-under-jun-2026/cl-above-60-jun-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will WTI Crude Oil (WTI) hit (HIGH) $90 in June?",
+          "url": "https://polymarket.com/event/what-price-will-wti-hit-in-june-2026/will-wti-reach-90-in-june-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will WTI Crude Oil (WTI) hit (HIGH) $150 in June?",
+          "url": "https://polymarket.com/event/what-price-will-wti-hit-in-june-2026/will-wti-reach-150-in-june-2026"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on May 26, 2026?",
+          "url": "https://kalshi.com/markets/KXWTI-26MAY2614-T90.99"
+        },
+        {
+          "source": "polymarket",
+          "question": "OPEC dissolves in 2026?",
+          "url": "https://polymarket.com/event/opec-dissolves-in-2026/opec-dissolves-in-2026"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.48,
+        "upper": 0.53
+      },
+      "reasoning": "The market consensus for WTI Crude Oil settling above $90 in June 2026 is approximately 50.5%. Direct markets (Polymarket) show a tight range between 49% and 51% for the $90 threshold. While proxy data from Kalshi suggests a slightly higher probability (59%) for a late May settlement, the overall evidence remains balanced. The low probability of OPEC dissolution (7.5%) suggests market participants expect current supply-side management to persist, anchoring the price expectations. Confidence is moderate due to the thin liquidity in specific high-price threshold markets and the inherent volatility of energy commodities."
+    },
+    {
+      "question": "Will SPX draw down more than 10% in the next 42 days?",
+      "probability": 0.01,
+      "probability_percent": 1.0,
+      "confidence": 0.58,
+      "source_market_count": 3,
+      "source_markets": [
+        {
+          "source": "polymarket",
+          "question": "Will the S&P 500 Index lose at least 2% on any day in Q1?",
+          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-2-on-any-day-in-q1"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will the S&P 500 Index lose at least 3% on any day in Q1?",
+          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-3-on-any-day-in-q1"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will the S&P 500 Index lose at least 5% on any day in Q1?",
+          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-5-on-any-day-in-q1"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.001,
+        "upper": 0.05
+      },
+      "reasoning": "The market-implied probability of a 10% drawdown in the next 42 days is extremely low, estimated at approximately 1%. This is inferred from proxy markets showing that while minor daily volatility (2% drops) is considered certain, significant tail-risk events (3% and 5% daily drops) are priced at near-zero probability. The lack of appetite for extreme downside protection in the current market regime suggests a low-volatility environment, making a 10% drawdown within a 42-day window statistically unlikely."
+    },
+    {
+      "question": "Will gold rise more than 10% in the next 42 days?",
+      "probability": 0.004,
+      "probability_percent": 0.4,
+      "confidence": 0.58,
+      "source_market_count": 3,
+      "source_markets": [
+        {
+          "source": "polymarket",
+          "question": "Will Gold (XAUUSD) hit (HIGH) $5,400 in May?",
+          "url": "https://polymarket.com/event/what-price-will-xauusd-hit-in-may-2026/will-xauusd-reach-5400-in-may-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will Gold (XAUUSD) hit (HIGH) $5,300 in May?",
+          "url": "https://polymarket.com/event/what-price-will-xauusd-hit-in-may-2026/will-xauusd-reach-5300-in-may-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will Gold (XAUUSD) hit (HIGH) $5,200 in May?",
+          "url": "https://polymarket.com/event/what-price-will-xauusd-hit-in-may-2026/will-xauusd-reach-5200-in-may-2026"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.002,
+        "upper": 0.006
+      },
+      "reasoning": "The market-implied probability of gold reaching the $5,200-$5,400 range in May 2026 is extremely low, ranging between 0.2% and 0.5%. Given that a 10% rise from current levels would require a significant price appreciation, and the available proxy markets for these high-threshold price targets are trading at near-zero probabilities, the likelihood of gold rising more than 10% within the next 42 days is estimated to be negligible. The forecast relies on proxy markets which suggest the market does not anticipate a breakout of this magnitude in the immediate term."
+    },
+    {
+      "question": "Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?",
+      "probability": 0.46,
+      "probability_percent": 46.0,
+      "confidence": 0.58,
+      "source_market_count": 6,
+      "source_markets": [
+        {
+          "source": "kalshi",
+          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before June 1, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260601"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before July 1, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260701"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before June 15, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260615"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before August 1, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260801"
+        },
+        {
+          "source": "polymarket",
+          "question": "US x Iran permanent peace deal by June 30, 2026?",
+          "url": "https://polymarket.com/event/us-x-iran-permanent-peace-deal-by/us-x-iran-permanent-peace-deal-by-june-30-2026-837-641-896-877-363-892-537"
+        },
+        {
+          "source": "polymarket",
+          "question": "US x Iran ceasefire extended by April 22, 2026?",
+          "url": "https://polymarket.com/event/us-x-iran-ceasefire-extended-by/us-x-iran-ceasefire-extended-by-april-22-2026"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.35,
+        "upper": 0.55
+      },
+      "reasoning": "The market consensus for the Strait of Hormuz reopening to regular traffic (defined as a 7-day moving average of transit calls above 60) by June 30, 2026, is approximately 46%. This is anchored by the Kalshi market for July 1, 2026, which shows a 46.5% probability. While the June 15 market is lower (14.5%), the probability increases significantly by August 1 (65.5%), suggesting the market anticipates a gradual normalization process throughout the summer. The proxy market for a US-Iran peace deal (58.5%) provides secondary support for a potential de-escalation, though the failure of the April ceasefire extension (0.2%) highlights the volatility of the current diplomatic environment."
+    }
+  ]
+}

@@ -1,5 +1,6 @@
 .env
 .env.local
+_source/
 **pycache**/
 .ipynb_checkpoints/
 .DS_Store

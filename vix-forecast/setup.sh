@@ -2,4 +2,4 @@
 set -euo pipefail
 
 python -m pip install --upgrade pip
-python -m pip install requests pandas matplotlib
+python -m pip install --upgrade requests matplotlib

@@ -730,7 +730,11 @@ def render_implied_return_distributions(snapshot: dict[str, Any], output_path: P
         for details in scenario.values()
     )
 
-    fig, axes = plt.subplots(3, 1, figsize=(14, 13), dpi=150, sharex=True)
+    x_padding = max(14.0, max_threshold_percent * 0.22)
+    outer_label_offset = max(2.0, max_threshold_percent * 0.035)
+    inner_label_offset = max(3.0, max_threshold_percent * 0.05)
+
+    fig, axes = plt.subplots(3, 1, figsize=(15.5, 13.8), dpi=150, sharex=True)
     setup_figure(fig)
 
     for ax, (scenario_key, scenario_label) in zip(axes, scenario_names):
@@ -760,12 +764,27 @@ def render_implied_return_distributions(snapshot: dict[str, Any], output_path: P
                 edgecolor=color,
                 linewidth=1.0,
             )
-            label_x = threshold_pct + (2.0 if threshold_pct >= 0 else -2.0)
+
+            if threshold_pct >= 0:
+                if threshold_pct >= (max_threshold_percent - x_padding * 0.6):
+                    label_x = threshold_pct - inner_label_offset
+                    label_ha = "right"
+                else:
+                    label_x = threshold_pct + outer_label_offset
+                    label_ha = "left"
+            else:
+                if abs(threshold_pct) >= (max_threshold_percent - x_padding * 0.6):
+                    label_x = threshold_pct + inner_label_offset
+                    label_ha = "left"
+                else:
+                    label_x = threshold_pct - outer_label_offset
+                    label_ha = "right"
+
             ax.text(
                 label_x,
                 row,
                 f"p={probability * 100:.1f}%  E[r]={expected_return:+.1f}%",
-                ha="left" if threshold_pct >= 0 else "right",
+                ha=label_ha,
                 va="center",
                 color=TEXT_PRIMARY,
                 fontsize=9,
@@ -778,10 +797,11 @@ def render_implied_return_distributions(snapshot: dict[str, Any], output_path: P
             loc="left",
             pad=12,
         )
+        ax.margins(x=0.02)
 
     axes[0].text(
         0.0,
-        1.22,
+        1.19,
         "Conditional Threshold Probability Mass",
         transform=axes[0].transAxes,
         color=TEXT_PRIMARY,
@@ -790,18 +810,18 @@ def render_implied_return_distributions(snapshot: dict[str, Any], output_path: P
     )
     axes[0].text(
         0.0,
-        1.12,
+        1.10,
         f"Threshold bars show the return hurdle. Opacity scales with PolyBridge probability. Snapshot {snapshot['generated_at']} UTC.",
         transform=axes[0].transAxes,
         color=TEXT_MUTED,
         fontsize=10,
     )
-    axes[-1].set_xlim(-(max_threshold_percent + 12.0), max_threshold_percent + 12.0)
+    axes[-1].set_xlim(-(max_threshold_percent + x_padding), max_threshold_percent + x_padding)
     axes[-1].set_xlabel("Return threshold (%)", color=TEXT_SECONDARY, fontsize=11)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.tight_layout(h_pad=2.2)
-    fig.savefig(output_path, facecolor=fig.get_facecolor(), bbox_inches="tight")
+    fig.subplots_adjust(left=0.15, right=0.96, top=0.88, bottom=0.075, hspace=0.42)
+    fig.savefig(output_path, facecolor=fig.get_facecolor(), dpi=150)
     plt.close(fig)
     return output_path
 

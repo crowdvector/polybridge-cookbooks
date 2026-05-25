@@ -1,0 +1,203 @@
+{
+  "generated_at": "2026-05-25T21:55:14Z",
+  "api_base_url": "https://api.polybridge.ai",
+  "forecast_endpoint": "https://api.polybridge.ai/v1/forecast",
+  "question_count": 5,
+  "questions": [
+    {
+      "question": "Will there be meaningful US crypto regulatory reform by Q2 2027?",
+      "probability": 0.55,
+      "probability_percent": 55.0,
+      "confidence": 0.34,
+      "source_market_count": 1,
+      "source_markets": [
+        {
+          "source_platform": "kalshi",
+          "question_title": "What will Governor Michael S. Barr say during Governor Michael S. Barr At The Federalist Society's The GENIUS Act in Practice: Key Questions for Stablecoin Regulation?",
+          "url": "https://kalshi.com/markets/KXBARRMENTION-26MAR31-TREA"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.45,
+        "upper": 0.65
+      },
+      "reasoning": "The forecast for meaningful US crypto regulatory reform by Q2 2027 is estimated at 55% (range 45-65%). This assessment relies on proxy evidence from the Kalshi market regarding Governor Michael S. Barr's engagement with the GENIUS Act, which suggests high-level regulatory attention to stablecoin frameworks. However, because the available evidence is proxy-only and lacks direct resolution markets for 'meaningful reform,' confidence remains low. The inference assumes that active discourse on stablecoin legislation by key regulators serves as a leading indicator for broader regulatory clarity, though legislative outcomes remain subject to significant political volatility."
+    },
+    {
+      "question": "Will the Fed cut rates before September 2026?",
+      "probability": 0.11,
+      "probability_percent": 11.0,
+      "confidence": 0.58,
+      "source_market_count": 6,
+      "source_markets": [
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will no Fed rate cuts happen in 2026?",
+          "url": "https://polymarket.com/event/how-many-fed-rate-cuts-in-2026/will-no-fed-rate-cuts-happen-in-2026"
+        },
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will 1 Fed rate cut happen in 2026?",
+          "url": "https://polymarket.com/event/how-many-fed-rate-cuts-in-2026/will-1-fed-rate-cut-happen-in-2026"
+        },
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will 2 Fed rate cuts happen in 2026?",
+          "url": "https://polymarket.com/event/how-many-fed-rate-cuts-in-2026/will-2-fed-rate-cuts-happen-in-2026"
+        },
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will 3 Fed rate cuts happen in 2026?",
+          "url": "https://polymarket.com/event/how-many-fed-rate-cuts-in-2026/will-3-fed-rate-cuts-happen-in-2026"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the Federal Reserve Cut rates by >25bps at their September 2026 meeting?",
+          "url": "https://kalshi.com/markets/KXFEDDECISION-26SEP-C26"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the Federal Reserve Cut rates by 25bps at their September 2026 meeting?",
+          "url": "https://kalshi.com/markets/KXFEDDECISION-26SEP-C25"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.08,
+        "upper": 0.15
+      },
+      "reasoning": "Markets indicate a low probability (median 11%) of a Fed rate cut occurring before September 2026. The consensus across Polymarket and Kalshi suggests that the market is heavily pricing in a 'no cut' scenario for the first half of 2026, with the probability of zero cuts currently at ~66%. The likelihood of a cut specifically by the September meeting is constrained by the low probability of 1 or more cuts occurring in the 2026 calendar year. High confidence is assigned due to the high liquidity and consistency across multiple direct event markets."
+    },
+    {
+      "question": "Will the US enter a recession by end of 2026?",
+      "probability": 0.16,
+      "probability_percent": 16.0,
+      "confidence": 0.58,
+      "source_market_count": 6,
+      "source_markets": [
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will there be a recession in 2026?",
+          "url": "https://kalshi.com/markets/KXRECSSNBER-26"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the Real-time Sahm Rule Recession Indicator trigger in 2026?",
+          "url": "https://kalshi.com/markets/KXSAHM-27JAN08-T0.50"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "When will the next U.S. recession start?",
+          "url": "https://kalshi.com/markets/KXNBERRECESSQ-Q4-2025"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "When will the next U.S. recession start?",
+          "url": "https://kalshi.com/markets/KXNBERRECESSQ-Q1-2025"
+        },
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will the US economy be in a soft landing at the end of 2026?",
+          "url": "https://polymarket.com/event/us-economic-state-at-the-end-of-2026/will-the-us-economy-be-in-a-soft-landing-at-the-end-of-2026"
+        },
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will the US economy be overheating at the end of 2026?",
+          "url": "https://polymarket.com/event/us-economic-state-at-the-end-of-2026/will-the-us-economy-be-overheating-at-the-end-of-2026"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.12,
+        "upper": 0.2
+      },
+      "reasoning": "Markets currently assign a 12-20% probability (median 16%) to a US recession occurring in 2026. The primary direct market (Kalshi) anchors this at 16.5%. Proxy evidence, including the Sahm Rule indicator (10%) and soft landing expectations (16.5%), aligns with a low-probability recession scenario. While the 'overheating' market shows higher volatility (57%), this is interpreted as a signal of economic strength rather than an immediate recessionary precursor. Confidence is moderate due to the reliance on a single high-volume direct market and the inherent difficulty of predicting macroeconomic turning points 18+ months out."
+    },
+    {
+      "question": "Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?",
+      "probability": 0.18,
+      "probability_percent": 18.0,
+      "confidence": 0.58,
+      "source_market_count": 6,
+      "source_markets": [
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before June 1, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260601"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before July 1, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260701"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before June 15, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260615"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before August 1, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260801"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before May 1, 2026?",
+          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260501"
+        },
+        {
+          "source_platform": "polymarket",
+          "question_title": "US x Iran ceasefire extended by April 22, 2026?",
+          "url": "https://polymarket.com/event/us-x-iran-ceasefire-extended-by/us-x-iran-ceasefire-extended-by-april-22-2026"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.1,
+        "upper": 0.25
+      },
+      "reasoning": "The market consensus indicates a low probability of the Strait of Hormuz returning to regular traffic (defined as >60 transit calls/day) by June 30, 2026. While the probability of reaching this threshold increases over time\u2014from 2.8% by June 1 to 58.5% by August 1\u2014the specific window ending June 30 is anchored by the June 15 (13.5%) and July 1 (39.5%) markets. The estimate of 18% reflects the likelihood that the recovery remains sluggish through the end of June. Confidence is moderate due to the clear temporal progression in the data, though the transition from June 15 to July 1 shows significant volatility in market sentiment."
+    },
+    {
+      "question": "Will WTI crude oil exceed $90 in June 2026?",
+      "probability": 0.5,
+      "probability_percent": 50.0,
+      "confidence": 0.58,
+      "source_market_count": 6,
+      "source_markets": [
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will Crude Oil (CL) settle over $90 on the final trading day of June 2026?",
+          "url": "https://polymarket.com/event/cl-over-under-jun-2026/cl-above-90-jun-2026"
+        },
+        {
+          "source_platform": "polymarket",
+          "question_title": "Will WTI Crude Oil (WTI) hit (HIGH) $90 in June?",
+          "url": "https://polymarket.com/event/what-price-will-wti-hit-in-june-2026/will-wti-reach-90-in-june-2026"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the WTI front-month settle oil price  be >90.99 on May 6, 2026?",
+          "url": "https://kalshi.com/markets/KXWTI-26MAY06-T90.99"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the WTI front-month settle oil price  be Between 90.00 and 90.99 on May 1, 2026?",
+          "url": "https://kalshi.com/markets/KXWTIW-26MAY01-B90.5"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the WTI front-month settle oil price  be >90.99 on May 7, 2026?",
+          "url": "https://kalshi.com/markets/KXWTI-26MAY07-T90.99"
+        },
+        {
+          "source_platform": "kalshi",
+          "question_title": "Will the WTI front-month settle oil price  be >90.99 on May 12, 2026?",
+          "url": "https://kalshi.com/markets/KXWTI-26MAY12-T90.99"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.45,
+        "upper": 0.55
+      },
+      "reasoning": "The market consensus for WTI crude oil exceeding $90 in June 2026 is currently split at 50%. While proxy markets for early May 2026 show high confidence in prices exceeding $90.99, these are closed and represent historical data points rather than forward-looking sentiment for the entire month of June. The direct markets on Polymarket provide the most relevant, albeit currently uncertain, outlook. Confidence is moderate due to the split in direct market sentiment and the reliance on current pricing as a proxy for future volatility."
+    }
+  ]
+}

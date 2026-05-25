@@ -1,0 +1,81 @@
+{
+  "generated_at": "2026-05-25T21:55:14Z",
+  "dry_run": true,
+  "review_only": true,
+  "requires_human_review": true,
+  "no_private_keys_required": true,
+  "no_execution_performed": true,
+  "warning": "Illustrative dry-run order intents only. Not financial advice. This is not an executable order file.",
+  "orders": [
+    {
+      "asset": "BTC",
+      "direction": "LONG",
+      "notional_usd": 11500,
+      "order_intent": {
+        "intent_type": "notional_usd_only",
+        "summary": "Review-only intent to maintain a LONG BTC exposure.",
+        "target_notional_usd": 11500,
+        "units": "placeholder_only_not_provided"
+      },
+      "review_only": true,
+      "dry_run": true,
+      "requires_human_review": true
+    },
+    {
+      "asset": "SPX",
+      "direction": "LONG",
+      "notional_usd": 6500,
+      "order_intent": {
+        "intent_type": "notional_usd_only",
+        "summary": "Review-only intent to maintain a LONG SPX exposure.",
+        "target_notional_usd": 6500,
+        "units": "placeholder_only_not_provided"
+      },
+      "review_only": true,
+      "dry_run": true,
+      "requires_human_review": true
+    },
+    {
+      "asset": "OP",
+      "direction": "SHORT",
+      "notional_usd": 6000,
+      "order_intent": {
+        "intent_type": "notional_usd_only",
+        "summary": "Review-only intent to maintain a SHORT OP exposure.",
+        "target_notional_usd": 6000,
+        "units": "placeholder_only_not_provided"
+      },
+      "review_only": true,
+      "dry_run": true,
+      "requires_human_review": true
+    },
+    {
+      "asset": "BERA",
+      "direction": "SHORT",
+      "notional_usd": 4500,
+      "order_intent": {
+        "intent_type": "notional_usd_only",
+        "summary": "Review-only intent to maintain a SHORT BERA exposure.",
+        "target_notional_usd": 4500,
+        "units": "placeholder_only_not_provided"
+      },
+      "review_only": true,
+      "dry_run": true,
+      "requires_human_review": true
+    },
+    {
+      "asset": "WTI",
+      "direction": "LONG",
+      "notional_usd": 1000,
+      "order_intent": {
+        "intent_type": "notional_usd_only",
+        "summary": "Review-only intent to maintain a LONG WTI exposure.",
+        "target_notional_usd": 1000,
+        "units": "placeholder_only_not_provided"
+      },
+      "review_only": true,
+      "dry_run": true,
+      "requires_human_review": true
+    }
+  ]
+}

@@ -793,34 +793,17 @@ def render_implied_return_distributions(snapshot: dict[str, Any], output_path: P
         ax.set_title(
             f"{scenario_label} • normalized scenario weight {scenario_weights[scenario_key] * 100:.1f}%",
             color=TEXT_PRIMARY,
-            fontsize=14,
+            fontsize=13,
             loc="left",
-            pad=12,
+            pad=10,
         )
         ax.margins(x=0.02)
 
-    axes[0].text(
-        0.0,
-        1.19,
-        "Conditional Threshold Probability Mass",
-        transform=axes[0].transAxes,
-        color=TEXT_PRIMARY,
-        fontsize=20,
-        fontweight="bold",
-    )
-    axes[0].text(
-        0.0,
-        1.10,
-        f"Threshold bars show the return hurdle. Opacity scales with PolyBridge probability. Snapshot {snapshot['generated_at']} UTC.",
-        transform=axes[0].transAxes,
-        color=TEXT_MUTED,
-        fontsize=10,
-    )
     axes[-1].set_xlim(-(max_threshold_percent + x_padding), max_threshold_percent + x_padding)
     axes[-1].set_xlabel("Return threshold (%)", color=TEXT_SECONDARY, fontsize=11)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.subplots_adjust(left=0.15, right=0.96, top=0.88, bottom=0.075, hspace=0.42)
+    fig.subplots_adjust(left=0.15, right=0.965, top=0.92, bottom=0.08, hspace=0.4)
     fig.savefig(output_path, facecolor=fig.get_facecolor(), dpi=150)
     plt.close(fig)
     return output_path

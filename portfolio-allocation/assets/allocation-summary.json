@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-05-25T21:06:20Z",
+  "not_financial_advice": true,
+  "assets": [
+    "SPY",
+    "TLT",
+    "GLD",
+    "XLE",
+    "VIXY"
+  ],
+  "scenario_probabilities": {
+    "recession": 0.16,
+    "fed_cut": 0.11,
+    "vol_spike": 0.05
+  },
+  "scenario_normalized_weights": {
+    "recession": 0.5,
+    "fed_cut": 0.34375,
+    "vol_spike": 0.15625
+  },
+  "expected_returns_per_asset": {
+    "SPY": -0.04371875,
+    "TLT": 0.029953125000000004,
+    "GLD": 0.025124999999999998,
+    "XLE": -0.032578125,
+    "VIXY": 0.08875
+  },
+  "equal_weight_baseline": {
+    "SPY": 0.2,
+    "TLT": 0.2,
+    "GLD": 0.2,
+    "XLE": 0.2,
+    "VIXY": 0.2
+  },
+  "optimized_allocation": {
+    "SPY": 0.02000000000000009,
+    "TLT": 0.39999999999999986,
+    "GLD": 0.3999999999999999,
+    "XLE": 0.050708484432943304,
+    "VIXY": 0.12929151556705681
+  },
+  "tilt_vs_equal": {
+    "SPY": -0.1799999999999999,
+    "TLT": 0.19999999999999984,
+    "GLD": 0.1999999999999999,
+    "XLE": -0.14929151556705672,
+    "VIXY": -0.0707084844329432
+  },
+  "expected_portfolio_return": 0.030979509662159302,
+  "expected_volatility": 0.14344530901656438,
+  "equal_weight_expected_return": 0.013506250000000001,
+  "equal_weight_volatility": 0.13803396889641698,
+  "optimized_sharpe": 0.21596739464364034,
+  "equal_weight_sharpe": 0.09784729156150918,
+  "yahoo_finance_lookback": {
+    "price_start": "2024-05-23",
+    "price_end": "2026-05-22",
+    "return_start": "2024-05-24",
+    "return_end": "2026-05-22"
+  },
+  "trading_day_count": 500,
+  "generated_assets": {
+    "snapshot": "assets/snapshot.json",
+    "summary": "assets/allocation-summary.json",
+    "covariance_csv": "assets/covariance-matrix.csv",
+    "scenario_chart": "assets/scenario-probabilities.png",
+    "implied_returns_chart": "assets/implied-return-distributions.png",
+    "allocation_chart": "assets/allocation-output.png"
+  }
+}

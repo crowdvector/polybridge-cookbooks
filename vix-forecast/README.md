@@ -4,7 +4,11 @@
 
 Use PolyBridge Forecast to build a live market snapshot around VIX and related stress questions that are not all directly listed on a single venue.
 
-The Colab link above is the final public path. It will work after `crowdvector/polybridge-cookbooks` exists and this repo is pushed.
+## Quick Links
+
+- Article: https://polybridge.ai/blog/vix-forecast
+- Colab: https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb
+- GitHub folder: https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast
 
 ## What this cookbook builds
 
@@ -26,6 +30,12 @@ Questions used in this cookbook:
 - `PROMPT.md` is the reproduction brief for adapting the cookbook.
 - `assets/` stores the generated snapshot and image output.
 
+## Dependencies
+
+- Python 3
+- `requests`
+- `matplotlib`
+
 ## API key handling
 
 Script mode expects `POLYBRIDGE_API_KEY` to already be present in the environment:
@@ -40,16 +50,12 @@ Notebook mode checks the environment first and falls back to `getpass()` only if
 
 ## Run locally
 
-Install dependencies:
+From the cookbook directory:
 
 ```bash
+cd vix-forecast
 ./setup.sh
-```
-
-Generate a live snapshot and hero image:
-
-```bash
-python vix-forecast/stress_monitor.py
+python3 stress_monitor.py
 ```
 
 The workflow is sequential, uses a 75 second request timeout, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed sleep. There is no baked-in fixed-delay public-tier assumption in this version.

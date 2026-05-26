@@ -4,7 +4,11 @@
 
 Use PolyBridge Forecast probabilities to build a live portfolio allocation snapshot across `SPY`, `TLT`, `GLD`, `XLE`, and `VIXY`.
 
-The Colab link above is the final public path. It will work after `crowdvector/polybridge-cookbooks` is published and this repo is pushed there.
+## Quick Links
+
+- Article: https://polybridge.ai/blog/portfolio-allocation
+- Colab: https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/portfolio-allocation/portfolio-allocation.ipynb
+- GitHub folder: https://github.com/crowdvector/polybridge-cookbooks/tree/main/portfolio-allocation
 
 ## What This Cookbook Builds
 
@@ -25,6 +29,16 @@ This cookbook:
 - `setup.sh` installs the local Python dependencies.
 - `PROMPT.md` is the reproduction brief for adapting the cookbook.
 - `assets/` stores the generated snapshot, summary, CSV, and charts.
+
+## Dependencies
+
+- Python 3
+- `requests`
+- `pandas`
+- `numpy`
+- `scipy`
+- `matplotlib`
+- `yfinance`
 
 ## Generated Outputs
 
@@ -49,16 +63,12 @@ Notebook mode checks the environment first and only falls back to `getpass()` if
 
 ## Run Locally
 
-Install dependencies:
+From the cookbook directory:
 
 ```bash
-./portfolio-allocation/setup.sh
-```
-
-Generate a live snapshot and charts:
-
-```bash
-python portfolio-allocation/portfolio_optimizer.py
+cd portfolio-allocation
+./setup.sh
+python3 portfolio_optimizer.py
 ```
 
 The workflow is sequential, keeps only one request in flight at a time, spaces requests to stay under the public 10-per-minute assumption, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed pacing hack.

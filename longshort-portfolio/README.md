@@ -4,7 +4,12 @@
 
 Use PolyBridge Forecast probabilities to turn a directional long/short thesis into a dry-run, review-only portfolio demo across `BTC`, `SPX`, `OP`, `BERA`, and optionally `WTI`.
 
-The Colab link above is the final public path. It will work after `crowdvector/polybridge-cookbooks` is published and this repo is pushed there.
+## Quick Links
+
+- Article: https://polybridge.ai/blog/longshort-portfolio
+- Colab: https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb
+- GitHub folder: https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio
+- PolyBridge MCP release: https://github.com/crowdvector/polybridge-search-mcp/releases/tag/polybridge-mcp-v0.2.4
 
 ## What This Cookbook Builds
 
@@ -46,26 +51,35 @@ Both paths are review-only. Neither path should submit trades, call execution AP
 ## PolyBridge MCP
 
 - Release: https://github.com/crowdvector/polybridge-search-mcp/releases/tag/polybridge-mcp-v0.2.4
-- Future notebook path: https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb
+- Notebook: https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb
+
+## Dependencies
+
+- Python 3
+- `requests`
+- `pillow`
+- Optional for the prompt workflow: Claude Desktop plus the PolyBridge MCP release above
 
 ## API Key Handling
 
 Script mode expects `POLYBRIDGE_API_KEY` to already be present in the environment.
 
+```bash
+read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
+echo
+export POLYBRIDGE_API_KEY
+```
+
 Notebook mode checks the environment first and only falls back to `getpass()` if the variable is missing. The key is never printed, saved into files, written into notebook outputs, or persisted into generated assets.
 
 ## Run Locally
 
-Install dependencies:
+From the cookbook directory:
 
 ```bash
-./longshort-portfolio/setup.sh
-```
-
-Run the dry-run helper:
-
-```bash
-python3 longshort-portfolio/dry_run_portfolio.py
+cd longshort-portfolio
+./setup.sh
+python3 dry_run_portfolio.py
 ```
 
 ## Notes

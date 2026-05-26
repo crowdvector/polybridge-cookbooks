@@ -1,7 +1,15 @@
 .env
 .env.local
 _source/
-**pycache**/
+__pycache__/
+**/__pycache__/
 .ipynb_checkpoints/
+**/.ipynb_checkpoints/
 .DS_Store
 *.pyc
+.venv/
+node_modules/
+*.log
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/

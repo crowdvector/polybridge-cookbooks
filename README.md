@@ -33,16 +33,28 @@ echo
 export POLYBRIDGE_API_KEY
 ```
 
-Then choose a cookbook and run its setup script from the repo root:
+Then choose a cookbook and run it from its own directory.
 
 ```bash
-./vix-forecast/setup.sh
-python3 vix-forecast/stress_monitor.py
+git clone https://github.com/crowdvector/polybridge-cookbooks.git
+cd polybridge-cookbooks/vix-forecast
+bash setup.sh
+read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
+echo
+export POLYBRIDGE_API_KEY
+python3 stress_monitor.py
+open assets/market-stress-monitor.png
 ```
 
 ```bash
-./longshort-portfolio/setup.sh
-python3 longshort-portfolio/dry_run_portfolio.py
+git clone https://github.com/crowdvector/polybridge-cookbooks.git
+cd polybridge-cookbooks/longshort-portfolio
+bash setup.sh
+read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
+echo
+export POLYBRIDGE_API_KEY
+python3 dry_run_portfolio.py
+open assets/dry-run-summary.png
 ```
 
 ## Safety

@@ -52,7 +52,7 @@ Notebook mode checks the environment first and falls back to `getpass()` only if
 
 ## Run locally
 
-```zsh
+```bash
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/vix-forecast
 bash setup.sh

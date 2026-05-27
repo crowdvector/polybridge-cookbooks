@@ -34,7 +34,7 @@ Questions used in this cookbook:
 
 ## Dependencies
 
-- Python 3
+- Python 3.10+
 - `requests`
 - `matplotlib`
 

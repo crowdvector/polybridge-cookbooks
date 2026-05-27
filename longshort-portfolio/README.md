@@ -74,12 +74,28 @@ Notebook mode checks the environment first and only falls back to `getpass()` if
 
 ## Run Locally
 
-From the cookbook directory:
+From a fresh checkout:
 
 ```bash
-cd longshort-portfolio
-./setup.sh
+git clone https://github.com/crowdvector/polybridge-cookbooks.git
+cd polybridge-cookbooks/longshort-portfolio
+```
+
+Or, if the repo already exists locally:
+
+```bash
+cd polybridge-cookbooks/longshort-portfolio
+```
+
+Then install dependencies, export your key, run the dry run, and open the generated summary image:
+
+```bash
+bash setup.sh
+read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
+echo
+export POLYBRIDGE_API_KEY
 python3 dry_run_portfolio.py
+open assets/dry-run-summary.png
 ```
 
 ## Notes

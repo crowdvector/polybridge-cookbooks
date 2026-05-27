@@ -2,6 +2,8 @@
 
 Runnable PolyBridge cookbooks for market-implied workflows, Colab notebooks, and developer examples. Each cookbook is self-contained and includes a standalone `README.md`, a runnable notebook, a `setup.sh` installer, helper code, and public-facing generated assets.
 
+The blog articles use dated snapshots. Running the notebooks or scripts calls the live Forecast API, so values may differ.
+
 ## Cookbook Index
 
 | Cookbook | What it builds | APIs / tools used | Article | Colab | GitHub folder |

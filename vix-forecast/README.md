@@ -2,7 +2,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb)
 
-Use PolyBridge Forecast to build a live market snapshot around VIX and related stress questions that are not all directly listed on a single venue.
+Use PolyBridge Forecast to build a market-implied stress snapshot from five Forecast API questions around VIX and related stress indicators.
 
 ## Quick Links
 
@@ -13,6 +13,8 @@ Use PolyBridge Forecast to build a live market snapshot around VIX and related s
 ## What this cookbook builds
 
 This cookbook runs five live forecast questions against `POST https://api.polybridge.ai/v1/forecast`, writes a sanitized snapshot to `assets/snapshot.json`, and renders a dark-theme hero image to `assets/market-stress-monitor.png`.
+
+Runtime is usually 2-5 minutes. Allow up to 10 minutes with retries. The blog article uses a dated snapshot; running the notebook or script calls the live Forecast API, so outputs may differ.
 
 Questions used in this cookbook:
 
@@ -46,16 +48,19 @@ echo
 export POLYBRIDGE_API_KEY
 ```
 
-Notebook mode checks the environment first and falls back to `getpass()` only if the variable is missing. The key is never printed, saved into files, or included in the generated assets.
+Notebook mode checks the environment first and falls back to `getpass()` only if the variable is missing. No secrets should be committed. The key is never printed, saved into files, or included in the generated assets.
 
 ## Run locally
 
-From the cookbook directory:
-
-```bash
-cd vix-forecast
-./setup.sh
+```zsh
+git clone https://github.com/crowdvector/polybridge-cookbooks.git
+cd polybridge-cookbooks/vix-forecast
+bash setup.sh
+read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
+echo
+export POLYBRIDGE_API_KEY
 python3 stress_monitor.py
+open assets/market-stress-monitor.png
 ```
 
 The workflow is sequential, uses a 75 second request timeout, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed sleep. There is no baked-in fixed-delay public-tier assumption in this version.

@@ -7,7 +7,6 @@ Runnable PolyBridge cookbooks for market-implied workflows, Colab notebooks, and
 | Cookbook | What it builds | APIs / tools used | Article | Colab | GitHub folder |
 | --- | --- | --- | --- | --- | --- |
 | `vix-forecast/` | A live market stress snapshot for VIX, oil, SPX drawdown, gold, and Hormuz reopening probabilities. | PolyBridge Forecast, Python, `requests`, `matplotlib` | [VIX forecast](https://polybridge.ai/blog/vix-forecast) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast) |
-| `portfolio-allocation/` | A market-implied allocation workflow across `SPY`, `TLT`, `GLD`, `XLE`, and `VIXY` with optimizer outputs and charts. | PolyBridge Forecast, Yahoo Finance, Python, `pandas`, `numpy`, `scipy`, `matplotlib`, `yfinance` | [Portfolio allocation](https://polybridge.ai/blog/portfolio-allocation) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/portfolio-allocation/portfolio-allocation.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/portfolio-allocation) |
 | `longshort-portfolio/` | A dry-run, review-only long/short sizing demo with structured order-intent artifacts and an MCP prompt workflow. | PolyBridge Forecast, PolyBridge MCP, Claude Desktop prompt workflow, Python, `requests`, `pillow` | [Long/short dry run](https://polybridge.ai/blog/longshort-portfolio) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio) |
 
 ## Repo Layout
@@ -40,11 +39,6 @@ python3 vix-forecast/stress_monitor.py
 ```
 
 ```bash
-./portfolio-allocation/setup.sh
-python3 portfolio-allocation/portfolio_optimizer.py
-```
-
-```bash
 ./longshort-portfolio/setup.sh
 python3 longshort-portfolio/dry_run_portfolio.py
 ```
@@ -61,5 +55,4 @@ python3 longshort-portfolio/dry_run_portfolio.py
 - PolyBridge Developer Console: https://polybridge.ai/console
 - PolyBridge MCP release: https://github.com/crowdvector/polybridge-search-mcp/releases/tag/polybridge-mcp-v0.2.4
 - VIX forecast article: https://polybridge.ai/blog/vix-forecast
-- Portfolio allocation article: https://polybridge.ai/blog/portfolio-allocation
 - Long/short dry-run article: https://polybridge.ai/blog/longshort-portfolio

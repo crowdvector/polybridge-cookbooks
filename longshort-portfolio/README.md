@@ -26,7 +26,7 @@ This cookbook:
 
 There are two workflows in this cookbook:
 
-- `PROMPT.md` is the interactive Claude Desktop + PolyBridge MCP workflow. It is for exploratory agent use, thesis challenges, and conversational review.
+- The same prompt lives in the cookbook `PROMPT.md`. It is for exploratory Claude Desktop + PolyBridge MCP use, thesis challenges, and conversational review.
 - `dry_run_portfolio.py` is the reproducible REST-backed helper. It calls the Forecast endpoint sequentially, retries `429` and `503` with `Retry-After`, sanitizes the responses, and writes the dry-run assets used in this cookbook.
 
 Both paths are review-only. Neither path should submit trades, call execution APIs, or rely on Hyperliquid private keys.
@@ -55,7 +55,7 @@ Both paths are review-only. Neither path should submit trades, call execution AP
 
 ## Dependencies
 
-- Python 3
+- Python 3.10+
 - `requests`
 - `pillow`
 - Optional for the prompt workflow: Claude Desktop plus the PolyBridge MCP release above

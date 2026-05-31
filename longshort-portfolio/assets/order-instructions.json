@@ -1,0 +1,40 @@
+{
+  "generated_at": "2026-05-25T21:55:14Z",
+  "orders": [
+    {
+      "asset": "BTC",
+      "direction": "LONG",
+      "notional_usd": 11500,
+      "target_notional_usd": 11500,
+      "units": "not provided"
+    },
+    {
+      "asset": "SPX",
+      "direction": "LONG",
+      "notional_usd": 6500,
+      "target_notional_usd": 6500,
+      "units": "not provided"
+    },
+    {
+      "asset": "OP",
+      "direction": "SHORT",
+      "notional_usd": 6000,
+      "target_notional_usd": 6000,
+      "units": "not provided"
+    },
+    {
+      "asset": "BERA",
+      "direction": "SHORT",
+      "notional_usd": 4500,
+      "target_notional_usd": 4500,
+      "units": "not provided"
+    },
+    {
+      "asset": "WTI",
+      "direction": "LONG",
+      "notional_usd": 1000,
+      "target_notional_usd": 1000,
+      "units": "not provided"
+    }
+  ]
+}

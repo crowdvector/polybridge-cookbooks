@@ -9,7 +9,7 @@ The blog articles use dated snapshots. Running the notebooks or scripts calls th
 | Cookbook | What it builds | APIs / tools used | Article | Colab | GitHub folder |
 | --- | --- | --- | --- | --- | --- |
 | `vix-forecast/` | A live market stress snapshot for VIX, oil, SPX drawdown, gold, and Hormuz reopening probabilities. | PolyBridge Forecast, Python 3.10+, `requests`, `matplotlib` | [VIX forecast](https://polybridge.ai/blog/vix-forecast) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast) |
-| `longshort-portfolio/` | A dry-run, review-only long/short sizing demo with structured order-intent artifacts and an MCP prompt workflow. | PolyBridge Forecast, PolyBridge MCP, Claude Desktop prompt workflow, Python 3.10+, `requests`, `pillow` | [Long/short dry run](https://polybridge.ai/blog/longshort-portfolio) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio) |
+| `longshort-portfolio/` | A portfolio sizing workflow from PolyBridge Forecast probabilities, directional thesis inputs, and order instructions. | PolyBridge Forecast, PolyBridge MCP, Claude Desktop prompt workflow, Python 3.10+, `requests`, `pillow` | [Long-short agent portfolio from prediction market insights](https://polybridge.ai/blog/longshort-portfolio) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio) |
 
 ## Repo Layout
 
@@ -53,20 +53,17 @@ bash setup.sh
 read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
 echo
 export POLYBRIDGE_API_KEY
-python3 dry_run_portfolio.py
-open assets/dry-run-summary.png
+python3 portfolio_sizing.py
+open assets/portfolio-summary.png
 ```
 
-## Safety
+## Operational Note
 
-- Forecast outputs are market-implied snapshots derived from prediction-market data.
-- The values in `assets/` can change as source markets update.
-- These cookbooks are technical examples and are not financial advice.
-- `longshort-portfolio/` is dry-run and review-only. It does not place trades, require private keys, or include live execution code.
+Cookbooks produce market-implied examples from live Forecast calls. Values can change as source markets update.
 
 ## Resources
 
 - PolyBridge Developer Console: https://polybridge.ai/console
 - PolyBridge MCP release: https://github.com/crowdvector/polybridge-search-mcp/releases/tag/polybridge-mcp-v0.2.4
 - VIX forecast article: https://polybridge.ai/blog/vix-forecast
-- Long/short dry-run article: https://polybridge.ai/blog/longshort-portfolio
+- Long-short agent portfolio article: https://polybridge.ai/blog/longshort-portfolio

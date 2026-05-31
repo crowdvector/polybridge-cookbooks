@@ -371,7 +371,7 @@ def render_chart(snapshot: dict[str, Any], output_path: Path) -> Path:
     ax.text(
         0.06,
         0.845,
-        "Market-implied probabilities from prediction markets. Not financial advice.",
+        "Market-implied probabilities from prediction markets.",
         color=secondary_text,
         fontsize=13,
         va="center",
@@ -585,7 +585,7 @@ def render_alt_chart(snapshot: dict[str, Any], output_path: Path) -> Path:
     fig.text(
         0.08,
         0.905,
-        "Market-implied probabilities from prediction markets. Not financial advice.",
+        "Market-implied probabilities from prediction markets.",
         color=secondary_text,
         fontsize=13,
     )
@@ -611,7 +611,7 @@ def write_snapshot(snapshot: dict[str, Any], output_path: Path) -> Path:
 
 
 def print_summary(snapshot: dict[str, Any]) -> None:
-    print("Market-implied snapshot from PolyBridge Forecast. Not financial advice.")
+    print("Market-implied snapshot from PolyBridge Forecast.")
     for item in snapshot.get("questions", []):
         probability = item.get("probability_percent")
         probability_text = f"{probability:.2f}%" if isinstance(probability, (int, float)) else "n/a"

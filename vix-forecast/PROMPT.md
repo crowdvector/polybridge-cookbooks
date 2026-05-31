@@ -32,4 +32,4 @@ Requirements:
 - Use the Colab link:
   - `https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb`
 - Mention that the Colab link will work after the repo exists and has been pushed.
-- Include a clear note that the results are market-implied snapshots, not financial advice.
+- Include a clear note that the results are market-implied snapshots and can change as source markets update.

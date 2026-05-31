@@ -1,7 +1,7 @@
 {
   "generated_at": "2026-05-25T21:55:14Z",
   "total_notional_usd": 50000,
-  "methodology_note": "Illustrative dry-run sizing only. Each asset receives a fixed cap bucket (BTC $18k, SPX $12k, OP $10k, BERA $8k, WTI $2k). Macro support comes from the five live PolyBridge probabilities, thesis conviction is fixed from the user view, and final USD notionals use square-root scaling with rounding to the nearest $500.",
+  "methodology_note": "Constrained scoring rule. Each asset starts with a thesis conviction and macro support score derived from the five live PolyBridge probabilities. Final USD notionals use square-root scaling, asset caps, a $50,000 gross notional budget, and rounding to the nearest $500.",
   "positions": [
     {
       "asset": "BTC",
@@ -13,9 +13,7 @@
         "Crypto reform is priced at 55%, which is the main macro tailwind for BTC.",
         "Fed cuts are only priced at 11%, so this BTC long leans more on the policy backdrop than on a near-term liquidity easing impulse."
       ],
-      "rationale": "Sized at $11,500 from a 85% fixed thesis conviction, a 48.3% macro support score, and a $18,000 asset cap in this illustrative dry run.",
-      "review_only": true,
-      "dry_run": true
+      "rationale": "Sized at $11,500 from a 85% fixed thesis conviction, a 48.3% macro support score, and a $18,000 asset cap."
     },
     {
       "asset": "SPX",
@@ -27,9 +25,7 @@
         "Recession is only priced at 16%, which keeps the SPX long viable even though the market does not expect early Fed easing.",
         "Hormuz reopening at 18% and WTI > $90 at 50% shape the energy shock risk around SPX."
       ],
-      "rationale": "Sized at $6,500 from a 68% fixed thesis conviction, a 41.5% macro support score, and a $12,000 asset cap in this illustrative dry run.",
-      "review_only": true,
-      "dry_run": true
+      "rationale": "Sized at $6,500 from a 68% fixed thesis conviction, a 41.5% macro support score, and a $12,000 asset cap."
     },
     {
       "asset": "OP",
@@ -41,9 +37,7 @@
         "Crypto reform is priced at 55%; higher reform odds weaken the short, lower reform odds strengthen it.",
         "Fed cuts are only priced at 11%, which limits any easy-money tailwind for alt beta and keeps the OP short thesis intact."
       ],
-      "rationale": "Sized at $6,000 from a 72% fixed thesis conviction, a 47.3% macro support score, and a $10,000 asset cap in this illustrative dry run.",
-      "review_only": true,
-      "dry_run": true
+      "rationale": "Sized at $6,000 from a 72% fixed thesis conviction, a 47.3% macro support score, and a $10,000 asset cap."
     },
     {
       "asset": "BERA",
@@ -55,9 +49,7 @@
         "BERA short conviction depends heavily on crypto reform at 55% because a strong policy tailwind can squeeze weaker alts.",
         "Low Fed cut odds at 11% mean this short is not fighting a strong easing narrative, even though recession risk itself is only 16%."
       ],
-      "rationale": "Sized at $4,500 from a 69% fixed thesis conviction, a 45.1% macro support score, and a $8,000 asset cap in this illustrative dry run.",
-      "review_only": true,
-      "dry_run": true
+      "rationale": "Sized at $4,500 from a 69% fixed thesis conviction, a 45.1% macro support score, and a $8,000 asset cap."
     },
     {
       "asset": "WTI",
@@ -69,16 +61,13 @@
         "WTI > $90 is priced at 50% while Hormuz reopening is priced at 18%.",
         "Bull support is 64.4% and bear support is 35.6%, so the oil signal is handled conservatively."
       ],
-      "rationale": "Sized at $1,000 from a 50% fixed thesis conviction, a 64.4% macro support score, and a $2,000 asset cap in this illustrative dry run.",
-      "review_only": true,
-      "dry_run": true
+      "rationale": "Sized at $1,000 from a 50% fixed thesis conviction, a 64.4% macro support score, and a $2,000 asset cap."
     }
   ],
   "validation": {
     "total_absolute_notional_usd": 29500,
     "total_absolute_notional_within_limit": true,
     "max_single_position_limit_usd": 20000,
-    "max_single_position_within_limit": true,
-    "all_positions_review_only": true
+    "max_single_position_within_limit": true
   }
 }

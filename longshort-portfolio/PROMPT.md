@@ -1,4 +1,4 @@
-# PolyBridge Long/Short Dry-Run Prompt
+# PolyBridge Long/Short Portfolio Prompt
 
 Use this prompt in Claude Desktop with the PolyBridge MCP extension installed.
 
@@ -21,29 +21,21 @@ Use PolyBridge Forecast on exactly these five questions:
 
 Portfolio constraints:
 - Total notional budget: $50,000
-- Dry-run and review-only
 - Notional USD sizing only
 - Total absolute notional must stay less than or equal to $50,000
 - No single position may exceed 40% of total notional
 - WTI may be FLAT if the signal is mixed
 
-Hard safety rules:
-- Do not place trades
-- Do not instantiate exchange or mainnet clients
-- Do not request or use Hyperliquid private keys
-- Do not call execution APIs
-- Do not output executable SDK code
-
 Output format:
 1. Macro read from the five PolyBridge results
 2. Thesis challenges where market evidence argues against my view
 3. Sized position table for BTC, SPX, OP, BERA, and WTI
-4. Review-only order intent JSON
+4. Order instructions JSON
 
-Order intent requirements:
-- Every order must include "dry_run": true
-- Every order must include "requires_human_review": true
-- Include "review_only": true everywhere
-- Use notional USD only, not live executable asset units
-- Include a note that this is illustrative and not financial advice
+Order instruction requirements:
+- Every order must include "asset"
+- Every order must include "direction"
+- Every order must include "notional_usd"
+- Every order must include "target_notional_usd"
+- Every order must include "units", if available, otherwise "not provided"
 ```

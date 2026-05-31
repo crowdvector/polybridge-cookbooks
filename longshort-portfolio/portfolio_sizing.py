@@ -74,19 +74,19 @@ class ForecastShapeError(RuntimeError):
 class WorkflowPaths:
     macro_snapshot: Path
     position_table: Path
-    review_only_orders: Path
+    order_instructions: Path
     research_brief: Path
     agent_session: Path
-    dry_run_summary_png: Path | None
+    portfolio_summary_png: Path | None
 
     def as_dict(self) -> dict[str, str | None]:
         return {
             "macro_snapshot": str(self.macro_snapshot),
             "position_table": str(self.position_table),
-            "review_only_orders": str(self.review_only_orders),
+            "order_instructions": str(self.order_instructions),
             "research_brief": str(self.research_brief),
             "agent_session": str(self.agent_session),
-            "dry_run_summary_png": str(self.dry_run_summary_png) if self.dry_run_summary_png else None,
+            "portfolio_summary_png": str(self.portfolio_summary_png) if self.portfolio_summary_png else None,
         }
 
 
@@ -478,11 +478,11 @@ def rationale_for_position(asset: str, direction: str, notional_usd: int, macro_
     conviction = THESIS_CONVICTION[asset]
     if direction == "FLAT":
         return (
-            "Left flat because the oil signal is mixed relative to the cautious thesis, so the dry run does not force a trade."
+            "Left flat because the oil signal is mixed relative to the cautious thesis, so the workflow does not force a position."
         )
     return (
         f"Sized at {format_usd(notional_usd)} from a {format_percent(conviction)} fixed thesis conviction, "
-        f"a {format_percent(macro_support)} macro support score, and a {format_usd(cap)} asset cap in this illustrative dry run."
+        f"a {format_percent(macro_support)} macro support score, and a {format_usd(cap)} asset cap."
     )
 
 
@@ -511,23 +511,19 @@ def build_position_table(snapshot: dict[str, Any]) -> dict[str, Any]:
                 "thesis": THESIS_BY_ASSET[asset],
                 "macro_evidence": macro_evidence_lines(asset, snapshot, support),
                 "rationale": rationale_for_position(asset, direction, notional_usd, macro_support),
-                "review_only": True,
-                "dry_run": True,
             }
         )
 
     total_absolute_notional = sum(abs(position["notional_usd"]) for position in positions)
     max_position_notional = max(abs(position["notional_usd"]) for position in positions)
-    all_review_only = all(position["review_only"] and position["dry_run"] for position in positions)
 
     return {
         "generated_at": snapshot["generated_at"],
         "total_notional_usd": TOTAL_NOTIONAL_USD,
         "methodology_note": (
-            "Illustrative dry-run sizing only. Each asset receives a fixed cap bucket "
-            "(BTC $18k, SPX $12k, OP $10k, BERA $8k, WTI $2k). Macro support comes from the "
-            "five live PolyBridge probabilities, thesis conviction is fixed from the user view, "
-            "and final USD notionals use square-root scaling with rounding to the nearest $500."
+            "Constrained scoring rule. Each asset starts with a thesis conviction and macro support score "
+            "derived from the five live PolyBridge probabilities. Final USD notionals use square-root scaling, "
+            "asset caps, a $50,000 gross notional budget, and rounding to the nearest $500."
         ),
         "positions": positions,
         "validation": {
@@ -535,54 +531,29 @@ def build_position_table(snapshot: dict[str, Any]) -> dict[str, Any]:
             "total_absolute_notional_within_limit": total_absolute_notional <= TOTAL_NOTIONAL_USD,
             "max_single_position_limit_usd": MAX_SINGLE_POSITION_USD,
             "max_single_position_within_limit": max_position_notional <= MAX_SINGLE_POSITION_USD,
-            "all_positions_review_only": all_review_only,
         },
     }
 
 
-def build_review_only_orders(position_table: dict[str, Any]) -> dict[str, Any]:
+def build_order_instructions(position_table: dict[str, Any]) -> dict[str, Any]:
     orders: list[dict[str, Any]] = []
 
     for position in position_table["positions"]:
         direction = position["direction"]
         notional_usd = int(position["notional_usd"])
 
-        if direction == "FLAT":
-            order_intent = {
-                "intent_type": "no_trade",
-                "summary": "No order generated. Hold flat until the oil signal is less ambiguous.",
-            }
-        else:
-            order_intent = {
-                "intent_type": "notional_usd_only",
-                "summary": f"Review-only intent to maintain a {direction} {position['asset']} exposure.",
-                "target_notional_usd": notional_usd,
-                "units": "placeholder_only_not_provided",
-            }
-
         orders.append(
             {
                 "asset": position["asset"],
                 "direction": direction,
                 "notional_usd": notional_usd,
-                "order_intent": order_intent,
-                "review_only": True,
-                "dry_run": True,
-                "requires_human_review": True,
+                "target_notional_usd": notional_usd,
+                "units": "not provided",
             }
         )
 
     return {
         "generated_at": position_table["generated_at"],
-        "dry_run": True,
-        "review_only": True,
-        "requires_human_review": True,
-        "no_private_keys_required": True,
-        "no_execution_performed": True,
-        "warning": (
-            "Illustrative dry-run order intents only. Not financial advice. "
-            "This is not an executable order file."
-        ),
         "orders": orders,
     }
 
@@ -604,7 +575,7 @@ def classify_macro_read(snapshot: dict[str, Any]) -> list[str]:
     )
     energy_read = (
         f"Hormuz reopening sits at {format_percent(p_hormuz_open)} and WTI > $90 sits at {format_percent(p_wti90)}. "
-        "The oil complex is not one-way enough to force a large WTI expression in the dry run."
+        "The oil complex is not one-way enough to force a large WTI expression in the portfolio."
     )
     return [liquidity_read, crypto_read, energy_read]
 
@@ -629,7 +600,7 @@ def thesis_challenges(snapshot: dict[str, Any], position_table: dict[str, Any]) 
         )
     if p_fed_cut >= 0.55 and positions["SPX"]["notional_usd"] < 10_000:
         challenges.append(
-            f"Fed cuts at {format_percent(p_fed_cut)} do help broad beta, but the dry run still discounts that support because recession and energy risks remain live."
+            f"Fed cuts at {format_percent(p_fed_cut)} do help broad beta, but the sizing rule still discounts that support because recession and energy risks remain live."
         )
     if abs((1.0 - p_hormuz_open) - p_wti90) < 0.12:
         challenges.append(
@@ -677,14 +648,14 @@ def markdown_forecast_table(snapshot: dict[str, Any]) -> str:
     return "\n".join(rows)
 
 
-def order_summary_lines(review_only_orders: dict[str, Any]) -> list[str]:
+def order_summary_lines(order_instructions: dict[str, Any]) -> list[str]:
     lines: list[str] = []
-    for order in review_only_orders["orders"]:
+    for order in order_instructions["orders"]:
         if order["direction"] == "FLAT":
             lines.append(f"- `{order['asset']}` stays flat with no generated order.")
         else:
             lines.append(
-                f"- `{order['asset']}` review-only intent: {order['direction']} {format_usd(order['notional_usd'])} notional."
+                f"- `{order['asset']}` order instruction: {order['direction']} {format_usd(order['notional_usd'])} notional."
             )
     return lines
 
@@ -692,22 +663,20 @@ def order_summary_lines(review_only_orders: dict[str, Any]) -> list[str]:
 def wti_rationale(position_table: dict[str, Any]) -> str:
     position = next(item for item in position_table["positions"] if item["asset"] == "WTI")
     if position["direction"] == "FLAT":
-        return "WTI is excluded from the active book because the oil and shipping signals are mixed, so the deterministic heuristic preserves a flat review-only stance."
+        return "WTI is excluded from the active book because the oil and shipping signals are mixed, so the constrained scoring rule preserves a flat stance."
     return (
-        f"WTI is included as a {position['direction']} review-only position because the oil signal cleared the ambiguity threshold. "
+        f"WTI is included as a {position['direction']} position because the oil signal cleared the ambiguity threshold. "
         f"The size stays small at {format_usd(position['notional_usd'])} because the base thesis on WTI is explicitly uncertain."
     )
 
 
-def build_research_brief(snapshot: dict[str, Any], position_table: dict[str, Any], review_only_orders: dict[str, Any]) -> str:
+def build_research_brief(snapshot: dict[str, Any], position_table: dict[str, Any], order_instructions: dict[str, Any]) -> str:
     macro_lines = classify_macro_read(snapshot)
     challenges = thesis_challenges(snapshot, position_table)
-    orders = order_summary_lines(review_only_orders)
+    orders = order_summary_lines(order_instructions)
 
     sections = [
-        "# Long/Short Dry-Run Research Brief",
-        "",
-        "This brief is generated from live PolyBridge Forecast responses and remains dry-run only. It is not financial advice and does not execute trades.",
+        "# Long/Short Portfolio Research Brief",
         "",
         "## Live Macro Snapshot",
         "",
@@ -729,16 +698,9 @@ def build_research_brief(snapshot: dict[str, Any], position_table: dict[str, Any
         "",
         wti_rationale(position_table),
         "",
-        "## Dry-Run Order Summary",
+        "## Order Instructions",
         "",
         *orders,
-        "",
-        "## Notes",
-        "",
-        "- Review-only and dry-run only.",
-        "- Human review is required before any manual execution elsewhere.",
-        "- No live execution code, private keys, or exchange clients are included in this cookbook.",
-        "- This is illustrative portfolio sizing, not financial advice.",
     ]
     return "\n".join(sections).strip() + "\n"
 
@@ -762,31 +724,23 @@ Use PolyBridge Forecast on exactly these five questions:
 
 Portfolio constraints:
 - Total notional budget: $50,000
-- Dry-run and review-only
 - Notional USD sizing only
 - Total absolute notional must stay less than or equal to $50,000
 - No single position may exceed 40% of total notional
 - WTI may be FLAT if the signal is mixed
 
-Hard safety rules:
-- Do not place trades
-- Do not instantiate exchange or mainnet clients
-- Do not request or use Hyperliquid private keys
-- Do not call execution APIs
-- Do not output executable SDK code
-
 Output format:
 1. Macro read from the five PolyBridge results
 2. Thesis challenges where market evidence argues against my view
 3. Sized position table for BTC, SPX, OP, BERA, and WTI
-4. Review-only order intent JSON
+4. Order instructions JSON
 """.strip()
 
 
-def build_agent_session(snapshot: dict[str, Any], position_table: dict[str, Any], review_only_orders: dict[str, Any]) -> str:
+def build_agent_session(snapshot: dict[str, Any], position_table: dict[str, Any], order_instructions: dict[str, Any]) -> str:
     macro_lines = classify_macro_read(snapshot)
     challenges = thesis_challenges(snapshot, position_table)
-    order_lines = order_summary_lines(review_only_orders)
+    order_lines = order_summary_lines(order_instructions)
 
     forecast_lines: list[str] = []
     for index, item in enumerate(snapshot["questions"], start=1):
@@ -811,9 +765,9 @@ def build_agent_session(snapshot: dict[str, Any], position_table: dict[str, Any]
             forecast_lines.append(f"   - Reasoning: {reasoning}")
 
     sections = [
-        "# REST-backed dry-run agent-style transcript",
+        "# REST-backed agent-style portfolio workflow",
         "",
-        "This file was generated by `dry_run_portfolio.py` from live REST Forecast calls. It is not a literal Claude transcript.",
+        "This file was generated by `portfolio_sizing.py` from live REST Forecast calls. It is not a literal Claude transcript.",
         "",
         "The same prompt lives in the cookbook `PROMPT.md`. A future user can copy it into Claude Desktop with the PolyBridge MCP release installed and reproduce the qualitative workflow there.",
         "",
@@ -839,21 +793,13 @@ def build_agent_session(snapshot: dict[str, Any], position_table: dict[str, Any]
         "",
         *[f"- {line}" for line in challenges],
         "",
-        "### Dry-Run Position Table",
+        "### Position Table",
         "",
         markdown_position_table(position_table),
         "",
-        "### Review-Only Order Summary",
+        "### Order Instructions",
         "",
         *order_lines,
-        "",
-        "### Safety Notes",
-        "",
-        "- Dry-run only.",
-        "- Review-only output.",
-        "- No live execution performed.",
-        "- Human review required.",
-        "- Not financial advice.",
     ]
     return "\n".join(sections).strip() + "\n"
 
@@ -917,9 +863,9 @@ def render_summary_png(snapshot: dict[str, Any], position_table: dict[str, Any],
     draw.ellipse((1170, -40, 1570, 360), fill="#112438")
     draw.ellipse((40, 700, 360, 1020), fill="#102030")
 
-    draw.text((82, 78), "PolyBridge long/short dry run", fill=accent, font=small_font)
-    draw.text((82, 112), "Macro snapshot and review-only position sizing", fill=text_primary, font=title_font)
-    draw.text((82, 180), "Five live Forecast probabilities converted into deterministic USD notionals. Not financial advice.", fill=text_secondary, font=subtitle_font)
+    draw.text((82, 78), "PolyBridge long/short portfolio", fill=accent, font=small_font)
+    draw.text((82, 112), "Macro snapshot and constrained portfolio sizing", fill=text_primary, font=title_font)
+    draw.text((82, 180), "Five live Forecast probabilities converted into USD notionals.", fill=text_secondary, font=subtitle_font)
     draw.text((82, 222), f"Generated {snapshot['generated_at']} UTC", fill=text_muted, font=small_font)
 
     left = 82
@@ -949,8 +895,8 @@ def render_summary_png(snapshot: dict[str, Any], position_table: dict[str, Any],
 
     right_left = 790
     draw.rounded_rectangle((right_left, 290, width - 82, 818), radius=22, fill=surface, outline=border, width=2)
-    draw.text((right_left + 28, 316), "Dry-run positions", fill=text_primary, font=heading_font)
-    draw.text((right_left + 28, 354), "Review-only USD intent, capped at $50,000 total absolute notional.", fill=text_secondary, font=small_font)
+    draw.text((right_left + 28, 316), "Portfolio positions", fill=text_primary, font=heading_font)
+    draw.text((right_left + 28, 354), "USD notionals capped at $50,000 total absolute notional.", fill=text_secondary, font=small_font)
 
     row_y = 404
     row_gap = 76
@@ -963,11 +909,6 @@ def render_summary_png(snapshot: dict[str, Any], position_table: dict[str, Any],
         draw.text((right_left + 28, row_y + 32), position["rationale"], fill=text_muted, font=small_font)
         row_y += row_gap
 
-    footer_y = 860
-    draw.rounded_rectangle((82, footer_y, width - 82, 914), radius=18, fill=surface, outline=border, width=2)
-    draw.text((106, footer_y + 14), "Dry-run only. Review-only. Human review required before any manual execution elsewhere.", fill=text_primary, font=body_font)
-    draw.text((106, footer_y + 48), "No private keys, no execution clients, and no executable order calls are included in this asset.", fill=text_secondary, font=small_font)
-
     image.save(output_path)
     return output_path
 
@@ -977,30 +918,30 @@ def run_once(output_dir: Path | None = None, prompt_for_key: bool = False) -> tu
     assets_dir = output_dir or (base_dir / "assets")
     snapshot = build_macro_snapshot(prompt_for_key=prompt_for_key)
     position_table = build_position_table(snapshot)
-    review_only_orders = build_review_only_orders(position_table)
-    research_brief = build_research_brief(snapshot, position_table, review_only_orders)
-    agent_session = build_agent_session(snapshot, position_table, review_only_orders)
+    order_instructions = build_order_instructions(position_table)
+    research_brief = build_research_brief(snapshot, position_table, order_instructions)
+    agent_session = build_agent_session(snapshot, position_table, order_instructions)
 
     macro_snapshot_path = write_json(assets_dir / "macro-snapshot.json", snapshot)
     position_table_path = write_json(assets_dir / "position-table.json", position_table)
-    review_only_orders_path = write_json(assets_dir / "review-only-orders.json", review_only_orders)
+    order_instructions_path = write_json(assets_dir / "order-instructions.json", order_instructions)
     research_brief_path = write_text(assets_dir / "research-brief.md", research_brief)
     agent_session_path = write_text(assets_dir / "agent-session.md", agent_session)
-    dry_run_summary_png = render_summary_png(snapshot, position_table, assets_dir / "dry-run-summary.png")
+    portfolio_summary_png = render_summary_png(snapshot, position_table, assets_dir / "portfolio-summary.png")
 
     paths = WorkflowPaths(
         macro_snapshot=macro_snapshot_path,
         position_table=position_table_path,
-        review_only_orders=review_only_orders_path,
+        order_instructions=order_instructions_path,
         research_brief=research_brief_path,
         agent_session=agent_session_path,
-        dry_run_summary_png=dry_run_summary_png,
+        portfolio_summary_png=portfolio_summary_png,
     )
 
     bundle = {
         "macro_snapshot": snapshot,
         "position_table": position_table,
-        "review_only_orders": review_only_orders,
+        "order_instructions": order_instructions,
         "research_brief": research_brief,
         "agent_session": agent_session,
     }
@@ -1019,7 +960,7 @@ def main() -> None:
         print(json.dumps(message, indent=2))
         raise SystemExit(1)
 
-    print("Completed long/short dry run.")
+    print("Completed long/short portfolio sizing.")
     print(json.dumps(paths.as_dict(), indent=2))
     for item in bundle["macro_snapshot"]["questions"]:
         print(

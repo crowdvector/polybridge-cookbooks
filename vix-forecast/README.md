@@ -72,4 +72,4 @@ The workflow is sequential, uses a 75 second request timeout, and retries with b
 
 ## Notes
 
-These outputs are market-implied snapshots, not financial advice. They can change as the underlying prediction markets update.
+These outputs are market-implied snapshots. They can change as the underlying prediction markets update.

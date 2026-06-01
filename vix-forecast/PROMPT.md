@@ -8,13 +8,15 @@ Build or adapt the PolyBridge VIX cookbook in `vix-forecast/` without publishing
 - In notebook mode, check the environment first and fall back to `getpass()` only if the variable is missing.
 - Call `POST https://api.polybridge.ai/v1/forecast` with `Authorization: Bearer <API key>`.
 - Never print, persist, or commit API keys, bearer tokens, headers, or `.env` contents.
-- Use these questions exactly:
-  - Will VIX close above 30 in the next 42 days?
+- Use five total forecast calls: one headline VIX signal and four highlighted macro drivers.
+- Use this headline question exactly:
+  - Will VIX close above 30 in the next 6 weeks?
+- Use these driver questions exactly:
   - Will crude oil settle above $90 in June 2026?
-  - Will SPX draw down more than 10% in the next 42 days?
-  - Will gold rise more than 10% in the next 42 days?
+  - Will SPX draw down more than 10% in the next 6 weeks?
+  - Will gold rise more than 10% in the next 6 weeks?
   - Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?
-- Keep live calls sequential or at most two concurrent.
+- Keep live calls sequential.
 - Use a safe timeout around 75 seconds.
 - Retry on `429` and `503`, and honor `Retry-After` when it is present.
 - Do not reintroduce the old fixed-delay rate-limit assumption.
@@ -23,8 +25,10 @@ Build or adapt the PolyBridge VIX cookbook in `vix-forecast/` without publishing
   - Market probability may be missing.
   - URLs may appear as `platform_url`, `platformUrl`, or `url`.
   - Market question labels may appear as `question`, `title`, or `name`.
-  - `confidence_interval` or `probability_range` may be missing.
+  - `confidence_interval` may be missing.
   - `reasoning` may be missing.
+- Public API docs and examples should use `markets_used` and `confidence_interval`; do not present `source_market_count` or `probability_range` as direct top-level fields from `POST /v1/forecast`.
+- A sanitized cookbook snapshot may include `source_market_count` only when derived from `len(markets_used)`.
 - Save sanitized outputs to:
   - `assets/snapshot.json`
   - `assets/market-stress-monitor.png`

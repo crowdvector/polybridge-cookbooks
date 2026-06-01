@@ -1,48 +1,53 @@
 {
-  "generated_at": "2026-05-25T14:10:00Z",
+  "generated_at": "2026-06-01T20:25:20Z",
   "api_base_url": "https://api.polybridge.ai",
   "forecast_endpoint": "https://api.polybridge.ai/v1/forecast",
   "questions": [
     {
-      "question": "Will VIX close above 30 in the next 42 days?",
+      "question": "Will VIX close above 30 in the next 6 weeks?",
       "probability": 0.1,
       "probability_percent": 10.0,
       "confidence": 0.34,
-      "source_market_count": 4,
+      "source_market_count": 5,
       "source_markets": [
         {
-          "source": "polymarket",
-          "question": "Will the S&P 500 Index gain at least 5% on any day in Q1?",
-          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-gain-at-least-5-on-any-day-in-q1"
+          "source": "kalshi",
+          "question": "Will the S&P 500 be between 6650 and 6674.9999 on Mar 30, 2026 at 4pm EDT?",
+          "url": "https://kalshi.com/markets/KXINX-26MAR30H1600-B6662"
         },
         {
           "source": "kalshi",
-          "question": "Will the number of unemployment rate exceeds 10% (monthly BLS); S&P 500 declines more than 30% from its closing level on Issuance; Zillow Home Value Index declines more than 10% YoY in any of: NYC, LA, San Francisco, Chicago, Houston, Phoenix; labor share of gross domestic income (GDI) first-release value for any quarter falls below 50%; CPI-U (All items, not seasonally-adjusted) YoY falls below 0% in any monthly release during before July 2028 be above 2?",
-          "url": "https://kalshi.com/markets/KXCITRINI-28JUL01"
+          "question": "Will the S&P 500 be between 6750 and 6774.9999 on Mar 30, 2026 at 4pm EDT?",
+          "url": "https://kalshi.com/markets/KXINX-26MAR30H1600-B6762"
         },
         {
-          "source": "polymarket",
-          "question": "Will the S&P 500 Index lose at least 3% on any day in Q1?",
-          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-3-on-any-day-in-q1"
+          "source": "kalshi",
+          "question": "Will the S&P 500 be between 6250 and 6274.9999 on Mar 30, 2026 at 4pm EDT?",
+          "url": "https://kalshi.com/markets/KXINX-26MAR30H1600-B6262"
         },
         {
-          "source": "polymarket",
-          "question": "Will the S&P 500 Index lose at least 5% on any day in Q1?",
-          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-5-on-any-day-in-q1"
+          "source": "kalshi",
+          "question": "Will the S&P 500 be between 6425 and 6449.9999 on Mar 30, 2026 at 4pm EDT?",
+          "url": "https://kalshi.com/markets/KXINX-26MAR30H1600-B6437"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the S&P 500 be above 6769.9999 on Apr 6, 2026 at 1pm EDT?",
+          "url": "https://kalshi.com/markets/KXINXU-26APR06H1300-T6769.9999"
         }
       ],
       "confidence_interval": {
         "lower": 0.05,
         "upper": 0.15
       },
-      "reasoning": "The market consensus for significant S&P 500 volatility (defined as 3-5% daily moves) is extremely low, with probabilities ranging from 0.1% to 1.1%. Given that the VIX is a measure of expected volatility, the lack of market expectation for large index swings suggests a low probability of the VIX spiking above 30 in the near term. The estimate is set at 10% to account for 'black swan' tail risk not captured by the provided proxy markets, which are currently focused on stable or low-volatility outcomes."
+      "reasoning": "The forecast for the VIX index closing above 30 within the next 6 weeks is estimated at 10% (5-15% range). There is no direct market for the VIX; therefore, the estimate is derived from S&P 500 volatility expectations implied by the provided weak-evidence markets. These markets show very low probabilities for extreme S&P 500 price deviations, suggesting the market currently prices in a stable, low-volatility regime. Confidence is low due to the lack of direct VIX-specific markets and reliance on indirect, low-liquidity proxy data."
     },
     {
       "question": "Will crude oil settle above $90 in June 2026?",
-      "probability": 0.51,
-      "probability_percent": 51.0,
+      "probability": 0.85,
+      "probability_percent": 85.0,
       "confidence": 0.58,
-      "source_market_count": 5,
+      "source_market_count": 6,
       "source_markets": [
         {
           "source": "polymarket",
@@ -50,133 +55,153 @@
           "url": "https://polymarket.com/event/cl-over-under-jun-2026/cl-above-90-jun-2026"
         },
         {
-          "source": "polymarket",
-          "question": "Will Crude Oil (CL) settle over $60 on the final trading day of June 2026?",
-          "url": "https://polymarket.com/event/cl-over-under-jun-2026/cl-above-60-jun-2026"
+          "source": "kalshi",
+          "question": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Jun 1, 2026?",
+          "url": "https://kalshi.com/markets/KXWTI-26JUN0114-T90.99"
         },
         {
-          "source": "polymarket",
-          "question": "Will WTI Crude Oil (WTI) hit (HIGH) $90 in June?",
-          "url": "https://polymarket.com/event/what-price-will-wti-hit-in-june-2026/will-wti-reach-90-in-june-2026"
+          "source": "kalshi",
+          "question": "Will the brent crude oil close price be above 93 USD/Bbl on June 02, 2026 at 5:00 PM EDT?",
+          "url": "https://kalshi.com/markets/KXBRENTD-26JUN0217-T93"
         },
         {
-          "source": "polymarket",
-          "question": "Will WTI Crude Oil (WTI) hit (HIGH) $150 in June?",
-          "url": "https://polymarket.com/event/what-price-will-wti-hit-in-june-2026/will-wti-reach-150-in-june-2026"
+          "source": "kalshi",
+          "question": "Will the brent crude oil close price be above 90 USD/Bbl on June 01, 2026 at 5:00 PM EDT?",
+          "url": "https://kalshi.com/markets/KXBRENTD-26JUN0117-T90"
         },
         {
-          "source": "polymarket",
-          "question": "Will WTI Crude Oil (WTI) hit (LOW) $20 in June?",
-          "url": "https://polymarket.com/event/what-price-will-wti-hit-in-june-2026/will-wti-dip-to-20-in-june-2026"
+          "source": "kalshi",
+          "question": "Will the brent crude oil close price be above 90 USD/Bbl on June 02, 2026 at 5:00 PM EDT?",
+          "url": "https://kalshi.com/markets/KXBRENTD-26JUN0217-T90"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Jun 2, 2026?",
+          "url": "https://kalshi.com/markets/KXWTI-26JUN0214-T90.99"
         }
       ],
       "confidence_interval": {
-        "lower": 0.48,
-        "upper": 0.53
+        "lower": 0.7,
+        "upper": 0.95
       },
-      "reasoning": "The market consensus for crude oil settling above $90 in June 2026 is approximately 51%. This is supported by the direct threshold market for $90, which shows a 51% probability. While other markets (e.g., $60 threshold) indicate a high likelihood of oil remaining well above $60, the $90 threshold remains a coin-flip scenario. Confidence is moderate due to the relatively low liquidity across the relevant event set, which introduces potential for volatility in the final month."
+      "reasoning": "The market consensus for crude oil settling above $90 in early June 2026 is strong, with multiple Kalshi markets indicating probabilities between 70% and 99% for the first two days of the month. However, the Polymarket event for the final trading day of June shows a significantly lower probability of 49%. This divergence suggests market participants expect higher volatility or a potential price decline as the month progresses. The estimate of 85% reflects the high confidence in early-month pricing, tempered by the uncertainty regarding the end-of-month settlement."
     },
     {
-      "question": "Will SPX draw down more than 10% in the next 42 days?",
+      "question": "Will SPX draw down more than 10% in the next 6 weeks?",
       "probability": 0.1,
       "probability_percent": 10.0,
-      "confidence": 0.34,
+      "confidence": 0.58,
       "source_market_count": 3,
       "source_markets": [
         {
           "source": "polymarket",
-          "question": "Will the S&P 500 Index lose at least 2% on any day in Q1?",
-          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-2-on-any-day-in-q1"
+          "question": "Will S&P 500 (SPX) hit $6,600 (LOW) in June?",
+          "url": "https://polymarket.com/event/spx-hit-jun-2026/spx-hit-6600-low-jun-2026-352-622"
         },
         {
           "source": "polymarket",
-          "question": "Will the S&P 500 Index lose at least 3% on any day in Q1?",
-          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-3-on-any-day-in-q1"
+          "question": "Will S&P 500 (SPX) hit $6,000 (LOW) in June?",
+          "url": "https://polymarket.com/event/spx-hit-jun-2026/spx-hit-6000-low-jun-2026-898-611"
         },
         {
           "source": "polymarket",
-          "question": "Will the S&P 500 Index lose at least 5% on any day in Q1?",
-          "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-5-on-any-day-in-q1"
+          "question": "Will S&P 500 (SPX) close at <$6,000 in December?",
+          "url": "https://polymarket.com/event/spx-close-dec-2026/spx-close-below-6000-dec-2026"
         }
       ],
       "confidence_interval": {
         "lower": 0.05,
         "upper": 0.15
       },
-      "reasoning": "The market-implied probability of a 10% drawdown is estimated at 10% (range 5-15%). While no direct market exists for a 10% drawdown, proxy markets for extreme single-day losses (2%, 3%, 5%) in Q1 indicate that tail-risk events are priced as highly improbable (near 0.1% for 3% and 5% drops). Given the 42-day window, the probability of a cumulative 10% drawdown is higher than a single-day extreme event but remains constrained by the low volatility expectations reflected in the proxy markets. Confidence is low due to the reliance on proxy data and the lack of direct market coverage."
+      "reasoning": "The market-implied probability of an SPX drawdown exceeding 10% in the next 6 weeks is estimated at 10%. This is derived from the low probability (2%) of the index hitting $6,000 in June, balanced against the 14.5% probability of it closing below $6,000 in December. The market currently prices a significant floor near $6,000, suggesting that a 10% drop from current levels (which would place the index near $6,000) is viewed as a tail-risk event rather than a base-case scenario for the next 6 weeks."
     },
     {
-      "question": "Will gold rise more than 10% in the next 42 days?",
-      "probability": 0.004,
-      "probability_percent": 0.4,
-      "confidence": 0.58,
-      "source_market_count": 3,
-      "source_markets": [
-        {
-          "source": "polymarket",
-          "question": "Will Gold (XAUUSD) hit (HIGH) $5,400 in May?",
-          "url": "https://polymarket.com/event/what-price-will-xauusd-hit-in-may-2026/will-xauusd-reach-5400-in-may-2026"
-        },
-        {
-          "source": "polymarket",
-          "question": "Will Gold (XAUUSD) hit (HIGH) $5,300 in May?",
-          "url": "https://polymarket.com/event/what-price-will-xauusd-hit-in-may-2026/will-xauusd-reach-5300-in-may-2026"
-        },
-        {
-          "source": "polymarket",
-          "question": "Will Gold (XAUUSD) hit (HIGH) $5,200 in May?",
-          "url": "https://polymarket.com/event/what-price-will-xauusd-hit-in-may-2026/will-xauusd-reach-5200-in-may-2026"
-        }
-      ],
-      "confidence_interval": {
-        "lower": 0.002,
-        "upper": 0.006
-      },
-      "reasoning": "The market consensus indicates a very low probability (0.2% to 0.5%) of gold reaching price thresholds between $5,200 and $5,400 in May 2026. Given that a 10% rise from current levels would require a significant price appreciation, and the proxy markets for these high-price targets are trading at near-zero probabilities, the likelihood of gold rising more than 10% in the next 42 days is extremely low. The forecast is based on the aggregation of these proxy threshold markets."
-    },
-    {
-      "question": "Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?",
-      "probability": 0.18,
-      "probability_percent": 18.0,
+      "question": "Will gold rise more than 10% in the next 6 weeks?",
+      "probability": 0.02,
+      "probability_percent": 2.0,
       "confidence": 0.58,
       "source_market_count": 6,
       "source_markets": [
         {
           "source": "kalshi",
-          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before June 1, 2026?",
-          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260601"
+          "question": "Will the gold close price be above $4550 on Apr 1, 2026 at 5pm EDT?",
+          "url": "https://kalshi.com/markets/KXGOLDD-26APR0117-T4550"
         },
         {
           "source": "kalshi",
-          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before July 1, 2026?",
-          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260701"
+          "question": "Will the gold close price be above $4450 on Apr 1, 2026 at 5pm EDT?",
+          "url": "https://kalshi.com/markets/KXGOLDD-26APR0117-T4450"
         },
         {
           "source": "kalshi",
-          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before June 15, 2026?",
-          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260615"
+          "question": "Will the gold open price be above $5069.99 on Mar 27, 2026 at 5pm EDT?",
+          "url": "https://kalshi.com/markets/KXGOLDW-26MAR2717-T5069.99"
         },
         {
           "source": "kalshi",
-          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before August 1, 2026?",
-          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260801"
+          "question": "Will the gold close price be above $4390 on Mar 31, 2026 at 5pm EDT?",
+          "url": "https://kalshi.com/markets/KXGOLDD-26MAR3117-T4390"
         },
         {
           "source": "kalshi",
-          "question": "Will the 7-day moving average of transit calls through the Strait of Hormuz as reported by the IMF PortWatch be above 60 before May 1, 2026?",
-          "url": "https://kalshi.com/markets/KXHORMUZNORM-26MAR17-B260501"
+          "question": "Will the gold open price be between $5700.00 and 5739.99 at Mar 31, 2026 at 5pm EDT?",
+          "url": "https://kalshi.com/markets/KXGOLDMON-26MAR3117-B5720.00"
         },
         {
-          "source": "polymarket",
-          "question": "US x Iran permanent peace deal by June 30, 2026?",
-          "url": "https://polymarket.com/event/us-x-iran-permanent-peace-deal-by/us-x-iran-permanent-peace-deal-by-june-30-2026-837-641-896-877-363-892-537"
+          "source": "kalshi",
+          "question": "Will the gold open price be above $5899.99 at Mar 31, 2026 at 5pm EDT?",
+          "url": "https://kalshi.com/markets/KXGOLDMON-26MAR3117-T5899.99"
         }
       ],
       "confidence_interval": {
-        "lower": 0.12,
-        "upper": 0.25
+        "lower": 0.01,
+        "upper": 0.05
       },
-      "reasoning": "The market consensus for the Strait of Hormuz reopening (defined by transit calls exceeding 60) by June 30, 2026, is estimated at 18%. While the market for June 15 shows a 14.5% probability and the July 1 market shows 46.5%, the sharp jump in the August 1 market (65.5%) suggests that traders view the reopening as a process that is more likely to complete in July than in June. The proxy market for a US-Iran peace deal (58.5%) provides a bullish signal for long-term stability, but the immediate transit data suggests significant friction remains through the end of June."
+      "reasoning": "The market data indicates a very low probability of gold rising more than 10% from its current price within the next 6 weeks. Proxy markets for late March/early April 2026 show that while gold is expected to maintain high price levels (e.g., >$4390), the probability of it reaching significantly higher thresholds (e.g., >$5069 or >$5899) is negligible (1% or less). Given that the current price is already anchored near these high-threshold levels, a further 10% increase within 6 weeks is viewed as highly unlikely by the market."
+    },
+    {
+      "question": "Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?",
+      "probability": 0.38,
+      "probability_percent": 38.0,
+      "confidence": 0.58,
+      "source_market_count": 6,
+      "source_markets": [
+        {
+          "source": "polymarket",
+          "question": "Will Donald Trump announce that the United States blockade of the Strait of Hormuz has been lifted by June 30, 2026?",
+          "url": "https://polymarket.com/event/trump-announces-us-blockade-of-hormuz-lifted-by/will-donald-trump-announce-that-the-united-states-blockade-of-the-strait-of-hormuz-has-been-lifted-by-june-30-2026-159-962"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will Donald Trump announce that the United States blockade of the Strait of Hormuz has been lifted by June 7, 2026?",
+          "url": "https://polymarket.com/event/trump-announces-us-blockade-of-hormuz-lifted-by/will-donald-trump-announce-that-the-united-states-blockade-of-the-strait-of-hormuz-has-been-lifted-by-june-7-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will Donald Trump announce that the United States blockade of the Strait of Hormuz has been lifted by June 15, 2026?",
+          "url": "https://polymarket.com/event/trump-announces-us-blockade-of-hormuz-lifted-by/will-donald-trump-announce-that-the-united-states-blockade-of-the-strait-of-hormuz-has-been-lifted-by-june-15-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will 80 ships transit the Strait of Hormuz on any day by June 30, 2026?",
+          "url": "https://polymarket.com/event/will-ships-transit-the-strait-of-hormuz-on-any-day-by-june-30/will-80-ships-transit-the-strait-of-hormuz-on-any-day-by-june-30-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will 60 ships transit the Strait of Hormuz on any day by June 30, 2026?",
+          "url": "https://polymarket.com/event/will-ships-transit-the-strait-of-hormuz-on-any-day-by-june-30/will-60-ships-transit-the-strait-of-hormuz-on-any-day-by-june-30-2026"
+        },
+        {
+          "source": "polymarket",
+          "question": "Will 20 ships transit the Strait of Hormuz on any day by June 30, 2026?",
+          "url": "https://polymarket.com/event/will-ships-transit-the-strait-of-hormuz-on-any-day-by-june-30/will-20-ships-transit-the-strait-of-hormuz-on-any-day-by-june-30-2026"
+        }
+      ],
+      "confidence_interval": {
+        "lower": 0.3,
+        "upper": 0.45
+      },
+      "reasoning": "The market consensus for the Strait of Hormuz reopening by June 30, 2026, is estimated at 38% (range 30-45%). This is derived primarily from the direct 'Trump blockade lifted' markets, which show significant temporal variance (15% for June 7 vs 55% for June 30). The proxy data regarding ship transit volumes (17% for 80 ships vs 56% for 20 ships) suggests that while some traffic may resume, a return to 'regular' high-volume traffic is viewed as less likely than a partial or symbolic reopening. The discrepancy between the 55% 'lifted' probability and the lower 'high-volume transit' probability indicates that market participants may be pricing in a scenario where the blockade is officially lifted but operational constraints or geopolitical tensions keep traffic below historical norms."
     }
   ]
 }

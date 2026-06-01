@@ -2,7 +2,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb)
 
-Use PolyBridge Forecast to build a market-implied stress snapshot from five Forecast API questions around VIX and related stress indicators.
+Use PolyBridge Forecast to build a market-implied stress snapshot from one headline VIX-spike question and four highlighted macro drivers.
 
 ## Quick Links
 
@@ -16,12 +16,15 @@ This cookbook runs five live forecast questions against `POST https://api.polybr
 
 Runtime is usually 2-5 minutes. Allow up to 10 minutes with retries. The blog article uses a dated snapshot; running the notebook or script calls the live Forecast API, so outputs may differ.
 
-Questions used in this cookbook:
+The first question is the headline signal:
 
-- Will VIX close above 30 in the next 42 days?
+- Will VIX close above 30 in the next 6 weeks?
+
+The remaining four questions are the highlighted macro drivers:
+
 - Will crude oil settle above $90 in June 2026?
-- Will SPX draw down more than 10% in the next 42 days?
-- Will gold rise more than 10% in the next 42 days?
+- Will SPX draw down more than 10% in the next 6 weeks?
+- Will gold rise more than 10% in the next 6 weeks?
 - Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?
 
 ## Files
@@ -65,9 +68,11 @@ open assets/market-stress-monitor.png
 
 The workflow is sequential, uses a 75 second request timeout, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed sleep. There is no baked-in fixed-delay public-tier assumption in this version.
 
+Forecast API responses should be treated as returning fields such as `probability`, `confidence`, `confidence_interval`, and `markets_used`. The cookbook snapshot derives its displayed source-market count from `markets_used`; `source_market_count` is not assumed to be a top-level field returned by `POST /v1/forecast`.
+
 ## Outputs
 
-- `assets/snapshot.json` contains the UTC timestamp, endpoint metadata, question-level probabilities, optional reasoning or interval data, and sanitized source markets.
+- `assets/snapshot.json` contains the UTC timestamp, endpoint metadata, question-level probabilities, optional reasoning or confidence interval data, sanitized source markets, and a derived source-market count.
 - `assets/market-stress-monitor.png` is a dark theme horizontal bar chart suitable for the eventual article hero image.
 
 ## Notes

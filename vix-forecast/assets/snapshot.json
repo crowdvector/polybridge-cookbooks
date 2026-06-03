@@ -1,36 +1,31 @@
 {
-  "generated_at": "2026-06-03T01:22:48Z",
+  "generated_at": "2026-06-03T01:42:45Z",
   "api_base_url": "https://api.polybridge.ai",
   "forecast_endpoint": "https://api.polybridge.ai/v1/forecast",
   "questions": [
     {
       "question": "Will VIX close above 30 at least once in the next 42 trading days?",
-      "probability": 0.18,
-      "probability_percent": 18.0,
+      "probability": 0.25,
+      "probability_percent": 25.0,
       "confidence": 0.34,
-      "source_market_count": 2,
+      "source_market_count": 1,
       "source_markets": [
         {
           "source": "kalshi",
           "question": "Will Powell say Volatility at his Apr 2026 press conference?",
           "url": "https://kalshi.com/markets/KXFEDMENTION-26APR-VOLA"
-        },
-        {
-          "source": "kalshi",
-          "question": "Will Kevin Warsh say Volatility at his Jun 2026 press conference?",
-          "url": "https://kalshi.com/markets/KXFEDMENTION-26JUN-VOLA"
         }
       ],
       "confidence_interval": {
-        "lower": 0.12,
-        "upper": 0.25
+        "lower": 0.15,
+        "upper": 0.35
       },
-      "reasoning": "The forecast for VIX closing above 30 in the next 42 trading days is estimated at 18% (12-25% range). This is derived from proxy markets tracking mentions of 'Volatility' by Fed officials Powell and Warsh. While these mentions are not direct indicators of VIX levels, they serve as a proxy for market sensitivity to Fed communication regarding financial stability. The low liquidity and indirect nature of the evidence necessitate a cautious, wide probability range. The discrepancy between the near-zero probability of Powell mentioning volatility and the 28.5% probability for Warsh suggests that market participants are more concerned about future communication than immediate policy rhetoric."
+      "reasoning": "The forecast for VIX closing above 30 in the next 42 trading days is estimated at 25% (15-35% range). There is no direct market for this specific VIX threshold. The available weak evidence (Powell mentioning volatility) suggests low market concern regarding systemic volatility spikes at the April 2026 press conference. Given the lack of direct market signals and the inherent difficulty in predicting short-term volatility spikes, confidence remains low. The estimate reflects a baseline expectation for occasional market turbulence within a 42-day window, adjusted for the current lack of explicit volatility-related market signals."
     },
     {
       "question": "Will crude oil settle above $90 in June 2026?",
-      "probability": 0.98,
-      "probability_percent": 98.0,
+      "probability": 0.95,
+      "probability_percent": 95.0,
       "confidence": 0.82,
       "source_market_count": 6,
       "source_markets": [
@@ -46,11 +41,6 @@
         },
         {
           "source": "kalshi",
-          "question": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Jun 2, 2026?",
-          "url": "https://kalshi.com/markets/KXWTI-26JUN0214-T90.99"
-        },
-        {
-          "source": "kalshi",
           "question": "Will the brent crude oil close price be above 90 USD/Bbl on June 01, 2026 at 5:00 PM EDT?",
           "url": "https://kalshi.com/markets/KXBRENTD-26JUN0117-T90"
         },
@@ -63,20 +53,25 @@
           "source": "kalshi",
           "question": "Will the brent crude oil close price be above 90 USD/Bbl on June 02, 2026 at 5:00 PM EDT?",
           "url": "https://kalshi.com/markets/KXBRENTD-26JUN0217-T90"
+        },
+        {
+          "source": "kalshi",
+          "question": "Will the WTI crude oil settlement price be above 90.99 USD/Bbl on Jun 2, 2026?",
+          "url": "https://kalshi.com/markets/KXWTI-26JUN0214-T90.99"
         }
       ],
       "confidence_interval": {
-        "lower": 0.95,
+        "lower": 0.85,
         "upper": 0.99
       },
-      "reasoning": "Markets overwhelmingly indicate that crude oil will settle above $90 in early June 2026, with multiple direct markets showing probabilities between 97.5% and 99.5%. While the Polymarket event for the final trading day of June shows a lower probability of 57%, the high-liquidity Kalshi markets for the first three days of the month provide strong evidence that the price floor is currently established well above the $90 threshold. The discrepancy likely reflects market uncertainty regarding volatility over the full month rather than the immediate price outlook."
+      "reasoning": "Markets indicate a very high probability (85-99%, median 95%) that crude oil will settle above $90 in June 2026. While the Polymarket event for the final trading day shows a more conservative 56.5% probability, the Kalshi markets for early June (June 1-3) consistently price the probability of exceeding $90-$90.99 at 97.5-99.5%. The discrepancy between the Polymarket event and the Kalshi daily events suggests market participants may be pricing in higher volatility or potential mean reversion toward the end of the month, but the overwhelming consensus across multiple early-month benchmarks supports a high likelihood of the threshold being breached."
     },
     {
       "question": "Will SPX draw down more than 10% at any point in the next 42 trading days?",
-      "probability": 0.1,
-      "probability_percent": 10.0,
-      "confidence": 0.34,
-      "source_market_count": 4,
+      "probability": 0.01,
+      "probability_percent": 1.0,
+      "confidence": 0.58,
+      "source_market_count": 3,
       "source_markets": [
         {
           "source": "polymarket",
@@ -92,18 +87,13 @@
           "source": "polymarket",
           "question": "Will the S&P 500 Index lose at least 3% on any day in Q1?",
           "url": "https://polymarket.com/event/sp-500-single-day-gains-and-losses-in-q1/will-the-sp-500-index-lose-at-least-3-on-any-day-in-q1"
-        },
-        {
-          "source": "kalshi",
-          "question": "Will the number of unemployment rate exceeds 10% (monthly BLS); S&P 500 declines more than 30% from its closing level on Issuance; Zillow Home Value Index declines more than 10% YoY in any of: NYC, LA, San Francisco, Chicago, Houston, Phoenix; labor share of gross domestic income (GDI) first-release value for any quarter falls below 50%; CPI-U (All items, not seasonally-adjusted) YoY falls below 0% in any monthly release during before July 2028 be above 2?",
-          "url": "https://kalshi.com/markets/KXCITRINI-28JUL01"
         }
       ],
       "confidence_interval": {
-        "lower": 0.05,
-        "upper": 0.15
+        "lower": 0.001,
+        "upper": 0.05
       },
-      "reasoning": "The forecast for a >10% drawdown in the next 42 trading days is estimated at 10% (5-15% range). While no direct market exists for this specific timeframe, proxy data from Q1 volatility markets shows that while 2% daily moves were common, 3-4% moves were extremely rare (0.1% probability). The Kalshi proxy market, which includes a 30% S&P 500 decline as part of a broader basket, trades at 27.5%, suggesting that extreme tail-risk events are currently priced as low-probability outcomes. Confidence is low due to the reliance on proxy data and the lack of a direct market for the specific 10% drawdown threshold."
+      "reasoning": "The market consensus indicates a very low probability of significant S&P 500 drawdowns (3-4%) occurring within the observed Q1 period. While the target question covers a 42-trading-day window, the proxy evidence from Q1 markets\u2014which show near-zero probability for 3% or 4% daily losses\u2014suggests a low-volatility regime. The estimate is anchored by the 0.1% probability assigned to 3% and 4% daily losses, adjusted slightly upward to account for the longer 42-day duration compared to the specific Q1 timeframe."
     },
     {
       "question": "Will gold rise more than 10% from its current price at any point in the next 42 trading days?",
@@ -147,7 +137,7 @@
         "lower": 0.05,
         "upper": 0.15
       },
-      "reasoning": "The market-implied probability that gold will rise more than 10% from its current price (approx. $4350-$4400 range) within the next 42 trading days is estimated at 8%. Direct threshold markets for early April 2026 show high confidence in prices remaining near current levels, with a 96% probability of exceeding $4550 but only a 4.5% probability of exceeding $4790. Since a 10% rise would require gold to exceed ~$4800, the current market pricing suggests this is an unlikely tail event. The proxy markets regarding Fed interest rate decisions indicate a stable monetary environment, further supporting the lack of volatility required for such a sharp move."
+      "reasoning": "The market data indicates a very low probability of gold rising more than 10% from its current price within the next 42 trading days. Threshold markets for April 2026 show high confidence in prices remaining below $4790, which is well below the 10% appreciation threshold from current levels. The proxy markets regarding Fed interest rate decisions suggest a stable monetary environment, further dampening the likelihood of a rapid, significant surge in gold prices. The forecast reflects a consensus that gold will likely trade within a narrower range than the 10% threshold requires."
     },
     {
       "question": "Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?",
@@ -191,7 +181,7 @@
         "lower": 0.12,
         "upper": 0.25
       },
-      "reasoning": "The market consensus suggests a low probability of returning to 'regular' traffic levels (defined here as >60-80 ships/day) by June 30, 2026. While there is a 57% probability of at least 20 ships transiting on any given day, the probability drops significantly for higher thresholds (22% for 60 ships, 8% for 80 ships). The IMF PortWatch proxy market for a 7-day moving average >60 ships before July 1, 2026, sits at 14.5%, reinforcing the view that a full return to pre-disruption traffic levels is unlikely within the timeframe. Confidence is moderate due to the reliance on proxy threshold markets rather than a direct 'reopen' event market."
+      "reasoning": "The market consensus suggests a low probability (median 18%) that the Strait of Hormuz will return to 'regular' traffic levels by June 30, 2026. Threshold markets indicate a 57% chance of at least 20 ships transiting daily, but this drops sharply to 22% for 60 ships and 8% for 80 ships. The IMF PortWatch proxy market (7-day moving average > 60) reinforces this skepticism, with only a 13.5% probability for the period ending July 1, 2026. The forecast reflects a cautious outlook where transit volumes remain significantly below historical norms."
     }
   ]
 }

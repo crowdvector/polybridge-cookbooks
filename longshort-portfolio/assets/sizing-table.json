@@ -1,32 +1,42 @@
 {
   "generated_at": "2026-05-31T14:00:00Z",
   "horizon": "July 31, 2026",
-  "venue": "Hyperliquid",
-  "instrument": "1x_perp",
-  "orders": [
+  "budget_usd": 50000,
+  "gross_notional_usd": 50000,
+  "positions": [
     {
       "asset": "BTC",
       "direction": "LONG",
+      "expected_return": 0.064,
+      "implied_vol": 0.337,
       "notional_usd": 8600
     },
     {
       "asset": "SPX",
       "direction": "LONG",
+      "expected_return": 0.0786,
+      "implied_vol": 0.233,
       "notional_usd": 12200
     },
     {
       "asset": "OP",
       "direction": "SHORT",
+      "expected_return": -0.06,
+      "implied_vol": 0.319,
       "notional_usd": 9000
     },
     {
       "asset": "BERA",
       "direction": "SHORT",
+      "expected_return": -0.1105,
+      "implied_vol": 0.3,
       "notional_usd": 12200
     },
     {
       "asset": "WTI",
       "direction": "LONG",
+      "expected_return": 0.0278,
+      "implied_vol": 0.23,
       "notional_usd": 8000
     }
   ]

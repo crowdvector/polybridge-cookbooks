@@ -1,41 +1,56 @@
-# PolyBridge Long/Short Portfolio Prompt
+# Long-short Portfolio Prompt
 
-Use this prompt in Claude Desktop with the PolyBridge MCP extension installed.
+Use this prompt in Claude Desktop with the PolyBridge MCP tool connected.
 
 ```text
-You have access to the PolyBridge MCP tool.
+You have access to the PolyBridge MCP tool (polybridge_forecast).
 
-My directional thesis:
-- Short BERA: high token supply, no clear PMF, founder conviction signals low
-- Short OP: declining sequencer revenue, ongoing token unlocks, fading narrative
-- Long BTC: fixed supply, maximum decentralisation, actual PMF
-- Uncertain WTI: geopolitics highly uncertain, need data before sizing
-- Lean long SPX: AI tailwind structural but macro risks real
+Assets and spot prices:
+BTC $74,000 · SPX $7,580 · OP $0.12 · BERA $0.38 · WTI $87
 
-Use PolyBridge Forecast on exactly these five questions:
-1. Will there be meaningful US crypto regulatory reform by Q2 2027?
-2. Will the Fed cut rates before September 2026?
-3. Will the US enter a recession by end of 2026?
-4. Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?
-5. Will WTI crude oil exceed $90 in June 2026?
+For each asset, query PolyBridge Forecast at four price thresholds
+(0.60x, 0.85x, 1.15x, 1.50x spot), all resolving July 31, 2026.
 
-Portfolio constraints:
-- Total notional budget: $50,000
-- Notional USD sizing only
-- Total absolute notional must stay less than or equal to $50,000
-- No single position may exceed 40% of total notional
-- WTI may be FLAT if the signal is mixed
+Round thresholds: to nearest $100 if spot >= $1,000; to nearest $1
+if spot >= $10; to nearest $0.01 otherwise.
 
-Output format:
-1. Macro read from the five PolyBridge results
-2. Thesis challenges where market evidence argues against my view
-3. Sized position table for BTC, SPX, OP, BERA, and WTI
-4. Order instructions JSON
+Question format: "Will {ASSET} exceed ${T} on July 31, 2026?"
 
-Order instruction requirements:
-- Every order must include "asset"
-- Every order must include "direction"
-- Every order must include "notional_usd"
-- Every order must include "target_notional_usd"
-- Every order must include "units", if available, otherwise "not provided"
+Collect all 20 probabilities first. Then write and execute a Python
+script that:
+
+1. Enforces monotonicity (clip so P(> T_i+1) <= P(> T_i)).
+
+2. Reconstructs a piecewise price distribution per asset:
+   Below T1:              prob = 1 - P(> T1),             midpoint = T1 / 2
+   Between Ti and Ti+1:   prob = P(> Ti) - P(> Ti+1),     midpoint = (Ti + Ti+1) / 2
+   Above T4:              prob = P(> T4),                 midpoint = (T4 + 1.5 * T4) / 2
+
+3. Computes per asset:
+   E[price]  = sum(midpoint * prob)
+   E[return] = (E[price] - spot) / spot
+   Vol       = sqrt(sum(midpoint^2 * prob) - E[price]^2) / spot
+
+4. Sizes via half-Kelly:
+   weight   = 0.5 * E[return] / Vol^2
+   notional = weight * $50,000
+
+   Constraints:
+   Gross notional <= $50,000
+   No single position > $20,000 (40%)
+   Scale all positions proportionally if gross exceeds budget
+   Round to nearest $100
+   Direction = sign of E[return]
+
+Output:
+1. Survival probability table per asset
+2. Expected returns, implied vols, and sized position table
+3. Hyperliquid 1x perp order instructions as JSON
 ```
+
+Notes:
+
+- Update spot prices before running.
+- Collect all 20 Forecast probabilities before running sizing.
+- If raw probabilities are non-monotonic, clip for arithmetic coherence and report that clipping occurred.
+- Source counts should be derived from `markets_used` when using REST responses; do not assume a direct source-count field is always present.

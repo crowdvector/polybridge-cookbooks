@@ -1,0 +1,73 @@
+{
+  "generated_at": "2026-05-31T14:00:00Z",
+  "horizon": "July 31, 2026",
+  "note": "The published draft includes a full worked survival example for BTC and the final sizing table for all assets. Run portfolio.py to generate complete live survival curves for BTC, SPX, OP, BERA, and WTI.",
+  "threshold_factors": [
+    0.6,
+    0.85,
+    1.15,
+    1.5
+  ],
+  "assets": [
+    {
+      "asset": "BTC",
+      "spot": 74000,
+      "thresholds": [
+        {
+          "threshold": 44400,
+          "question": "Will BTC exceed $44,400 on July 31, 2026?",
+          "raw_probability": 0.96,
+          "clipped_probability": 0.96
+        },
+        {
+          "threshold": 62900,
+          "question": "Will BTC exceed $62,900 on July 31, 2026?",
+          "raw_probability": 0.78,
+          "clipped_probability": 0.78
+        },
+        {
+          "threshold": 85100,
+          "question": "Will BTC exceed $85,100 on July 31, 2026?",
+          "raw_probability": 0.3,
+          "clipped_probability": 0.3
+        },
+        {
+          "threshold": 111000,
+          "question": "Will BTC exceed $111,000 on July 31, 2026?",
+          "raw_probability": 0.08,
+          "clipped_probability": 0.08
+        }
+      ],
+      "distribution_bands": [
+        {
+          "label": "below first threshold",
+          "probability": 0.04,
+          "midpoint": 22200
+        },
+        {
+          "label": "between $44,400 and $62,900",
+          "probability": 0.18,
+          "midpoint": 53650
+        },
+        {
+          "label": "between $62,900 and $85,100",
+          "probability": 0.48,
+          "midpoint": 74000
+        },
+        {
+          "label": "between $85,100 and $111,000",
+          "probability": 0.22,
+          "midpoint": 98050
+        },
+        {
+          "label": "above $111,000",
+          "probability": 0.08,
+          "midpoint": 138750
+        }
+      ],
+      "expected_price": 78736,
+      "expected_return": 0.064,
+      "implied_vol": 0.337
+    }
+  ]
+}

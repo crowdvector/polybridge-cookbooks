@@ -6,7 +6,7 @@ Use PolyBridge Forecast to build a market-implied stress snapshot from one headl
 
 ## Quick Links
 
-- Article: https://polybridge.ai/blog/vix-forecast
+- Article: https://polybridge.ai/research/vix-forecast
 - Colab: https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb
 - GitHub folder: https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast
 
@@ -14,17 +14,19 @@ Use PolyBridge Forecast to build a market-implied stress snapshot from one headl
 
 This cookbook runs five live forecast questions against `POST https://api.polybridge.ai/v1/forecast`, writes a sanitized snapshot to `assets/snapshot.json`, and renders a dark-theme hero image to `assets/market-stress-monitor.png`.
 
-Runtime is usually 2-5 minutes. Allow up to 10 minutes with retries. The blog article uses a dated snapshot; running the notebook or script calls the live Forecast API, so outputs may differ.
+Runtime is usually 2-5 minutes. Allow up to 10 minutes with retries. The research article uses a dated snapshot; running the notebook or script calls the live Forecast API, so outputs may differ.
+
+The VIX, SPX, and gold questions use a next 2 months (~42 trading days) horizon to match a traditional-index two-month window.
 
 The first question is the headline signal:
 
-- Will VIX close above 30 in the next 6 weeks?
+- Will VIX close above 30 at least once in the next 42 trading days?
 
 The remaining four questions are the highlighted macro drivers:
 
 - Will crude oil settle above $90 in June 2026?
-- Will SPX draw down more than 10% in the next 6 weeks?
-- Will gold rise more than 10% in the next 6 weeks?
+- Will SPX draw down more than 10% at any point in the next 42 trading days?
+- Will gold rise more than 10% from its current price at any point in the next 42 trading days?
 - Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?
 
 ## Files

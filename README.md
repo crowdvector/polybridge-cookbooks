@@ -8,7 +8,7 @@ The blog articles use dated snapshots. Running the notebooks or scripts calls th
 
 | Cookbook | What it builds | APIs / tools used | Article | Colab | GitHub folder |
 | --- | --- | --- | --- | --- | --- |
-| `vix-forecast/` | A five-call VIX stress monitor with one headline VIX signal and four highlighted macro drivers: oil, SPX drawdown, gold, and Hormuz reopening. | PolyBridge Forecast, Python 3.10+, `requests`, `matplotlib` | [Forecast VIX from prediction markets](https://polybridge.ai/blog/vix-forecast) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast) |
+| `vix-forecast/` | A five-call VIX stress monitor for the next 2 months (~42 trading days), with one headline VIX signal and four highlighted macro drivers: oil, SPX drawdown, gold, and Hormuz reopening. | PolyBridge Forecast, Python 3.10+, `requests`, `matplotlib` | [Forecast VIX from prediction markets](https://polybridge.ai/research/vix-forecast) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast) |
 | `longshort-portfolio/` | A portfolio sizing workflow from PolyBridge Forecast probabilities, directional thesis inputs, and order instructions. | PolyBridge Forecast, PolyBridge MCP, Claude Desktop prompt workflow, Python 3.10+, `requests`, `pillow` | [Long-short agent portfolio from prediction market insights](https://polybridge.ai/blog/longshort-portfolio) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio) |
 
 ## Repo Layout
@@ -65,5 +65,5 @@ Cookbooks produce market-implied examples from live Forecast calls. Values can c
 
 - PolyBridge Developer Console: https://polybridge.ai/console
 - PolyBridge MCP release: https://github.com/crowdvector/polybridge-search-mcp/releases/tag/polybridge-mcp-v0.2.4
-- VIX forecast article: https://polybridge.ai/blog/vix-forecast
+- VIX forecast article: https://polybridge.ai/research/vix-forecast
 - Long-short agent portfolio article: https://polybridge.ai/blog/longshort-portfolio

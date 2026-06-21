@@ -4,11 +4,8 @@ Build or adapt the PolyBridge VIX cookbook in `vix-forecast/` without publishing
 
 ## Requirements
 
-- Support anonymous Forecast calls when `POLYBRIDGE_API_KEY` is not set.
-- In notebook mode, check the environment first and prompt for an optional API key only if the variable is missing.
-- Call `POST https://api.polybridge.ai/v1/forecast` without Authorization at anonymous limits.
-- Add an `Authorization` header only if `POLYBRIDGE_API_KEY` is present.
-- If auth fails with `401` or `403`, stop and fix or remove the key. Do not silently retry anonymously after auth failure.
+- Call `POST https://api.polybridge.ai/v1/forecast` without Authorization.
+- If auth fails with `401` or `403`, stop and fix or remove the configured key. Do not silently retry anonymously after auth failure.
 - Never print, persist, or commit API keys, bearer tokens, headers, or `.env` contents.
 - Use a two-month traditional-index horizon: approximately 42 trading days. Forecast question strings should say `next 42 trading days`; prose may say `next 2 months (~42 trading days)`.
 - Use five total forecast calls: one headline VIX signal and four highlighted macro drivers.

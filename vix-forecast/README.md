@@ -32,7 +32,7 @@ The remaining four questions are the highlighted macro drivers:
 ## Files
 
 - `stress_monitor.py` runs the live workflow, retries on `429` and `503`, sanitizes the response, and renders the PNG.
-- `vix-forecast.ipynb` mirrors the same workflow in notebook form and can prompt for an optional API key.
+- `vix-forecast.ipynb` mirrors the same workflow in notebook form.
 - `setup.sh` installs the minimal local dependencies.
 - `PROMPT.md` is the reproduction brief for adapting the cookbook.
 - `assets/` stores the generated snapshot and image output.
@@ -43,16 +43,9 @@ The remaining four questions are the highlighted macro drivers:
 - `requests`
 - `matplotlib`
 
-## API key handling
+## API key
 
-The VIX cookbook runs without an API key at anonymous limits. Add an API key for higher usage by setting `POLYBRIDGE_API_KEY`:
-
-```bash
-# Optional. Leave unset to use anonymous limits.
-# export POLYBRIDGE_API_KEY="your_api_key_here"
-```
-
-Notebook mode checks the environment first and can prompt for an optional key. Paste a key for higher usage, or leave the prompt blank to use anonymous limits. No secrets should be committed. The key is never printed, saved into files, or included in the generated assets.
+No API key is required for this cookbook.
 
 ## Run locally
 
@@ -60,21 +53,17 @@ Notebook mode checks the environment first and can prompt for an optional key. P
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/vix-forecast
 bash setup.sh
-
-# Optional. Leave unset to use anonymous limits.
-# export POLYBRIDGE_API_KEY="your_api_key_here"
-
 python3 stress_monitor.py
 open assets/market-stress-monitor.png
 ```
 
-The workflow is sequential, uses a 75 second request timeout, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed sleep. If a configured API key is rejected with `401` or `403`, the script stops and reports the auth failure instead of retrying anonymously.
+The workflow is sequential, uses a 75 second request timeout, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed sleep. If a configured key is rejected with `401` or `403`, the script stops and reports the auth failure instead of retrying anonymously.
 
 Forecast API responses should be treated as returning fields such as `probability`, `confidence`, `confidence_interval`, and `markets_used`. The cookbook snapshot derives its displayed source-market count from `markets_used`; `source_market_count` is not assumed to be a top-level field returned by `POST /v1/forecast`.
 
 ## Outputs
 
-- `assets/snapshot.json` contains the UTC timestamp, endpoint metadata, question-level probabilities, optional reasoning or confidence interval data, sanitized source markets, and a derived source-market count.
+- `assets/snapshot.json` contains the UTC timestamp, endpoint metadata, question-level probabilities, available reasoning or confidence interval data, sanitized source markets, and a derived source-market count.
 - `assets/market-stress-monitor.png` is a dark theme horizontal bar chart suitable for the eventual article hero image.
 
 ## Notes

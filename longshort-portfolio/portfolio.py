@@ -2,8 +2,6 @@
 """Long-short portfolio from PolyBridge Forecast price-threshold probabilities.
 
 Usage:
-    # Optional. Leave unset to use anonymous limits.
-    # export POLYBRIDGE_API_KEY=your_key
     python3 portfolio.py
 """
 
@@ -103,7 +101,7 @@ def load_api_key(prompt_if_missing: bool = False) -> str | None:
     if prompt_if_missing:
         from getpass import getpass
 
-        return clean_text(getpass("Optional POLYBRIDGE_API_KEY (leave blank for anonymous limits): "))
+        return clean_text(getpass("POLYBRIDGE_API_KEY for advanced workflows (press Enter to skip): "))
     return None
 
 
@@ -116,7 +114,7 @@ def raise_auth_error(response: requests.Response, api_key: str | None) -> None:
         )
     raise RuntimeError(
         f"PolyBridge Forecast anonymous request was rejected with HTTP {response.status_code}. "
-        "Retry without adding Authorization, or set a valid POLYBRIDGE_API_KEY for higher usage."
+        "Retry without adding Authorization, or set a valid configured key."
     )
 
 

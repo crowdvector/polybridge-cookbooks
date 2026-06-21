@@ -78,18 +78,11 @@ The example order instructions are in `assets/order-instructions.json`.
 
 - Python 3.10+
 - `requests`
-- Optional for the prompt workflow: Claude Desktop plus the PolyBridge MCP release above
+- For the prompt workflow: Claude Desktop plus the PolyBridge MCP release above
 
-## API Key Handling
+## API key
 
-The long-short cookbook runs without an API key at anonymous limits. Add an API key for higher usage by setting `POLYBRIDGE_API_KEY`:
-
-```bash
-# Optional. Leave unset to use anonymous limits.
-# export POLYBRIDGE_API_KEY="your_api_key_here"
-```
-
-Notebook mode checks the environment first and can prompt for an optional key. Paste a key for higher usage, or leave the prompt blank to use anonymous limits. The key is never printed, saved into files, written into notebook outputs, or persisted into generated assets. If a configured key is rejected with `401` or `403`, the script stops and reports the auth failure instead of retrying anonymously.
+No API key is required for this cookbook. If a configured key is rejected with `401` or `403`, the script stops and reports the auth failure instead of retrying anonymously.
 
 ## Run Locally
 
@@ -97,10 +90,6 @@ Notebook mode checks the environment first and can prompt for an optional key. P
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/longshort-portfolio
 bash setup.sh
-
-# Optional. Leave unset to use anonymous limits.
-# export POLYBRIDGE_API_KEY="your_api_key_here"
-
 python3 portfolio.py
 ```
 
@@ -114,7 +103,7 @@ Hosted MCP:
 
 - Use `https://mcp.polybridge.ai/mcp`.
 - No key is required at anonymous limits.
-- API key or supported OAuth is optional for higher usage.
+- Use supported OAuth only if your MCP client or workflow requires it.
 
 Local MCPB:
 

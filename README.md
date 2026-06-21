@@ -21,9 +21,9 @@ The blog articles use dated snapshots. Running the notebooks or scripts calls th
 
 ## Setup
 
-These cookbooks run without an API key at anonymous limits. Add an API key for higher usage.
+These cookbooks run without an API key.
 
-Python 3.10+ is required. `POLYBRIDGE_API_KEY` is optional.
+Python 3.10+ is required.
 
 Choose a cookbook and run it from its own directory.
 
@@ -31,10 +31,6 @@ Choose a cookbook and run it from its own directory.
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/vix-forecast
 bash setup.sh
-
-# Optional. Leave unset to use anonymous limits.
-# export POLYBRIDGE_API_KEY="your_api_key_here"
-
 python3 stress_monitor.py
 open assets/market-stress-monitor.png
 ```
@@ -43,10 +39,6 @@ open assets/market-stress-monitor.png
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/longshort-portfolio
 bash setup.sh
-
-# Optional. Leave unset to use anonymous limits.
-# export POLYBRIDGE_API_KEY="your_api_key_here"
-
 python3 portfolio.py
 ```
 

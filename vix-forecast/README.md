@@ -32,7 +32,7 @@ The remaining four questions are the highlighted macro drivers:
 ## Files
 
 - `stress_monitor.py` runs the live workflow, retries on `429` and `503`, sanitizes the response, and renders the PNG.
-- `vix-forecast.ipynb` mirrors the same workflow in notebook form and uses `getpass` if the API key is not already set.
+- `vix-forecast.ipynb` mirrors the same workflow in notebook form and can prompt for an optional API key.
 - `setup.sh` installs the minimal local dependencies.
 - `PROMPT.md` is the reproduction brief for adapting the cookbook.
 - `assets/` stores the generated snapshot and image output.
@@ -45,15 +45,14 @@ The remaining four questions are the highlighted macro drivers:
 
 ## API key handling
 
-Script mode expects `POLYBRIDGE_API_KEY` to already be present in the environment:
+The VIX cookbook runs without an API key at anonymous limits. Add an API key for higher usage by setting `POLYBRIDGE_API_KEY`:
 
 ```bash
-read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
-echo
-export POLYBRIDGE_API_KEY
+# Optional. Leave unset to use anonymous limits.
+# export POLYBRIDGE_API_KEY="your_api_key_here"
 ```
 
-Notebook mode checks the environment first and falls back to `getpass()` only if the variable is missing. No secrets should be committed. The key is never printed, saved into files, or included in the generated assets.
+Notebook mode checks the environment first and can prompt for an optional key. Paste a key for higher usage, or leave the prompt blank to use anonymous limits. No secrets should be committed. The key is never printed, saved into files, or included in the generated assets.
 
 ## Run locally
 
@@ -61,14 +60,15 @@ Notebook mode checks the environment first and falls back to `getpass()` only if
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/vix-forecast
 bash setup.sh
-read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
-echo
-export POLYBRIDGE_API_KEY
+
+# Optional. Leave unset to use anonymous limits.
+# export POLYBRIDGE_API_KEY="your_api_key_here"
+
 python3 stress_monitor.py
 open assets/market-stress-monitor.png
 ```
 
-The workflow is sequential, uses a 75 second request timeout, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed sleep. There is no baked-in fixed-delay public-tier assumption in this version.
+The workflow is sequential, uses a 75 second request timeout, and retries with backoff when the API returns `429` or `503`. If the service provides `Retry-After`, that value is honored instead of using a fixed sleep. If a configured API key is rejected with `401` or `403`, the script stops and reports the auth failure instead of retrying anonymously.
 
 Forecast API responses should be treated as returning fields such as `probability`, `confidence`, `confidence_interval`, and `markets_used`. The cookbook snapshot derives its displayed source-market count from `markets_used`; `source_market_count` is not assumed to be a top-level field returned by `POST /v1/forecast`.
 

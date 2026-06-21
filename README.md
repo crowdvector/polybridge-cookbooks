@@ -21,27 +21,20 @@ The blog articles use dated snapshots. Running the notebooks or scripts calls th
 
 ## Setup
 
-Get a PolyBridge Forecast API key from the PolyBridge Developer Console:
+These cookbooks run without an API key at anonymous limits. Add an API key for higher usage.
 
-- https://polybridge.ai/console
+Python 3.10+ is required. `POLYBRIDGE_API_KEY` is optional.
 
-Export it before running the forecast-backed cookbooks:
-
-```bash
-read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
-echo
-export POLYBRIDGE_API_KEY
-```
-
-Then choose a cookbook and run it from its own directory.
+Choose a cookbook and run it from its own directory.
 
 ```bash
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/vix-forecast
 bash setup.sh
-read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
-echo
-export POLYBRIDGE_API_KEY
+
+# Optional. Leave unset to use anonymous limits.
+# export POLYBRIDGE_API_KEY="your_api_key_here"
+
 python3 stress_monitor.py
 open assets/market-stress-monitor.png
 ```
@@ -50,9 +43,10 @@ open assets/market-stress-monitor.png
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/longshort-portfolio
 bash setup.sh
-read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
-echo
-export POLYBRIDGE_API_KEY
+
+# Optional. Leave unset to use anonymous limits.
+# export POLYBRIDGE_API_KEY="your_api_key_here"
+
 python3 portfolio.py
 ```
 

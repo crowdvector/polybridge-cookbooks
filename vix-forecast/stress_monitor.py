@@ -104,33 +104,40 @@ def normalize_retry_after(value: str | None) -> float | None:
     return max(0.0, delta)
 
 
-def load_api_key(prompt_if_missing: bool = False) -> str:
+def load_api_key(prompt_if_missing: bool = False) -> str | None:
     api_key = clean_text(os.getenv("POLYBRIDGE_API_KEY"))
     if api_key:
         return api_key
     if prompt_if_missing:
         from getpass import getpass
 
-        api_key = clean_text(getpass("Paste POLYBRIDGE_API_KEY: "))
-        if api_key:
-            return api_key
+        return clean_text(getpass("Optional POLYBRIDGE_API_KEY (leave blank for anonymous limits): "))
+    return None
+
+
+def raise_auth_error(response: requests.Response, api_key: str | None) -> None:
+    if api_key:
+        raise RuntimeError(
+            f"PolyBridge Forecast authentication failed with HTTP {response.status_code}. "
+            "The configured POLYBRIDGE_API_KEY was rejected; remove it to use anonymous "
+            "limits or set a valid key."
+        )
     raise RuntimeError(
-        "POLYBRIDGE_API_KEY is not set. Export it before running the script, "
-        "or allow the notebook flow to prompt for it with getpass()."
+        f"PolyBridge Forecast anonymous request was rejected with HTTP {response.status_code}. "
+        "Retry without adding Authorization, or set a valid POLYBRIDGE_API_KEY for higher usage."
     )
 
 
 def forecast_question(
     session: requests.Session,
-    api_key: str,
+    api_key: str | None,
     question: str,
     timeout_seconds: int = REQUEST_TIMEOUT_SECONDS,
     max_retries: int = MAX_RETRIES,
 ) -> dict[str, Any]:
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
     payload = {"question": question}
     last_error: Exception | None = None
 
@@ -157,6 +164,9 @@ def forecast_question(
                 wait_seconds = min(20.0, BACKOFF_BASE_SECONDS * (2 ** attempt))
             time.sleep(wait_seconds)
             continue
+
+        if response.status_code in {401, 403}:
+            raise_auth_error(response, api_key)
 
         response.raise_for_status()
         return response.json()

@@ -2,7 +2,8 @@
 """Long-short portfolio from PolyBridge Forecast price-threshold probabilities.
 
 Usage:
-    export POLYBRIDGE_API_KEY=your_key
+    # Optional. Leave unset to use anonymous limits.
+    # export POLYBRIDGE_API_KEY=your_key
     python3 portfolio.py
 """
 
@@ -95,19 +96,27 @@ def normalize_retry_after(value: str | None) -> float | None:
     return max(0.0, delta)
 
 
-def load_api_key(prompt_if_missing: bool = False) -> str:
+def load_api_key(prompt_if_missing: bool = False) -> str | None:
     api_key = clean_text(os.getenv("POLYBRIDGE_API_KEY"))
     if api_key:
         return api_key
     if prompt_if_missing:
         from getpass import getpass
 
-        entered = clean_text(getpass("Paste POLYBRIDGE_API_KEY: "))
-        if entered:
-            return entered
+        return clean_text(getpass("Optional POLYBRIDGE_API_KEY (leave blank for anonymous limits): "))
+    return None
+
+
+def raise_auth_error(response: requests.Response, api_key: str | None) -> None:
+    if api_key:
+        raise RuntimeError(
+            f"PolyBridge Forecast authentication failed with HTTP {response.status_code}. "
+            "The configured POLYBRIDGE_API_KEY was rejected; remove it to use anonymous "
+            "limits or set a valid key."
+        )
     raise RuntimeError(
-        "POLYBRIDGE_API_KEY is not set. Export it before running the script, "
-        "or allow notebook mode to prompt for it with getpass()."
+        f"PolyBridge Forecast anonymous request was rejected with HTTP {response.status_code}. "
+        "Retry without adding Authorization, or set a valid POLYBRIDGE_API_KEY for higher usage."
     )
 
 
@@ -128,11 +137,10 @@ def format_price(value: float) -> str:
     return f"${value:.2f}"
 
 
-def forecast(session: requests.Session, api_key: str, question: str) -> dict[str, Any]:
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-    }
+def forecast(session: requests.Session, api_key: str | None, question: str) -> dict[str, Any]:
+    headers = {"Content-Type": "application/json"}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
     payload = {"question": question}
     last_error: Exception | None = None
 
@@ -155,6 +163,9 @@ def forecast(session: requests.Session, api_key: str, question: str) -> dict[str
             time.sleep(wait_seconds)
             continue
 
+        if response.status_code in {401, 403}:
+            raise_auth_error(response, api_key)
+
         response.raise_for_status()
         return response.json()
 
@@ -174,7 +185,7 @@ def confidence_interval(payload: dict[str, Any]) -> Any:
 
 def fetch_survival_curve(
     session: requests.Session,
-    api_key: str,
+    api_key: str | None,
     asset: str,
     thresholds: list[float],
 ) -> list[dict[str, Any]]:

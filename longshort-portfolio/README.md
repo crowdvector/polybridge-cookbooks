@@ -82,15 +82,14 @@ The example order instructions are in `assets/order-instructions.json`.
 
 ## API Key Handling
 
-Script mode expects `POLYBRIDGE_API_KEY` to already be present in the environment.
+The long-short cookbook runs without an API key at anonymous limits. Add an API key for higher usage by setting `POLYBRIDGE_API_KEY`:
 
 ```bash
-read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
-echo
-export POLYBRIDGE_API_KEY
+# Optional. Leave unset to use anonymous limits.
+# export POLYBRIDGE_API_KEY="your_api_key_here"
 ```
 
-Notebook mode checks the environment first and only falls back to `getpass()` if the variable is missing. The key is never printed, saved into files, written into notebook outputs, or persisted into generated assets.
+Notebook mode checks the environment first and can prompt for an optional key. Paste a key for higher usage, or leave the prompt blank to use anonymous limits. The key is never printed, saved into files, written into notebook outputs, or persisted into generated assets. If a configured key is rejected with `401` or `403`, the script stops and reports the auth failure instead of retrying anonymously.
 
 ## Run Locally
 
@@ -98,13 +97,31 @@ Notebook mode checks the environment first and only falls back to `getpass()` if
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/longshort-portfolio
 bash setup.sh
-read -s "POLYBRIDGE_API_KEY?Paste POLYBRIDGE_API_KEY: "
-echo
-export POLYBRIDGE_API_KEY
+
+# Optional. Leave unset to use anonymous limits.
+# export POLYBRIDGE_API_KEY="your_api_key_here"
+
 python3 portfolio.py
 ```
 
 The script prints the survival probability table, the expected return / implied vol / sizing table, gross notional, and the Hyperliquid 1x perp order instructions JSON. It also writes the three JSON assets into `assets/`.
+
+## Claude + MCP
+
+The same threshold workflow can be driven from an MCP client once the `polybridge_forecast` tool is available. Reuse `PROMPT.md` after connecting either Hosted MCP or Local MCPB.
+
+Hosted MCP:
+
+- Use `https://mcp.polybridge.ai/mcp`.
+- No key is required at anonymous limits.
+- API key or supported OAuth is optional for higher usage.
+
+Local MCPB:
+
+- The local Claude Desktop package still uses `POLYBRIDGE_API_KEY` unless package behavior changes.
+- Configure the key locally in Claude Desktop before using the local MCPB package.
+
+The cookbook does not place orders in either path. It only emits notional-only order instructions for review.
 
 ## Limitations
 

@@ -24,23 +24,23 @@ REQUEST_TIMEOUT_SECONDS = 75
 MAX_RETRIES = 4
 BACKOFF_BASE_SECONDS = 2.0
 
-HEADLINE = "Will VIX close above 30 at least once in the next 42 trading days?"
+HEADLINE = "Will the VIX close above 30 at any point in the next 90 days?"
 
 DRIVERS = [
-    "Will crude oil settle above $90 in June 2026?",
-    "Will SPX draw down more than 10% at any point in the next 42 trading days?",
-    "Will gold rise more than 10% from its current price at any point in the next 42 trading days?",
-    "Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?",
+    "Will crude oil settle above $90 at any point in the next 90 days?",
+    "Will SPX draw down more than 10% at any point in the next 90 days?",
+    "Will gold rise more than 10% from its current price at any point in the next 90 days?",
+    "Will the Strait of Hormuz be open to regular traffic at the end of the next 90 days?",
 ]
 
 QUESTIONS = [HEADLINE, *DRIVERS]
 
 QUESTION_LABELS = {
-    "Will VIX close above 30 at least once in the next 42 trading days?": "VIX > 30 (2mo)",
-    "Will crude oil settle above $90 in June 2026?": "Crude > $90 (Jun 2026)",
-    "Will SPX draw down more than 10% at any point in the next 42 trading days?": "SPX drawdown > 10% (2mo)",
-    "Will gold rise more than 10% from its current price at any point in the next 42 trading days?": "Gold +10% (2mo)",
-    "Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?": "Hormuz reopens (Jun 30, 2026)",
+    "Will the VIX close above 30 at any point in the next 90 days?": "VIX > 30 (90d)",
+    "Will crude oil settle above $90 at any point in the next 90 days?": "Crude > $90 (90d)",
+    "Will SPX draw down more than 10% at any point in the next 90 days?": "SPX drawdown > 10% (90d)",
+    "Will gold rise more than 10% from its current price at any point in the next 90 days?": "Gold +10% (90d)",
+    "Will the Strait of Hormuz be open to regular traffic at the end of the next 90 days?": "Hormuz regular traffic (90d)",
 }
 
 

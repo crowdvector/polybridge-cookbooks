@@ -7,15 +7,15 @@ Build or adapt the PolyBridge VIX cookbook in `vix-forecast/` without publishing
 - Call `POST https://api.polybridge.ai/v1/forecast` without Authorization.
 - If auth fails with `401` or `403`, stop and fix or remove the configured key. Do not silently retry anonymously after auth failure.
 - Never print, persist, or commit API keys, bearer tokens, headers, or `.env` contents.
-- Use a two-month traditional-index horizon: approximately 42 trading days. Forecast question strings should say `next 42 trading days`; prose may say `next 2 months (~42 trading days)`.
+- Use a rolling next 90 days horizon. Forecast question strings should say `next 90 days`; prose may say `over the next quarter`.
 - Use five total forecast calls: one headline VIX signal and four highlighted macro drivers.
 - Use this headline question exactly:
-  - Will VIX close above 30 at least once in the next 42 trading days?
+  - Will the VIX close above 30 at any point in the next 90 days?
 - Use these driver questions exactly:
-  - Will crude oil settle above $90 in June 2026?
-  - Will SPX draw down more than 10% at any point in the next 42 trading days?
-  - Will gold rise more than 10% from its current price at any point in the next 42 trading days?
-  - Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?
+  - Will crude oil settle above $90 at any point in the next 90 days?
+  - Will SPX draw down more than 10% at any point in the next 90 days?
+  - Will gold rise more than 10% from its current price at any point in the next 90 days?
+  - Will the Strait of Hormuz be open to regular traffic at the end of the next 90 days?
 - Keep live calls sequential.
 - Use a safe timeout around 75 seconds.
 - Retry on `429` and `503`, and honor `Retry-After` when it is present.

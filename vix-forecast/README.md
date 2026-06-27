@@ -16,18 +16,18 @@ This cookbook runs five live forecast questions against `POST https://api.polybr
 
 Runtime is usually 2-5 minutes. Allow up to 10 minutes with retries. The research article uses a dated snapshot; running the notebook or script calls the live Forecast API, so outputs may differ.
 
-The VIX, SPX, and gold questions use a next 2 months (~42 trading days) horizon to match a traditional-index two-month window.
+The runnable questions use a rolling next 90 days horizon to look over the next quarter.
 
 The first question is the headline signal:
 
-- Will VIX close above 30 at least once in the next 42 trading days?
+- Will the VIX close above 30 at any point in the next 90 days?
 
 The remaining four questions are the highlighted macro drivers:
 
-- Will crude oil settle above $90 in June 2026?
-- Will SPX draw down more than 10% at any point in the next 42 trading days?
-- Will gold rise more than 10% from its current price at any point in the next 42 trading days?
-- Will the Strait of Hormuz reopen to regular traffic by June 30, 2026?
+- Will crude oil settle above $90 at any point in the next 90 days?
+- Will SPX draw down more than 10% at any point in the next 90 days?
+- Will gold rise more than 10% from its current price at any point in the next 90 days?
+- Will the Strait of Hormuz be open to regular traffic at the end of the next 90 days?
 
 ## Files
 
@@ -65,6 +65,8 @@ Forecast API responses should be treated as returning fields such as `probabilit
 
 - `assets/snapshot.json` contains the UTC timestamp, endpoint metadata, question-level probabilities, available reasoning or confidence interval data, sanitized source markets, and a derived source-market count.
 - `assets/market-stress-monitor.png` is a dark theme horizontal bar chart suitable for the eventual article hero image.
+
+The checked-in image and snapshot are archived sample outputs from an earlier run; rerun the cookbook to produce current results.
 
 ## Notes
 

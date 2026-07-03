@@ -1,0 +1,50 @@
+{
+  "allowed_use": "research_only_not_financial_advice",
+  "confidence": 0.72,
+  "confidence_interval": {
+    "lower": 0.56,
+    "upper": 0.78
+  },
+  "created_at": "2026-07-03T12:00:00Z",
+  "evidence_profile": {
+    "confidence_interval_width": 0.22,
+    "fixture_mode": true,
+    "forecast_evidence_type": "direct_and_proxy_market_evidence",
+    "forecast_status": "ok",
+    "proxy_only": false,
+    "search_result_count": 2,
+    "search_status": "ok",
+    "source_market_count": 2
+  },
+  "packet_id": "ep_9e8dc8d275b77a98",
+  "probability": 0.66,
+  "quality_flags": [
+    "offline_fixture",
+    "sanitized_fixture"
+  ],
+  "question": "Will Apple report gross margin above 45% for fiscal Q4 2026?",
+  "raw_response_sha256": "9e8dc8d275b77a982a3bc1c4767d78b53b785b6b8337e086568d5c9abc14cb2e",
+  "reasoning_summary": "The offline fixture combines one direct margin-style market and one contextual earnings-quality proxy. The normalized confidence and interval pass the deterministic evidence gate for a paper-preview object only.",
+  "scenario_id": "offline-demo-aapl-margin-resilience",
+  "schema_version": "evidence_packet.v1",
+  "source_markets": [
+    {
+      "is_proxy": false,
+      "probability": 0.68,
+      "question": "Offline fixture: Apple gross margin above 45% for fiscal Q4 2026?",
+      "relevance": 0.92,
+      "schema_version": "source_market.v1",
+      "source": "offline_fixture_market",
+      "url": "https://example.invalid/markets/apple-gross-margin-q4-2026"
+    },
+    {
+      "is_proxy": true,
+      "probability": 0.61,
+      "question": "Offline fixture: Apple fiscal Q4 2026 earnings quality above baseline?",
+      "relevance": 0.74,
+      "schema_version": "source_market.v1",
+      "source": "offline_fixture_market",
+      "url": "https://example.invalid/markets/apple-earnings-quality-q4-2026"
+    }
+  ]
+}

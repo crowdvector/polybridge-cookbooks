@@ -1,0 +1,12 @@
+{
+  "allowed_use": "research_only_not_financial_advice",
+  "broker": "alpaca",
+  "created_at": "2026-07-03T12:00:00Z",
+  "human_approval_required": true,
+  "mode": "paper_preview_only",
+  "notional_usd": 1000.0,
+  "schema_version": "paper_order_preview.v1",
+  "side": "buy",
+  "submit_supported": false,
+  "symbol": "AAPL"
+}

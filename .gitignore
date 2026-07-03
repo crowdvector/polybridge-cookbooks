@@ -14,3 +14,7 @@ node_modules/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+agentic-finance/outputs/
+agentic-finance/runs/
+*.jsonl
+!agentic-finance/assets/sample-audit-log.jsonl

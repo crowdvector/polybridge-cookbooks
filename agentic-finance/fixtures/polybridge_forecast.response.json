@@ -1,0 +1,34 @@
+{
+  "fixture_notice": "Offline, sanitized PolyBridge Forecast-shaped fixture. No live API call was made.",
+  "status": "ok",
+  "question": "Will Apple report gross margin above 45% for fiscal Q4 2026?",
+  "probability": 0.66,
+  "confidence": 0.72,
+  "confidence_interval": {
+    "lower": 0.56,
+    "upper": 0.78
+  },
+  "evidence_profile": {
+    "type": "direct_and_proxy_market_evidence",
+    "proxy_only": false
+  },
+  "markets_used": [
+    {
+      "source": "offline_fixture_market",
+      "question": "Offline fixture: Apple gross margin above 45% for fiscal Q4 2026?",
+      "url": "https://example.invalid/markets/apple-gross-margin-q4-2026",
+      "probability": 0.68,
+      "relevance": 0.92,
+      "is_proxy": false
+    },
+    {
+      "source": "offline_fixture_market",
+      "question": "Offline fixture: Apple fiscal Q4 2026 earnings quality above baseline?",
+      "url": "https://example.invalid/markets/apple-earnings-quality-q4-2026",
+      "probability": 0.61,
+      "relevance": 0.74,
+      "is_proxy": true
+    }
+  ],
+  "reasoning_summary": "The offline fixture combines one direct margin-style market and one contextual earnings-quality proxy. The normalized confidence and interval pass the deterministic evidence gate for a paper-preview object only."
+}

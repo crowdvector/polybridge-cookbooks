@@ -73,6 +73,8 @@ The committed examples in `assets/` are sanitized samples. Runtime audit logs sh
 
 ## Schema Summary
 
+See `SCHEMA.md` for the full schema contract.
+
 `EvidencePacket` includes:
 
 - `packet_id`

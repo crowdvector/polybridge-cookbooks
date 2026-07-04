@@ -13,6 +13,15 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
+def audit_path(path: Path | None, base_dir: Path) -> str | None:
+    if path is None:
+        return None
+    try:
+        return path.resolve().relative_to(base_dir.resolve()).as_posix()
+    except (OSError, RuntimeError, ValueError):
+        return f"external-output/{path.name or 'output'}"
+
+
 def build_audit_record(
     run_id: str,
     scenario_id: str,
@@ -20,7 +29,9 @@ def build_audit_record(
     gate_decision: GateDecision,
     memo_path: Path,
     paper_preview_path: Path | None = None,
+    base_dir: Path | None = None,
 ) -> dict[str, Any]:
+    audit_base_dir = base_dir or Path.cwd()
     record = {
         "schema_version": "audit_record.v1",
         "run_id": run_id,
@@ -28,8 +39,8 @@ def build_audit_record(
         "scenario_id": scenario_id,
         "evidence_packet": to_jsonable(evidence_packet),
         "gate_decision": to_jsonable(gate_decision),
-        "memo_path": str(memo_path),
-        "paper_preview_path": str(paper_preview_path) if paper_preview_path else None,
+        "memo_path": audit_path(memo_path, audit_base_dir),
+        "paper_preview_path": audit_path(paper_preview_path, audit_base_dir),
         "guardrails": {
             "offline_fixture_mode": True,
             "no_live_polybridge_calls": True,
@@ -62,6 +73,7 @@ def append_audit_record(
         gate_decision=gate_decision,
         memo_path=memo_path,
         paper_preview_path=paper_preview_path,
+        base_dir=base_dir,
     )
     with audit_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, sort_keys=True) + "\n")

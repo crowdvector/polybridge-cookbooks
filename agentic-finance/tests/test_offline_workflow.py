@@ -37,6 +37,31 @@ class OfflineWorkflowTests(unittest.TestCase):
             self.assertTrue(audit["guardrails"]["no_live_polybridge_calls"])
             self.assertTrue(audit["guardrails"]["no_broker_submission"])
 
+    def test_default_runtime_audit_paths_are_relative(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            base_dir = Path(temp_dir) / "agentic-finance"
+            base_dir.mkdir()
+
+            result = run_offline_workflow(base_dir=base_dir, fixtures_dir=BASE_DIR / "fixtures")
+
+            audit = result["audit_record"]
+            self.assertEqual(audit["memo_path"], "outputs/decision-memo.md")
+            self.assertEqual(audit["paper_preview_path"], "outputs/alpaca-order-preview.json")
+            self.assertFalse(Path(audit["memo_path"]).is_absolute())
+            self.assertFalse(Path(audit["paper_preview_path"]).is_absolute())
+
+    def test_external_runtime_audit_paths_use_sanitized_fallback(self) -> None:
+        with tempfile.TemporaryDirectory() as base_temp, tempfile.TemporaryDirectory() as output_temp:
+            result = run_offline_workflow(
+                base_dir=Path(base_temp) / "agentic-finance",
+                fixtures_dir=BASE_DIR / "fixtures",
+                output_dir=Path(output_temp),
+            )
+
+            audit = result["audit_record"]
+            self.assertEqual(audit["memo_path"], "external-output/decision-memo.md")
+            self.assertEqual(audit["paper_preview_path"], "external-output/alpaca-order-preview.json")
+
 
 if __name__ == "__main__":
     unittest.main()

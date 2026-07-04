@@ -7,6 +7,8 @@ from pathlib import Path
 from typing import Any
 
 from .models import ALLOWED_USE, EvidencePacket, FinancialActionIntent, SourceMarket
+from .polybridge import PolyBridgeAuthError, PolyBridgeClient, PolyBridgeError
+from .redaction import redact_string
 
 
 def utc_now_iso() -> str:
@@ -115,8 +117,11 @@ def build_quality_flags(
     interval: dict[str, float] | None,
     source_markets: tuple[SourceMarket, ...],
     proxy_only: bool,
+    fixture_mode: bool = True,
+    extra_flags: tuple[str, ...] = tuple(),
 ) -> tuple[str, ...]:
-    flags = {"offline_fixture", "sanitized_fixture"}
+    flags = {"offline_fixture", "sanitized_fixture"} if fixture_mode else {"live_polybridge"}
+    flags.update(extra_flags)
     if forecast_response.get("status") not in (None, "ok"):
         flags.add("api_error")
     if search_response.get("status") not in (None, "ok"):
@@ -139,6 +144,8 @@ def build_evidence_packet(
     forecast_response: dict[str, Any],
     search_response: dict[str, Any],
     created_at: str | None = None,
+    fixture_mode: bool = True,
+    extra_quality_flags: tuple[str, ...] = tuple(),
 ) -> EvidencePacket:
     probability = normalize_unit_interval(first_present(forecast_response, ("probability", "forecast", "p")))
     confidence = normalize_unit_interval(first_present(forecast_response, ("confidence", "confidence_score")))
@@ -156,15 +163,24 @@ def build_evidence_packet(
     profile = dict(raw_profile) if isinstance(raw_profile, dict) else {}
     search_results = search_response.get("results")
     search_count = len(search_results) if isinstance(search_results, list) else 0
+    search_relevances: list[float] = []
+    if isinstance(search_results, list):
+        search_relevances = [
+            value
+            for value in (normalize_unit_interval(item.get("relevance")) for item in search_results if isinstance(item, dict))
+            if value is not None
+        ]
     proxy_only = bool(profile.get("proxy_only")) or bool(source_markets and all(item.is_proxy for item in source_markets))
     interval_width = None if interval is None else round(interval["upper"] - interval["lower"], 6)
 
     evidence_profile: dict[str, Any] = {
-        "fixture_mode": True,
+        "fixture_mode": fixture_mode,
+        "live_polybridge": not fixture_mode,
         "forecast_status": forecast_response.get("status", "ok"),
         "search_status": search_response.get("status", "ok"),
         "forecast_evidence_type": profile.get("type", "unspecified"),
         "search_result_count": search_count,
+        "search_max_relevance": max(search_relevances) if search_relevances else None,
         "source_market_count": len(source_markets),
         "proxy_only": proxy_only,
         "confidence_interval_width": interval_width,
@@ -181,6 +197,8 @@ def build_evidence_packet(
         interval=interval,
         source_markets=source_markets,
         proxy_only=proxy_only,
+        fixture_mode=fixture_mode,
+        extra_flags=extra_quality_flags,
     )
 
     return EvidencePacket(
@@ -205,3 +223,24 @@ def load_offline_evidence(fixtures_dir: Path) -> tuple[FinancialActionIntent, Ev
     forecast_response = load_json(fixtures_dir / "polybridge_forecast.response.json")
     search_response = load_json(fixtures_dir / "polybridge_search.response.json")
     return intent, build_evidence_packet(intent, forecast_response, search_response)
+
+
+def fetch_live_evidence(intent: FinancialActionIntent, client: PolyBridgeClient) -> EvidencePacket:
+    try:
+        search_response = client.search(intent.search_query)
+    except PolyBridgeAuthError:
+        raise
+    except PolyBridgeError as exc:
+        search_response = {
+            "status": "error",
+            "error": redact_string(str(exc)),
+            "results": [],
+        }
+
+    forecast_response = client.forecast(intent.forecast_question)
+    return build_evidence_packet(
+        intent=intent,
+        forecast_response=forecast_response,
+        search_response=search_response,
+        fixture_mode=False,
+    )

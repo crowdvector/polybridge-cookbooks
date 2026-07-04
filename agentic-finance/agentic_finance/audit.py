@@ -32,6 +32,8 @@ def build_audit_record(
     base_dir: Path | None = None,
 ) -> dict[str, Any]:
     audit_base_dir = base_dir or Path.cwd()
+    live_polybridge = bool(evidence_packet.evidence_profile.get("live_polybridge"))
+    offline_fixture_mode = bool(evidence_packet.evidence_profile.get("fixture_mode", False))
     record = {
         "schema_version": "audit_record.v1",
         "run_id": run_id,
@@ -42,8 +44,8 @@ def build_audit_record(
         "memo_path": audit_path(memo_path, audit_base_dir),
         "paper_preview_path": audit_path(paper_preview_path, audit_base_dir),
         "guardrails": {
-            "offline_fixture_mode": True,
-            "no_live_polybridge_calls": True,
+            "offline_fixture_mode": offline_fixture_mode,
+            "no_live_polybridge_calls": not live_polybridge,
             "no_live_broker_calls": True,
             "no_broker_submission": True,
             "paper_preview_only": True,

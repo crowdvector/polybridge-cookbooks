@@ -113,7 +113,9 @@ Required fields:
 Safety notes:
 
 - Core gate logic must not consume raw PolyBridge API responses.
-- Only `evidence.py` should know the raw fixture or future adapter shape.
+- Only `evidence.py` should know the raw fixture or live adapter shape.
+- Optional live PolyBridge responses must be normalized into this object before gate logic runs.
+- Search relevance may appear in `evidence_profile` as metadata, but Forecast remains the only probability source.
 - Raw response bodies, headers, bearer tokens, API keys, and account data must not be persisted.
 - `raw_response_sha256` is a provenance hash, not raw evidence.
 - Alpaca fields must not appear in `EvidencePacket`.
@@ -135,8 +137,11 @@ Example:
   },
   "evidence_profile": {
     "fixture_mode": true,
+    "live_polybridge": false,
     "forecast_status": "ok",
     "search_status": "ok",
+    "search_result_count": 2,
+    "search_max_relevance": 0.99,
     "source_market_count": 2,
     "proxy_only": false
   },
@@ -170,7 +175,7 @@ Safety notes:
 
 - Gate configuration is not model output and should be explicit.
 - Lowering thresholds can make the demo less conservative.
-- `allow_proxy_only=false` is the PR 1 default.
+- `allow_proxy_only=false` is the default.
 
 Example:
 
@@ -270,6 +275,7 @@ Required fields:
 Safety notes:
 
 - Runtime audit logs are written to `outputs/audit-log.jsonl` and ignored by git.
+- Live PolyBridge mode must not write raw headers, API keys, or unredacted error details to audit records.
 - Paths in audit records should be relative to the cookbook directory during normal runs.
 - If a path cannot be represented relative to the cookbook, it must use a sanitized fallback.
 - Audit records must not include local usernames, home directories, account IDs, secrets, bearer tokens, or authorization headers.
@@ -316,7 +322,7 @@ Required fields:
 
 Safety notes:
 
-- PR 1 supports preview only.
+- This cookbook supports preview only.
 - `submit_supported` must be `false`.
 - `human_approval_required` must be `true`.
 - The object is not an order and cannot be submitted by this cookbook.

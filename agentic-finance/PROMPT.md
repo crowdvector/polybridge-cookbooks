@@ -12,8 +12,12 @@ Rules:
 - Do not call broker submission APIs.
 - Do not create a live-trading path.
 - Use evidence first.
-- Use only offline fixtures for PR 1.
+- Use offline fixtures by default.
+- Use live PolyBridge mode only when explicitly requested; it is read-only.
+- If POLYBRIDGE_API_KEY is unset, omit Authorization for live PolyBridge calls.
+- If a configured POLYBRIDGE_API_KEY is rejected, fail clearly and do not retry anonymously.
 - Normalize Search and Forecast evidence into an EvidencePacket.
+- Treat Forecast as the only probability source; Search relevance is metadata only.
 - Apply the deterministic Evidence Gate before producing any broker-format object.
 - Write a decision memo.
 - Write a redacted JSONL audit record.
@@ -33,4 +37,4 @@ Allowed use:
 research_only_not_financial_advice
 ```
 
-PR 1 is offline-only. Future live adapters must preserve the same guardrails and must not make paper submission possible without explicit human approval and separate safety flags.
+Offline mode is the default. Optional live PolyBridge mode must preserve the same guardrails and must not make paper submission possible without explicit human approval and separate safety flags.

@@ -2,7 +2,7 @@
 
 Runnable PolyBridge cookbooks for market-implied workflows, Colab notebooks, and developer examples. Each cookbook is self-contained and includes a standalone `README.md`, a runnable notebook, a `setup.sh` installer, helper code, and public-facing generated assets.
 
-The Forecast blog articles use dated snapshots. Running those notebooks or scripts calls the live Forecast API, so values may differ. The Agentic Finance Evidence Gate cookbook is offline-first in PR 1 and uses fixtures only.
+The Forecast blog articles use dated snapshots. Running those notebooks or scripts calls the live Forecast API, so values may differ. The Agentic Finance Evidence Gate cookbook is offline-first and has optional read-only live PolyBridge evidence mode.
 
 ## Cookbook Index
 
@@ -10,7 +10,7 @@ The Forecast blog articles use dated snapshots. Running those notebooks or scrip
 | --- | --- | --- | --- | --- | --- |
 | `vix-forecast/` | A five-call VIX stress monitor over the next quarter (next 90 days), with one headline VIX signal and four highlighted macro drivers: oil, SPX drawdown, gold, and Hormuz regular traffic. | PolyBridge Forecast, Python 3.10+, `requests`, `matplotlib` | [Forecast VIX from prediction markets](https://polybridge.ai/research/vix-forecast) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast) |
 | `longshort-portfolio/` | Reconstruct market-implied price distributions from Forecast price thresholds, size via half-Kelly, and output Hyperliquid 1x perp order instructions. | PolyBridge Forecast, Python 3.10+, `requests` | [Long-short portfolio on Hyperliquid from prediction market prices](https://polybridge.ai/research/longshort-portfolio) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio) |
-| `agentic-finance/` | Build an offline, deterministic Evidence Gate for financial-agent pre-action review: normalized EvidencePacket, decision memo, redacted JSONL audit log, and Alpaca-style paper-preview object only. | Offline PolyBridge Forecast/Search fixtures, Python 3.10+, stdlib `unittest` | Forthcoming | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/agentic-finance) |
+| `agentic-finance/` | Build an offline-first, deterministic Evidence Gate for financial-agent pre-action review: normalized EvidencePacket, decision memo, redacted JSONL audit log, optional live PolyBridge evidence, and Alpaca-style paper-preview object only. | Offline fixtures, optional PolyBridge Forecast/Search, Python 3.10+, `requests`, stdlib `unittest` | Forthcoming | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/agentic-finance) |
 
 ## Repo Layout
 
@@ -52,7 +52,7 @@ python3 evidence_gate.py --offline
 
 ## Operational Note
 
-Forecast cookbooks produce market-implied examples from live Forecast calls. Values can change as source markets update. The Agentic Finance Evidence Gate cookbook is research/demo software, not financial advice, and PR 1 runs offline with sanitized fixtures only.
+Forecast cookbooks produce market-implied examples from live Forecast calls. Values can change as source markets update. The Agentic Finance Evidence Gate cookbook is research/demo software, not financial advice, and defaults to sanitized offline fixtures.
 
 ## Resources
 

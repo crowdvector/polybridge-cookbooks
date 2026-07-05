@@ -54,10 +54,19 @@ The demo is designed for teams evaluating agentic finance guardrails. It uses fa
 
 ## Quickstart
 
+### Setup
+
 ```bash
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/agentic-finance
 bash setup.sh
+```
+
+### Run Offline Evidence Gate
+
+From the cookbook folder:
+
+```bash
 python3 evidence_gate.py --offline
 ```
 
@@ -67,25 +76,43 @@ From the repository root:
 python3 agentic-finance/evidence_gate.py --offline
 ```
 
-Run the portfolio tier from the repository root:
+### Run Offline Portfolio Event-Risk Map
+
+From the repository root:
 
 ```bash
 python3 agentic-finance/run_portfolio_risk_map.py --offline --holdings agentic-finance/examples/sample_holdings.csv
 ```
 
-Run the same tier from the cookbook folder:
+From the cookbook folder:
 
 ```bash
 python3 run_portfolio_risk_map.py --offline --holdings examples/sample_holdings.csv
 ```
 
-Optional live PolyBridge mode is available but is never the default:
+### Optional Live PolyBridge Mode
+
+Live PolyBridge mode is available but is never the default:
 
 ```bash
 python3 agentic-finance/evidence_gate.py --live-polybridge
 ```
 
 If `POLYBRIDGE_API_KEY` is unset, live mode omits the `Authorization` header entirely and uses anonymous PolyBridge limits. If a configured key is rejected with `401` or `403`, the run fails clearly and does not retry anonymously. Live mode is still read-only and is not financial advice.
+
+### Open In Colab
+
+Use the badge at the top of this README or open:
+
+```text
+https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb
+```
+
+The notebook runs offline fixtures by default, does not require API keys, and previews generated local artifacts.
+
+### Prompt Pack
+
+Use `PROMPT.md` as the prompt index. Copy-paste workflow prompts live in `prompts/`.
 
 ## Files
 

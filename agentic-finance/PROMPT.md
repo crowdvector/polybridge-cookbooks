@@ -1,13 +1,53 @@
-# Agentic Finance Evidence Gate Prompt
+# Agentic Finance Prompt Pack
 
-Use this prompt in Claude, Cursor, or an MCP-style agent workspace when adapting the cookbook.
+Use this file as the entry point for agent workflows around the Agentic Finance Evidence Gate cookbook.
+
+## Prompt Files
+
+- `prompts/claude-mcp.md`: copy-paste prompt for Claude with PolyBridge MCP tools.
+- `prompts/cursor.md`: code-agent prompt for running the offline and optional live cookbook workflows.
+- `prompts/custom-agent.md`: generic input/output contract for external agents.
+- `prompts/broker-neutral-workflow.md`: broker or wealth-platform boundary prompt.
+- `prompts/portfolio-risk-map.md`: portfolio review prompt for local holdings CSV workflows.
+
+## Core Guardrails
+
+All prompt variants must preserve these rules:
+
+- Do not give financial advice.
+- Do not present outputs as portfolio-action instructions.
+- Do not place trades.
+- Do not call broker submission APIs.
+- Do not create a live-trading path.
+- Use evidence first.
+- Use offline fixtures by default.
+- Use live PolyBridge mode only when explicitly requested; it is read-only.
+- Normalize Search and Forecast evidence into an EvidencePacket.
+- Search relevance is not probability.
+- Forecast is the probability surface.
+- Preserve EvidencePacket as the adapter boundary.
+- Apply the deterministic Evidence Gate before producing any broker-format object.
+- Write a memo.
+- Write a redacted JSONL audit record.
+- Create an Alpaca-style paper order preview only if the gate decision is cleared_for_paper_preview.
+- The paper preview requires explicit human approval and must have submit_supported=false.
+- Never log secrets, environment variables, headers, bearer tokens, account data, order IDs, or local absolute paths.
+- Keep Alpaca-specific fields out of core EvidencePacket and gate logic.
+- Tier 2 is the Portfolio Event-Risk Map for a local holdings CSV.
+- For Tier 2, use deterministic exposure mapping only; do not call an LLM.
+- For Tier 2, write a portfolio risk map JSON, portfolio risk memo Markdown, and redacted audit record.
+- For Tier 2, do not create a paper-preview object and do not instruct portfolio changes.
+
+## Minimal Baseline Prompt
+
+Use this shorter prompt when a tool does not need one of the specialized prompt files.
 
 ```text
 You are assisting with the Agentic Finance Evidence Gate cookbook.
 
 Rules:
 - Do not give financial advice.
-- Do not present outputs as investment recommendations.
+- Do not present outputs as portfolio-action instructions.
 - Do not place trades.
 - Do not call broker submission APIs.
 - Do not create a live-trading path.
@@ -17,7 +57,9 @@ Rules:
 - If POLYBRIDGE_API_KEY is unset, omit Authorization for live PolyBridge calls.
 - If a configured POLYBRIDGE_API_KEY is rejected, fail clearly and do not retry anonymously.
 - Normalize Search and Forecast evidence into an EvidencePacket.
-- Treat Forecast as the only probability source; Search relevance is metadata only.
+- Search relevance is not probability.
+- Forecast is the probability surface.
+- Preserve EvidencePacket as the adapter boundary.
 - Apply the deterministic Evidence Gate before producing any broker-format object.
 - Write a decision memo.
 - Write a redacted JSONL audit record.

@@ -92,6 +92,7 @@ If `POLYBRIDGE_API_KEY` is unset, live mode omits the `Authorization` header ent
 - `evidence_gate.py` is the Tier 1 runnable entry point.
 - `run_portfolio_risk_map.py` is the Tier 2 runnable entry point.
 - `agentic_finance/` contains the offline workflow package and optional live PolyBridge adapter.
+- `prompts/` contains copy-paste prompts for Claude, Cursor, MCP-style agents, broker-neutral workflows, custom agents, and portfolio review agents.
 - `fixtures/` contains sanitized PolyBridge-shaped Search and Forecast fixtures plus the thesis.
 - `examples/sample_holdings.csv` is a local, fake portfolio input for the portfolio tier.
 - `assets/` contains sanitized committed sample outputs.
@@ -135,6 +136,18 @@ The allowed-use value is always:
 ```text
 research_only_not_financial_advice
 ```
+
+## Agent Prompt Pack
+
+`PROMPT.md` is the index for workflow prompts. The prompt files are:
+
+- `prompts/claude-mcp.md`
+- `prompts/cursor.md`
+- `prompts/custom-agent.md`
+- `prompts/broker-neutral-workflow.md`
+- `prompts/portfolio-risk-map.md`
+
+They are documentation-only workflow contracts. They require evidence first, Forecast as the probability surface, Search relevance as metadata only, `EvidencePacket` as the adapter boundary, memo and audit outputs, and a human approval boundary before any broker-format paper-preview object.
 
 ## Gate Rules
 

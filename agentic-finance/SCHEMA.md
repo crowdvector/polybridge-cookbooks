@@ -10,6 +10,8 @@ Every public object uses:
 }
 ```
 
+The prompt pack in `prompts/` is documentation only. Prompt outputs must still conform to the objects below, keep `EvidencePacket` as the adapter boundary, treat Search relevance as metadata only, use Forecast as the probability surface, and write memo plus redacted audit artifacts.
+
 ## FinancialActionIntent
 
 Purpose: captures the research thesis and the broker-neutral action intent before evidence is fetched or normalized.

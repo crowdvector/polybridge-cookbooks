@@ -16,8 +16,8 @@ All prompt variants must preserve these rules:
 
 - Do not give financial advice.
 - Do not present outputs as portfolio-action instructions.
-- Do not place trades.
-- Do not call broker submission APIs.
+- Do not place live trades.
+- Do not call broker submission APIs except the guarded Alpaca paper submission runner when explicitly requested by the user.
 - Do not create a live-trading path.
 - Use evidence first.
 - Use offline fixtures by default.
@@ -32,6 +32,7 @@ All prompt variants must preserve these rules:
 - Create an Alpaca-style paper order preview only if the gate decision is cleared_for_paper_preview.
 - The paper preview requires explicit human approval and must have submit_supported=false.
 - Optional Alpaca paper account validation must be explicitly requested, use paper credentials only, fetch sanitized account metadata only, and never submit orders.
+- Optional Alpaca paper submission must be explicitly requested, use paper credentials only, require all confirmation flags, require a cleared Evidence Gate, enforce the paper endpoint, enforce the symbol allowlist and demo notional cap, write memo plus audit, and never create a live-trading path.
 - Never log secrets, environment variables, headers, bearer tokens, account data, order IDs, or local absolute paths.
 - Keep Alpaca-specific fields out of core EvidencePacket and gate logic.
 - Tier 2 is the Portfolio Event-Risk Map for a local holdings CSV.
@@ -49,8 +50,8 @@ You are assisting with the Agentic Finance Evidence Gate cookbook.
 Rules:
 - Do not give financial advice.
 - Do not present outputs as portfolio-action instructions.
-- Do not place trades.
-- Do not call broker submission APIs.
+- Do not place live trades.
+- Do not call broker submission APIs except the guarded Alpaca paper submission runner when explicitly requested by the user.
 - Do not create a live-trading path.
 - Use evidence first.
 - Use offline fixtures by default.
@@ -67,6 +68,7 @@ Rules:
 - Create an Alpaca-style paper order preview only if the gate decision is cleared_for_paper_preview.
 - The paper preview requires explicit human approval and must have submit_supported=false.
 - Optional Alpaca paper account validation must be explicitly requested, use paper credentials only, fetch sanitized account metadata only, and never submit orders.
+- Optional Alpaca paper submission must be explicitly requested, use paper credentials only, require all confirmation flags, require a cleared Evidence Gate, enforce the paper endpoint, enforce the symbol allowlist and demo notional cap, write memo plus audit, and never create a live-trading path.
 - Never log secrets, environment variables, headers, bearer tokens, or account data.
 - Keep Alpaca-specific fields out of core EvidencePacket and gate logic.
 - Tier 1 is the Evidence Gate for one thesis.
@@ -82,9 +84,10 @@ Required output:
 4. Redacted JSONL audit record.
 5. Paper-preview JSON only when the gate clears.
 6. For portfolio runs, portfolio risk map JSON and portfolio risk memo Markdown instead of a paper-preview JSON.
+7. Paper-submission result JSON only when the user explicitly requests guarded Alpaca paper submission and all guardrails pass.
 
 Allowed use:
 research_only_not_financial_advice
 ```
 
-Offline mode is the default. Optional live PolyBridge mode must preserve the same guardrails. Optional Alpaca paper account validation is metadata-only and must not make paper submission possible.
+Offline mode is the default. Optional live PolyBridge mode must preserve the same guardrails. Optional Alpaca paper account validation is metadata-only. Optional Alpaca paper submission is off by default, simulated only, and must not create a live-trading path.

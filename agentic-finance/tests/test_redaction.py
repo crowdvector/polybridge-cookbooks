@@ -49,6 +49,21 @@ class RedactionTests(unittest.TestCase):
         self.assertEqual(redacted["ALPACA_API_KEY"], REDACTED)
         self.assertEqual(redacted["raw_response_sha256"], "0" * 64)
 
+    def test_preserves_safe_schema_and_path_metadata(self) -> None:
+        payload = {
+            "schema_version": "alpaca_paper_submission_result.v1",
+            "tier": "alpaca_paper_submission",
+            "order_result_path": "outputs/alpaca-paper-submission-result.json",
+            "APCA_API_SECRET_KEY": "paper_secret_value",
+        }
+
+        redacted = redact(payload)
+
+        self.assertEqual(redacted["schema_version"], "alpaca_paper_submission_result.v1")
+        self.assertEqual(redacted["tier"], "alpaca_paper_submission")
+        self.assertEqual(redacted["order_result_path"], "outputs/alpaca-paper-submission-result.json")
+        self.assertEqual(redacted["APCA_API_SECRET_KEY"], REDACTED)
+
 
 if __name__ == "__main__":
     unittest.main()

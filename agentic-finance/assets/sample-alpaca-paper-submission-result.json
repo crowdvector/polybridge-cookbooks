@@ -1,0 +1,16 @@
+{
+  "allowed_use": "research_only_not_financial_advice",
+  "broker": "alpaca",
+  "client_order_id": "sample_redacted",
+  "human_approval_confirmed": true,
+  "mode": "paper_submission_result",
+  "no_live_trading": true,
+  "notional": "1000.00",
+  "order_id": "sample_redacted",
+  "paper_endpoint_validated": true,
+  "schema_version": "alpaca_paper_submission_result.v1",
+  "side": "buy",
+  "status": "accepted",
+  "submitted": true,
+  "symbol": "SPY"
+}

@@ -42,6 +42,10 @@ def is_sensitive_key(key: str) -> bool:
 def redact_string(value: str, key: str | None = None) -> str:
     if key and "sha256" in key.lower():
         return value
+    if key and key.lower() in {"schema_version", "tier", "mode", "broker", "allowed_use"}:
+        return value
+    if key and key.lower().endswith("_path") and value.startswith(("outputs/", "external-output/")):
+        return value
     text = AUTHORIZATION_RE.sub(lambda match: f"{match.group(1)}: {REDACTED}", value)
     text = BEARER_RE.sub(f"Bearer {REDACTED}", text)
     text = ENV_ASSIGN_RE.sub(lambda match: f"{match.group(1).upper()}={REDACTED}", text)

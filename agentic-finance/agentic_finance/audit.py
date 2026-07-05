@@ -149,3 +149,61 @@ def append_portfolio_audit_record(
     with audit_log_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, sort_keys=True) + "\n")
     return audit_log_path, record
+
+
+def build_paper_submission_audit_record(
+    run_id: str,
+    scenario_id: str,
+    paper_preview_path: Path | None,
+    order_result_path: Path,
+    submission_result: dict[str, Any],
+    base_dir: Path | None = None,
+) -> dict[str, Any]:
+    audit_base_dir = base_dir or Path.cwd()
+    record = {
+        "schema_version": "alpaca_paper_submission_audit_record.v1",
+        "run_id": run_id,
+        "timestamp": utc_now_iso(),
+        "scenario_id": scenario_id,
+        "tier": "alpaca_paper_submission",
+        "paper_only": True,
+        "human_approval_confirmed": True,
+        "no_live_trading": True,
+        "paper_preview_path": audit_path(paper_preview_path, audit_base_dir),
+        "order_result_path": audit_path(order_result_path, audit_base_dir),
+        "submission_result": to_jsonable(submission_result),
+        "guardrails": {
+            "paper_only": True,
+            "paper_endpoint_only": True,
+            "human_approval_confirmed": True,
+            "no_live_trading": True,
+            "no_raw_broker_response": True,
+            "no_account_data": True,
+            "secrets_redacted": True,
+        },
+    }
+    return redact(record)
+
+
+def append_paper_submission_audit_record(
+    base_dir: Path,
+    output_dir: Path,
+    run_id: str,
+    scenario_id: str,
+    paper_preview_path: Path | None,
+    order_result_path: Path,
+    submission_result: dict[str, Any],
+) -> tuple[Path, dict[str, Any]]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    audit_log_path = output_dir / "audit-log.jsonl"
+    record = build_paper_submission_audit_record(
+        run_id=run_id,
+        scenario_id=scenario_id,
+        paper_preview_path=paper_preview_path,
+        order_result_path=order_result_path,
+        submission_result=submission_result,
+        base_dir=base_dir,
+    )
+    with audit_log_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, sort_keys=True) + "\n")
+    return audit_log_path, record

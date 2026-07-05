@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+from collections.abc import Iterable
 from datetime import datetime, timezone
 from dataclasses import dataclass
 from typing import Any
@@ -13,6 +14,9 @@ from ..redaction import REDACTED, redact_string
 
 PAPER_BASE_URL = "https://paper-api.alpaca.markets"
 REQUEST_TIMEOUT_SECONDS = 30
+DEFAULT_PAPER_SUBMISSION_NOTIONAL_CAP_USD = 1000.0
+DEFAULT_PAPER_SUBMISSION_SYMBOL_ALLOWLIST = ("SPY", "QQQ", "TLT", "GLD", "XLE", "AAPL")
+ALLOWED_PAPER_SUBMISSION_SIDES = ("buy", "sell")
 
 
 class AlpacaPaperError(RuntimeError):
@@ -169,6 +173,9 @@ class AlpacaPaperClient:
     def _account_url(self) -> str:
         return f"{self.config.base_url}/v2/account"
 
+    def _orders_url(self) -> str:
+        return f"{PAPER_BASE_URL}/v2/orders"
+
     def get_account_metadata(self) -> dict[str, Any]:
         try:
             response = self.session.get(
@@ -211,6 +218,32 @@ class AlpacaPaperClient:
             "submit_supported": False,
         }
 
+    def post_guarded_paper_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+        try:
+            response = self.session.post(
+                self._orders_url(),
+                headers=self._headers(),
+                json=payload,
+                timeout=self.timeout_seconds,
+            )
+        except Exception as exc:
+            message = redact_alpaca_message(str(exc))
+            raise AlpacaPaperError(f"Alpaca paper submission request failed: {message}") from exc
+
+        status_code = int(getattr(response, "status_code", 0) or 0)
+        if status_code in {401, 403}:
+            raise AlpacaPaperAuthError(f"Alpaca paper submission failed with HTTP {status_code}.")
+        if status_code < 200 or status_code >= 300:
+            raise AlpacaPaperError(f"Alpaca paper submission failed with HTTP {status_code}.")
+
+        try:
+            data = response.json()
+        except ValueError as exc:
+            raise AlpacaPaperError("Alpaca paper submission response was not valid JSON.") from exc
+        if not isinstance(data, dict):
+            raise AlpacaPaperError("Alpaca paper submission response JSON was not an object.")
+        return data
+
 
 def sanitize_account_metadata(data: dict[str, Any]) -> dict[str, Any]:
     account_present = any(data.get(key) for key in ("id", "account_id", "account_number"))
@@ -228,3 +261,143 @@ def sanitize_account_metadata(data: dict[str, Any]) -> dict[str, Any]:
         "allowed_use": ALLOWED_USE,
         "no_order_submission": True,
     }
+
+
+def normalize_symbol_allowlist(symbol_allowlist: Iterable[str] | None = None) -> tuple[str, ...]:
+    source = symbol_allowlist or DEFAULT_PAPER_SUBMISSION_SYMBOL_ALLOWLIST
+    normalized = tuple(sorted({str(symbol).strip().upper() for symbol in source if str(symbol).strip()}))
+    if not normalized:
+        raise AlpacaPaperError("Alpaca paper submission requires at least one allowlisted symbol.")
+    return normalized
+
+
+def validate_alpaca_paper_submission_config(config: AlpacaPaperConfig) -> AlpacaPaperConfig:
+    validated = validate_alpaca_paper_config(config)
+    if validated.paper_trade is None or validated.paper_trade.lower() != "true":
+        raise AlpacaPaperError("ALPACA_PAPER_TRADE=true is required for guarded paper submission.")
+    if validated.base_url != PAPER_BASE_URL:
+        raise AlpacaPaperError(f"Guarded paper submission requires APCA_API_BASE_URL={PAPER_BASE_URL}.")
+    return validated
+
+
+def require_submission_confirmations(
+    *,
+    confirm_paper_trading: bool,
+    confirm_not_financial_advice: bool,
+    confirm_human_approval: bool,
+) -> None:
+    missing = []
+    if not confirm_paper_trading:
+        missing.append("--confirm-paper-trading")
+    if not confirm_not_financial_advice:
+        missing.append("--confirm-not-financial-advice")
+    if not confirm_human_approval:
+        missing.append("--confirm-human-approval")
+    if missing:
+        raise AlpacaPaperError(
+            "Guarded paper submission requires explicit confirmation flags: "
+            + ", ".join(missing)
+            + "."
+        )
+
+
+def build_guarded_paper_order_payload(
+    preview: PaperOrderPreview,
+    *,
+    max_notional_usd: float = DEFAULT_PAPER_SUBMISSION_NOTIONAL_CAP_USD,
+    symbol_allowlist: Iterable[str] | None = None,
+) -> dict[str, Any]:
+    if preview.broker != "alpaca" or preview.mode != "paper_preview_only":
+        raise AlpacaPaperError("Guarded paper submission requires an Alpaca paper-preview object.")
+    if not preview.human_approval_required:
+        raise AlpacaPaperError("Guarded paper submission requires a preview with human_approval_required=true.")
+    if preview.submit_supported:
+        raise AlpacaPaperError("Guarded paper submission requires submit_supported=false on the preview.")
+
+    symbol = preview.symbol.strip().upper()
+    allowed_symbols = normalize_symbol_allowlist(symbol_allowlist)
+    if symbol not in allowed_symbols:
+        raise AlpacaPaperError(f"Guarded paper submission blocked: symbol {symbol} is not allowlisted.")
+
+    side = preview.side.strip().lower()
+    if side not in ALLOWED_PAPER_SUBMISSION_SIDES:
+        raise AlpacaPaperError(f"Guarded paper submission blocked: side {side!r} is not allowed.")
+
+    notional = round(float(preview.notional_usd), 2)
+    if notional <= 0:
+        raise AlpacaPaperError("Guarded paper submission requires a positive notional value.")
+    if max_notional_usd <= 0:
+        raise AlpacaPaperError("Guarded paper submission requires a positive demo notional cap.")
+    if notional > round(float(max_notional_usd), 2):
+        raise AlpacaPaperError(
+            "Guarded paper submission blocked: notional exceeds the configured demo cap."
+        )
+
+    return {
+        "symbol": symbol,
+        "side": side,
+        "type": "market",
+        "time_in_force": "day",
+        "notional": f"{notional:.2f}",
+    }
+
+
+def sanitize_paper_submission_result(
+    data: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    human_approval_confirmed: bool,
+) -> dict[str, Any]:
+    order_present = any(data.get(key) for key in ("id", "order_id"))
+    client_order_present = data.get("client_order_id") not in (None, "")
+    return {
+        "schema_version": "alpaca_paper_submission_result.v1",
+        "broker": "alpaca",
+        "mode": "paper_submission_result",
+        "submitted": True,
+        "paper_endpoint_validated": True,
+        "order_id": REDACTED if order_present else None,
+        "client_order_id": REDACTED if client_order_present else None,
+        "symbol": payload["symbol"],
+        "side": payload["side"],
+        "notional": payload["notional"],
+        "status": clean_text(data.get("status")) or "unknown",
+        "allowed_use": ALLOWED_USE,
+        "no_live_trading": True,
+        "human_approval_confirmed": bool(human_approval_confirmed),
+    }
+
+
+def submit_paper_order(
+    preview: PaperOrderPreview,
+    config: AlpacaPaperConfig,
+    *,
+    gate_decision: GateDecision,
+    confirm_paper_trading: bool,
+    confirm_not_financial_advice: bool,
+    confirm_human_approval: bool,
+    max_notional_usd: float = DEFAULT_PAPER_SUBMISSION_NOTIONAL_CAP_USD,
+    symbol_allowlist: Iterable[str] | None = None,
+    session: Any | None = None,
+    timeout_seconds: int = REQUEST_TIMEOUT_SECONDS,
+) -> dict[str, Any]:
+    require_submission_confirmations(
+        confirm_paper_trading=confirm_paper_trading,
+        confirm_not_financial_advice=confirm_not_financial_advice,
+        confirm_human_approval=confirm_human_approval,
+    )
+    if not gate_decision.cleared_for_paper_preview:
+        raise AlpacaPaperError("Evidence Gate did not clear; guarded paper submission is blocked.")
+    submission_config = validate_alpaca_paper_submission_config(config)
+    payload = build_guarded_paper_order_payload(
+        preview,
+        max_notional_usd=max_notional_usd,
+        symbol_allowlist=symbol_allowlist,
+    )
+    client = AlpacaPaperClient(submission_config, session=session, timeout_seconds=timeout_seconds)
+    response_data = client.post_guarded_paper_payload(payload)
+    return sanitize_paper_submission_result(
+        response_data,
+        payload,
+        human_approval_confirmed=confirm_human_approval,
+    )

@@ -1,6 +1,6 @@
 # Agentic Finance Evidence Gate Schema Contract
 
-This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a broker execution integration. Tier 1 is the Evidence Gate. Tier 2 is the Portfolio Event-Risk Map.
+This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a live or real-money broker execution integration. Tier 1 is the Evidence Gate. Tier 2 is the Portfolio Event-Risk Map.
 
 Every public object uses:
 
@@ -448,10 +448,10 @@ Required fields:
 
 Safety notes:
 
-- This cookbook supports preview only.
+- The preview object alone is not a submission instruction.
 - `submit_supported` must be `false`.
 - `human_approval_required` must be `true`.
-- The object is not an order and cannot be submitted by this cookbook.
+- Guarded paper submission requires a separate explicit command, paper credentials, confirmation flags, a cleared gate, and submission guardrails.
 - Alpaca fields must not leak into `EvidencePacket` or `GateDecision`.
 - This cookbook is not a trading system and not financial advice.
 
@@ -494,6 +494,7 @@ Safety notes:
 - Live-looking base URLs block validation.
 - Headers and credential values must be redacted from errors and logs.
 - Paper account validation fetches sanitized account metadata only and does not submit orders.
+- Guarded paper submission additionally requires `ALPACA_PAPER_TRADE=true`, an exact paper base URL, all confirmation flags, an allowlisted symbol, and the demo notional cap.
 
 ## AlpacaPaperAccountCheck
 
@@ -538,3 +539,85 @@ Example:
   "no_order_submission": true
 }
 ```
+
+## AlpacaPaperSubmissionResult
+
+Purpose: sanitized output from an explicit guarded Alpaca paper submission.
+
+Required fields:
+
+- `schema_version`
+- `broker`
+- `mode`
+- `submitted`
+- `paper_endpoint_validated`
+- `order_id`
+- `client_order_id`
+- `symbol`
+- `side`
+- `notional`
+- `status`
+- `allowed_use`
+- `no_live_trading`
+- `human_approval_confirmed`
+
+Safety notes:
+
+- `mode` must be `paper_submission_result`.
+- `submitted` may be `true` only after all guarded paper submission checks pass.
+- The paper base URL must be exactly `https://paper-api.alpaca.markets`.
+- `ALPACA_PAPER_TRADE=true` is required.
+- Confirmation flags for paper trading, non-advice, and human approval are required.
+- Symbols must be allowlisted.
+- Notional must be within the demo cap.
+- Order IDs and client order IDs must be redacted or sample placeholders.
+- Raw broker responses, account IDs, headers, API keys, secrets, bearer tokens, and local absolute paths must not be persisted.
+- This object is simulated paper trading output only. It is not live trading and not financial advice.
+
+Example:
+
+```json
+{
+  "schema_version": "alpaca_paper_submission_result.v1",
+  "broker": "alpaca",
+  "mode": "paper_submission_result",
+  "submitted": true,
+  "paper_endpoint_validated": true,
+  "order_id": "sample_redacted",
+  "client_order_id": "sample_redacted",
+  "symbol": "SPY",
+  "side": "buy",
+  "notional": "1000.00",
+  "status": "accepted",
+  "allowed_use": "research_only_not_financial_advice",
+  "no_live_trading": true,
+  "human_approval_confirmed": true
+}
+```
+
+## AlpacaPaperSubmissionAuditRecord
+
+Purpose: redacted JSONL audit event for explicit guarded paper submission.
+
+Required fields:
+
+- `schema_version`
+- `run_id`
+- `timestamp`
+- `scenario_id`
+- `tier`
+- `paper_only`
+- `human_approval_confirmed`
+- `no_live_trading`
+- `paper_preview_path`
+- `order_result_path`
+- `submission_result`
+- `guardrails`
+
+Safety notes:
+
+- `tier` must be `alpaca_paper_submission`.
+- `paper_only`, `human_approval_confirmed`, and `no_live_trading` must be `true`.
+- `order_result_path` should be relative to the cookbook directory or sanitized as an external output.
+- Guardrails must show paper endpoint only, no live trading, no raw broker response, no account data, and redaction.
+- The audit record must not include raw broker responses, headers, credentials, account IDs, real order IDs, or local absolute paths.

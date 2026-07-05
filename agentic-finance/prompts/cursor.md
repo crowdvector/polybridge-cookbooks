@@ -11,8 +11,9 @@ Run and inspect the Agentic Finance Evidence Gate cookbook without inventing evi
 Safety invariants:
 - Treat outputs as research/demo artifacts, not financial advice.
 - Use evidence first.
-- Do not call broker APIs.
-- Do not submit orders.
+- Do not call broker APIs except the guarded Alpaca paper runner when explicitly requested by the user.
+- Do not submit live orders.
+- Do not submit paper orders unless all guarded paper submission confirmations and checks pass.
 - Do not create a real-money trading path.
 - Do not provide portfolio-action instructions.
 - Preserve EvidencePacket as the adapter boundary.
@@ -45,6 +46,14 @@ Optional Alpaca paper validation:
 - Run PYENV_VERSION=3.13.0 python agentic-finance/run_alpaca_paper_check.py --validate-paper-account only when the user explicitly asks.
 - Use paper credentials only and require APCA_API_BASE_URL=https://paper-api.alpaca.markets.
 - Validation fetches sanitized account metadata only and must not submit orders.
+
+Optional guarded Alpaca paper submission:
+- Do not run this in quickstart checks or tests.
+- Run PYENV_VERSION=3.13.0 python agentic-finance/run_alpaca_paper_check.py --submit-paper-order only when the user explicitly asks and provides all confirmation flags.
+- Require --confirm-paper-trading, --confirm-not-financial-advice, and --confirm-human-approval.
+- Use paper credentials only, require ALPACA_PAPER_TRADE=true, and require APCA_API_BASE_URL=https://paper-api.alpaca.markets.
+- Confirm the Evidence Gate cleared before paper submission.
+- Treat the result as simulated paper trading only, not financial advice and not live trading.
 
 Review discipline:
 - Report the actual command results.

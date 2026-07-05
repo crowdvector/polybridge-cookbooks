@@ -246,6 +246,37 @@ class AlpacaPaperAdapterTests(unittest.TestCase):
         self.assertTrue(payload["preview_only"])
         self.assertFalse(payload["submit_supported"])
 
+    def test_client_has_no_public_post_guarded_paper_payload_method(self) -> None:
+        self.assertFalse(hasattr(AlpacaPaperClient, "post_guarded_paper_payload"))
+
+    def test_client_has_no_public_direct_order_submission_method(self) -> None:
+        public_methods = {
+            name
+            for name in dir(AlpacaPaperClient)
+            if not name.startswith("_") and callable(getattr(AlpacaPaperClient, name))
+        }
+
+        forbidden_fragments = ("post", "submit", "place", "create")
+        for method_name in public_methods:
+            self.assertFalse(
+                any(fragment in method_name.lower() for fragment in forbidden_fragments),
+                msg=f"unexpected public direct-submission method: {method_name}",
+            )
+
+    def test_arbitrary_payload_submission_is_not_available_on_public_client_api(self) -> None:
+        client = AlpacaPaperClient(self.paper_config(), session=FakeSession())
+        arbitrary_payload = {
+            "symbol": "TSLA",
+            "side": "buy",
+            "type": "market",
+            "time_in_force": "day",
+            "notional": "999999.99",
+        }
+
+        self.assertFalse(hasattr(client, "post_guarded_paper_payload"))
+        with self.assertRaises(AttributeError):
+            getattr(client, "post_guarded_paper_payload")(arbitrary_payload)
+
     def test_submit_path_fails_if_any_confirmation_flag_is_missing(self) -> None:
         flag_sets = [
             {"confirm_paper_trading": False, "confirm_not_financial_advice": True, "confirm_human_approval": True},

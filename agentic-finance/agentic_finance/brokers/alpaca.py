@@ -218,32 +218,6 @@ class AlpacaPaperClient:
             "submit_supported": False,
         }
 
-    def post_guarded_paper_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
-        try:
-            response = self.session.post(
-                self._orders_url(),
-                headers=self._headers(),
-                json=payload,
-                timeout=self.timeout_seconds,
-            )
-        except Exception as exc:
-            message = redact_alpaca_message(str(exc))
-            raise AlpacaPaperError(f"Alpaca paper submission request failed: {message}") from exc
-
-        status_code = int(getattr(response, "status_code", 0) or 0)
-        if status_code in {401, 403}:
-            raise AlpacaPaperAuthError(f"Alpaca paper submission failed with HTTP {status_code}.")
-        if status_code < 200 or status_code >= 300:
-            raise AlpacaPaperError(f"Alpaca paper submission failed with HTTP {status_code}.")
-
-        try:
-            data = response.json()
-        except ValueError as exc:
-            raise AlpacaPaperError("Alpaca paper submission response was not valid JSON.") from exc
-        if not isinstance(data, dict):
-            raise AlpacaPaperError("Alpaca paper submission response JSON was not an object.")
-        return data
-
 
 def sanitize_account_metadata(data: dict[str, Any]) -> dict[str, Any]:
     account_present = any(data.get(key) for key in ("id", "account_id", "account_number"))
@@ -395,7 +369,29 @@ def submit_paper_order(
         symbol_allowlist=symbol_allowlist,
     )
     client = AlpacaPaperClient(submission_config, session=session, timeout_seconds=timeout_seconds)
-    response_data = client.post_guarded_paper_payload(payload)
+    try:
+        response = client.session.post(
+            client._orders_url(),
+            headers=client._headers(),
+            json=payload,
+            timeout=client.timeout_seconds,
+        )
+    except Exception as exc:
+        message = redact_alpaca_message(str(exc))
+        raise AlpacaPaperError(f"Alpaca paper submission request failed: {message}") from exc
+
+    status_code = int(getattr(response, "status_code", 0) or 0)
+    if status_code in {401, 403}:
+        raise AlpacaPaperAuthError(f"Alpaca paper submission failed with HTTP {status_code}.")
+    if status_code < 200 or status_code >= 300:
+        raise AlpacaPaperError(f"Alpaca paper submission failed with HTTP {status_code}.")
+
+    try:
+        response_data = response.json()
+    except ValueError as exc:
+        raise AlpacaPaperError("Alpaca paper submission response was not valid JSON.") from exc
+    if not isinstance(response_data, dict):
+        raise AlpacaPaperError("Alpaca paper submission response JSON was not an object.")
     return sanitize_paper_submission_result(
         response_data,
         payload,

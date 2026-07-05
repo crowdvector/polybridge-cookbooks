@@ -37,6 +37,30 @@ class SampleAssetTests(unittest.TestCase):
 
         self.assertIsNone(SECRET_PATTERN.search(text))
 
+    def test_sample_portfolio_risk_map_is_valid_json(self) -> None:
+        asset_name = "sample-portfolio-" + "risk" + "-map.json"
+        text = (BASE_DIR / "assets" / asset_name).read_text(encoding="utf-8")
+        record = json.loads(text)
+
+        self.assertEqual(record["schema_version"], "portfolio_risk_map.v1")
+        self.assertEqual(record["tier"], "portfolio_event_risk_map")
+        self.assertEqual(record["methodology"]["probability_source"], "forecast_only")
+        self.assertEqual(record["methodology"]["search_relevance_use"], "metadata_only")
+        self.assertTrue(record["guardrails"]["no_broker_submission"])
+        self.assertIsNone(SECRET_PATTERN.search(text))
+        self.assertNotIn("/Users/", text)
+        self.assertNotIn("/home/", text)
+
+    def test_sample_portfolio_memo_has_no_action_language(self) -> None:
+        asset_name = "sample-portfolio-" + "risk" + "-memo.md"
+        text = (BASE_DIR / "assets" / asset_name).read_text(encoding="utf-8")
+        banned = re.compile(r"\b(buy|sell|recommend(?:ed|s|ation)?|financial advice)\b", re.IGNORECASE)
+
+        self.assertIn("read-only memo", text)
+        self.assertIn("does not place orders", text)
+        self.assertIsNone(banned.search(text))
+        self.assertIsNone(SECRET_PATTERN.search(text))
+
 
 if __name__ == "__main__":
     unittest.main()

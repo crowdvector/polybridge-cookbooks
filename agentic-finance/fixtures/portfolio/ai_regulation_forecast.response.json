@@ -1,0 +1,34 @@
+{
+  "fixture_notice": "Offline, sanitized PolyBridge Forecast-shaped fixture. No live API call was made.",
+  "status": "ok",
+  "question": "Will AI regulation or export-control risk materially affect large-cap technology over the next 90 days?",
+  "probability": 0.57,
+  "confidence": 0.66,
+  "confidence_interval": {
+    "lower": 0.46,
+    "upper": 0.68
+  },
+  "evidence_profile": {
+    "type": "portfolio_event_risk_fixture",
+    "proxy_only": false
+  },
+  "markets_used": [
+    {
+      "source": "offline_fixture_market",
+      "question": "Offline fixture: AI regulatory action affects large-cap technology over the next 90 days?",
+      "url": "https://example.invalid/markets/ai-regulation-large-cap-tech-90d",
+      "probability": 0.57,
+      "relevance": 0.88,
+      "is_proxy": false
+    },
+    {
+      "source": "offline_fixture_market",
+      "question": "Offline fixture: export-control risk above baseline for technology supply chains?",
+      "url": "https://example.invalid/markets/export-control-tech-risk",
+      "probability": 0.54,
+      "relevance": 0.74,
+      "is_proxy": true
+    }
+  ],
+  "reasoning_summary": "The offline fixture combines AI-regulation and export-control event-risk proxies for the technology exposure."
+}

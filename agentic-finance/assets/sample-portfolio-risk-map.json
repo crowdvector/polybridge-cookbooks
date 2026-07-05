@@ -1,0 +1,217 @@
+{
+  "allowed_use": "research_only_not_financial_advice",
+  "created_at": "2026-07-05T12:00:00Z",
+  "exposures": [
+    {
+      "affected_notional_usd": 12050.0,
+      "affected_symbols": [
+        "SPY",
+        "QQQ",
+        "TLT",
+        "GLD"
+      ],
+      "drivers": [
+        "rates",
+        "inflation",
+        "Fed policy",
+        "Treasury volatility",
+        "dollar/rates"
+      ],
+      "exposure_id": "rates",
+      "label": "Rates and inflation sensitivity",
+      "portfolio_weight": 0.902622,
+      "schema_version": "portfolio_exposure.v1"
+    },
+    {
+      "affected_notional_usd": 10250.0,
+      "affected_symbols": [
+        "SPY",
+        "QQQ",
+        "GLD"
+      ],
+      "drivers": [
+        "volatility",
+        "tariff/geopolitical risk",
+        "geopolitical escalation"
+      ],
+      "exposure_id": "volatility",
+      "label": "Equity volatility and geopolitical risk",
+      "portfolio_weight": 0.76779,
+      "schema_version": "portfolio_exposure.v1"
+    },
+    {
+      "affected_notional_usd": 2800.0,
+      "affected_symbols": [
+        "QQQ"
+      ],
+      "drivers": [
+        "AI regulation",
+        "China/Taiwan",
+        "export controls",
+        "rates"
+      ],
+      "exposure_id": "ai_regulation",
+      "label": "AI regulation and technology policy",
+      "portfolio_weight": 0.209738,
+      "schema_version": "portfolio_exposure.v1"
+    },
+    {
+      "affected_notional_usd": 1300.0,
+      "affected_symbols": [
+        "XLE"
+      ],
+      "drivers": [
+        "oil shock",
+        "Middle East escalation",
+        "sanctions",
+        "shipping disruption"
+      ],
+      "exposure_id": "energy",
+      "label": "Energy and shipping disruption",
+      "portfolio_weight": 0.097378,
+      "schema_version": "portfolio_exposure.v1"
+    }
+  ],
+  "guardrails": {
+    "local_holdings_csv": true,
+    "no_broker_submission": true,
+    "no_live_broker_calls": true,
+    "no_real_money_trading_path": true,
+    "read_only_portfolio_workflow": true
+  },
+  "methodology": {
+    "adapter_boundary": "EvidencePacket",
+    "mapping": "deterministic_local_rules",
+    "probability_source": "forecast_only",
+    "raw_polybridge_responses_persisted": false,
+    "search_relevance_use": "metadata_only"
+  },
+  "portfolio": {
+    "holding_count": 5,
+    "symbols": [
+      "SPY",
+      "QQQ",
+      "TLT",
+      "XLE",
+      "GLD"
+    ],
+    "total_notional_usd": 13350.0
+  },
+  "risk_items": [
+    {
+      "evidence_packet": {
+        "confidence": 0.7,
+        "evidence_profile": {
+          "fixture_mode": true,
+          "forecast_status": "ok",
+          "live_polybridge": false,
+          "search_max_relevance": 0.89,
+          "search_status": "ok"
+        },
+        "packet_id": "ep_sample_rates",
+        "probability": 0.62,
+        "quality_flags": [
+          "offline_fixture",
+          "sanitized_fixture"
+        ],
+        "raw_response_sha256": "0000000000000000000000000000000000000000000000000000000000000001",
+        "schema_version": "evidence_packet.v1"
+      },
+      "exposure_id": "rates",
+      "gate_decision": {
+        "cleared_for_paper_preview": true,
+        "decision": "cleared_for_paper_preview",
+        "schema_version": "gate_decision.v1"
+      },
+      "risk_band": "elevated_event_risk",
+      "schema_version": "portfolio_risk_item.v1"
+    },
+    {
+      "evidence_packet": {
+        "confidence": 0.67,
+        "evidence_profile": {
+          "fixture_mode": true,
+          "forecast_status": "ok",
+          "live_polybridge": false,
+          "search_max_relevance": 0.85,
+          "search_status": "ok"
+        },
+        "packet_id": "ep_sample_volatility",
+        "probability": 0.54,
+        "quality_flags": [
+          "offline_fixture",
+          "sanitized_fixture"
+        ],
+        "raw_response_sha256": "0000000000000000000000000000000000000000000000000000000000000002",
+        "schema_version": "evidence_packet.v1"
+      },
+      "exposure_id": "volatility",
+      "gate_decision": {
+        "cleared_for_paper_preview": false,
+        "decision": "watchlist_only",
+        "schema_version": "gate_decision.v1"
+      },
+      "risk_band": "monitor",
+      "schema_version": "portfolio_risk_item.v1"
+    },
+    {
+      "evidence_packet": {
+        "confidence": 0.66,
+        "evidence_profile": {
+          "fixture_mode": true,
+          "forecast_status": "ok",
+          "live_polybridge": false,
+          "search_max_relevance": 0.91,
+          "search_status": "ok"
+        },
+        "packet_id": "ep_sample_ai_regulation",
+        "probability": 0.57,
+        "quality_flags": [
+          "offline_fixture",
+          "sanitized_fixture"
+        ],
+        "raw_response_sha256": "0000000000000000000000000000000000000000000000000000000000000003",
+        "schema_version": "evidence_packet.v1"
+      },
+      "exposure_id": "ai_regulation",
+      "gate_decision": {
+        "cleared_for_paper_preview": true,
+        "decision": "cleared_for_paper_preview",
+        "schema_version": "gate_decision.v1"
+      },
+      "risk_band": "elevated_event_risk",
+      "schema_version": "portfolio_risk_item.v1"
+    },
+    {
+      "evidence_packet": {
+        "confidence": 0.68,
+        "evidence_profile": {
+          "fixture_mode": true,
+          "forecast_status": "ok",
+          "live_polybridge": false,
+          "search_max_relevance": 0.86,
+          "search_status": "ok"
+        },
+        "packet_id": "ep_sample_energy",
+        "probability": 0.58,
+        "quality_flags": [
+          "offline_fixture",
+          "sanitized_fixture"
+        ],
+        "raw_response_sha256": "0000000000000000000000000000000000000000000000000000000000000004",
+        "schema_version": "evidence_packet.v1"
+      },
+      "exposure_id": "energy",
+      "gate_decision": {
+        "cleared_for_paper_preview": true,
+        "decision": "cleared_for_paper_preview",
+        "schema_version": "gate_decision.v1"
+      },
+      "risk_band": "elevated_event_risk",
+      "schema_version": "portfolio_risk_item.v1"
+    }
+  ],
+  "run_id": "run_sample_portfolio",
+  "schema_version": "portfolio_risk_map.v1",
+  "tier": "portfolio_event_risk_map"
+}

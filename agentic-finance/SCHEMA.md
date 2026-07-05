@@ -1,6 +1,6 @@
 # Agentic Finance Evidence Gate Schema Contract
 
-This document describes the public schema contract for the offline Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a broker integration.
+This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a broker integration. Tier 1 is the Evidence Gate. Tier 2 is the Portfolio Event-Risk Map.
 
 Every public object uses:
 
@@ -300,6 +300,130 @@ Example:
   }
 }
 ```
+
+## PortfolioHolding
+
+Purpose: one row from the local holdings CSV used by the Portfolio Event-Risk Map tier.
+
+Required fields:
+
+- `schema_version`
+- `symbol`
+- `name`
+- `quantity`
+- `notional_usd`
+- `sector`
+
+Safety notes:
+
+- Holdings samples must be fake or sanitized before commit.
+- Do not include account IDs, custodian data, tax lots, order IDs, or broker account data.
+- Runtime holdings paths in audit records must be sanitized relative paths when possible.
+
+## PortfolioExposure
+
+Purpose: deterministic mapping from holdings to event-risk exposures.
+
+Required fields:
+
+- `schema_version`
+- `exposure_id`
+- `label`
+- `risk_theme`
+- `drivers`
+- `affected_symbols`
+- `affected_notional_usd`
+- `portfolio_weight`
+- `forecast_question`
+- `search_query`
+- `source_rules`
+
+Safety notes:
+
+- Exposure mapping must be deterministic local code.
+- No LLM call is required or allowed for mapping.
+- Broad equity and technology holdings can map to rates, inflation, volatility, tariff/geopolitical, AI regulation, China/Taiwan, export-control, and rates drivers.
+- Rates, energy, and gold holdings map to their documented deterministic drivers.
+
+## PortfolioRiskMap
+
+Purpose: JSON artifact for the read-only portfolio event-risk tier.
+
+Required fields:
+
+- `schema_version`
+- `run_id`
+- `created_at`
+- `tier`
+- `allowed_use`
+- `portfolio`
+- `methodology`
+- `exposures`
+- `risk_items`
+- `guardrails`
+
+Safety notes:
+
+- `tier` must be `portfolio_event_risk_map`.
+- `methodology.probability_source` must be `forecast_only`.
+- `methodology.search_relevance_use` must be `metadata_only`.
+- `methodology.adapter_boundary` must be `EvidencePacket`.
+- Gate logic consumes normalized `EvidencePacket` objects only.
+- The portfolio tier must not create an Alpaca preview object, broker submission path, or real-money execution path.
+- The portfolio memo must describe risk review only and must not contain buy, sell, or recommendation language.
+
+Example:
+
+```json
+{
+  "schema_version": "portfolio_risk_map.v1",
+  "tier": "portfolio_event_risk_map",
+  "run_id": "run_sample_portfolio",
+  "portfolio": {
+    "holding_count": 5,
+    "total_notional_usd": 13350.0,
+    "symbols": ["SPY", "QQQ", "TLT", "XLE", "GLD"]
+  },
+  "methodology": {
+    "mapping": "deterministic_local_rules",
+    "adapter_boundary": "EvidencePacket",
+    "probability_source": "forecast_only",
+    "search_relevance_use": "metadata_only",
+    "raw_polybridge_responses_persisted": false
+  },
+  "guardrails": {
+    "read_only_portfolio_workflow": true,
+    "local_holdings_csv": true,
+    "no_live_broker_calls": true,
+    "no_broker_submission": true,
+    "no_real_money_trading_path": true
+  }
+}
+```
+
+## PortfolioAuditRecord
+
+Purpose: redacted JSONL record for a portfolio event-risk run.
+
+Required fields:
+
+- `schema_version`
+- `run_id`
+- `timestamp`
+- `tier`
+- `holdings_source`
+- `exposures`
+- `evidence_packets`
+- `gate_decisions`
+- `output_paths`
+- `guardrails`
+
+Safety notes:
+
+- Runtime portfolio audit logs are written to ignored runtime outputs.
+- `holdings_source` and output paths must not expose local usernames or absolute local paths.
+- Evidence packets may include provenance hashes, but raw PolyBridge response bodies, headers, bearer tokens, API keys, account IDs, and order IDs must not be persisted.
+- Guardrails must show read-only portfolio workflow, local holdings input, no live broker calls, no broker submission, no real-money path, no raw PolyBridge response persistence, and redaction.
 
 ## PaperOrderPreview
 

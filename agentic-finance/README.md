@@ -2,7 +2,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb)
 
-> Safety banner: this cookbook is research/demo software, not financial advice. Offline mode is the default; optional live PolyBridge mode is read-only, paper-preview-only, and does not place trades or call broker APIs.
+> Safety banner: this cookbook is research/demo software, not financial advice. Offline mode is the default. Optional live PolyBridge evidence mode is read-only, and no tier places trades or calls broker APIs.
 
 ## Quick Links
 
@@ -12,7 +12,9 @@
 
 ## What This Is
 
-This cookbook shows a broker-neutral pre-action evidence workflow for financial agents:
+This cookbook has two read-only research tiers for financial-agent guardrails.
+
+Tier 1 is the Evidence Gate:
 
 ```text
 financial thesis
@@ -24,7 +26,20 @@ financial thesis
   -> optional Alpaca-style paper order preview object
 ```
 
-The demo is designed for teams evaluating agentic finance guardrails. It uses fake, sanitized fixtures by default to model how evidence can be normalized before any broker-format object is created. Optional live PolyBridge mode fetches Search and Forecast evidence, remains read-only, and still writes only local review artifacts.
+Tier 2 is the Portfolio Event-Risk Map:
+
+```text
+holdings CSV
+  -> deterministic exposure mapping
+  -> offline fixtures or optional live PolyBridge Search/Forecast evidence per exposure
+  -> normalized EvidencePackets
+  -> deterministic Evidence Gate decisions
+  -> portfolio risk map JSON
+  -> portfolio risk memo Markdown
+  -> redacted JSONL audit log
+```
+
+The demo is designed for teams evaluating agentic finance guardrails. It uses fake, sanitized fixtures by default to model how evidence can be normalized before any broker-format object is created. Optional live PolyBridge mode fetches Search and Forecast evidence, remains read-only, and still writes only local review artifacts. The portfolio tier is a read-only risk memo workflow, not a recommendation or trade/action workflow.
 
 ## What This Is Not
 
@@ -35,6 +50,7 @@ The demo is designed for teams evaluating agentic finance guardrails. It uses fa
 - Not connected to Alpaca or any broker API.
 - Not capable of submitting orders.
 - Not a real-money workflow.
+- Not a portfolio action engine.
 
 ## Quickstart
 
@@ -51,6 +67,18 @@ From the repository root:
 python3 agentic-finance/evidence_gate.py --offline
 ```
 
+Run the portfolio tier from the repository root:
+
+```bash
+python3 agentic-finance/run_portfolio_risk_map.py --offline --holdings agentic-finance/examples/sample_holdings.csv
+```
+
+Run the same tier from the cookbook folder:
+
+```bash
+python3 run_portfolio_risk_map.py --offline --holdings examples/sample_holdings.csv
+```
+
 Optional live PolyBridge mode is available but is never the default:
 
 ```bash
@@ -61,9 +89,11 @@ If `POLYBRIDGE_API_KEY` is unset, live mode omits the `Authorization` header ent
 
 ## Files
 
-- `evidence_gate.py` is the runnable entry point.
+- `evidence_gate.py` is the Tier 1 runnable entry point.
+- `run_portfolio_risk_map.py` is the Tier 2 runnable entry point.
 - `agentic_finance/` contains the offline workflow package and optional live PolyBridge adapter.
 - `fixtures/` contains sanitized PolyBridge-shaped Search and Forecast fixtures plus the thesis.
+- `examples/sample_holdings.csv` is a local, fake portfolio input for the portfolio tier.
 - `assets/` contains sanitized committed sample outputs.
 - `outputs/` is the default runtime output directory and is ignored by git.
 - `tests/` contains stdlib `unittest` coverage.
@@ -76,6 +106,8 @@ Runtime outputs are written to `agentic-finance/outputs/` by default:
 - `decision-memo.md`
 - `audit-log.jsonl`
 - `alpaca-order-preview.json`, only when the evidence gate clears
+- portfolio risk map JSON from the portfolio tier
+- portfolio risk memo Markdown from the portfolio tier
 
 The committed examples in `assets/` are sanitized samples. Runtime audit logs should not be committed.
 
@@ -126,9 +158,15 @@ The gate does not provide investment advice. A cleared result only means the loc
 
 ## Live PolyBridge Mode
 
-`--live-polybridge` uses `fixtures/thesis.json` for the thesis, Search query, and Forecast question, then fetches live Search and Forecast evidence. Search relevance is stored only as search metadata; Forecast remains the only probability source. Raw PolyBridge responses are normalized into `EvidencePacket` before gate evaluation.
+`--live-polybridge` on Tier 1 uses `fixtures/thesis.json` for the thesis, Search query, and Forecast question, then fetches live Search and Forecast evidence. `--live-polybridge` on Tier 2 uses the local holdings CSV and deterministic exposure mapping, then fetches live Search and Forecast evidence per exposure. Search relevance is stored only as search metadata; Forecast remains the only probability source. Raw PolyBridge responses are normalized into `EvidencePacket` before gate evaluation.
 
 This mode does not call Alpaca, does not submit broker orders, and does not create a real-money trading path.
+
+## Portfolio Event-Risk Map
+
+The portfolio tier reads a local holdings CSV and maps holdings to deterministic event-risk exposures. The built-in sample maps broad equity, technology, rates, energy, and gold holdings to rates/inflation, volatility/geopolitical, AI regulation/export-control, and energy/shipping-disruption exposures.
+
+The portfolio memo is a risk review artifact only. It does not connect to a broker, does not create an order object, does not submit anything, and does not tell a reader to change a portfolio.
 
 ## Audit Log Notes
 
@@ -142,6 +180,16 @@ Audit records are JSONL and are redacted before write. The runtime record includ
 - memo path
 - optional paper preview path
 - guardrails showing offline/live evidence mode, no live broker calls, no broker submission, and paper-preview-only behavior
+
+Portfolio audit records include:
+
+- tier name
+- sanitized holdings source path
+- deterministic exposures
+- normalized evidence packets
+- gate decisions
+- portfolio output paths
+- guardrails showing read-only mode, local holdings input, no live broker calls, no broker submission, no real-money path, and no persisted raw PolyBridge responses
 
 Redaction covers authorization headers, bearer tokens, known PolyBridge and Alpaca env names, and obvious token-like strings.
 

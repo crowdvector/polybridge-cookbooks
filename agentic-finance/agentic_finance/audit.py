@@ -80,3 +80,72 @@ def append_audit_record(
     with audit_path.open("a", encoding="utf-8") as handle:
         handle.write(json.dumps(record, sort_keys=True) + "\n")
     return audit_path, record
+
+
+def build_portfolio_audit_record(
+    run_id: str,
+    holdings_source: Path,
+    exposures: tuple[Any, ...],
+    evidence_packets: tuple[EvidencePacket, ...],
+    gate_decisions: tuple[GateDecision, ...],
+    risk_map_path: Path,
+    memo_path: Path,
+    base_dir: Path | None = None,
+) -> dict[str, Any]:
+    audit_base_dir = base_dir or Path.cwd()
+    live_polybridge = any(bool(packet.evidence_profile.get("live_polybridge")) for packet in evidence_packets)
+    offline_fixture_mode = all(bool(packet.evidence_profile.get("fixture_mode", False)) for packet in evidence_packets)
+    record = {
+        "schema_version": "portfolio_audit_record.v1",
+        "run_id": run_id,
+        "timestamp": utc_now_iso(),
+        "tier": "portfolio_event_risk_map",
+        "holdings_source": audit_path(holdings_source, audit_base_dir),
+        "exposures": to_jsonable(exposures),
+        "evidence_packets": to_jsonable(evidence_packets),
+        "gate_decisions": to_jsonable(gate_decisions),
+        "output_paths": {
+            "portfolio_risk_map": audit_path(risk_map_path, audit_base_dir),
+            "portfolio_risk_memo": audit_path(memo_path, audit_base_dir),
+        },
+        "guardrails": {
+            "offline_fixture_mode": offline_fixture_mode,
+            "no_live_polybridge_calls": not live_polybridge,
+            "read_only_portfolio_workflow": True,
+            "local_holdings_csv": True,
+            "no_live_broker_calls": True,
+            "no_broker_submission": True,
+            "no_real_money_trading_path": True,
+            "no_raw_polybridge_responses_persisted": True,
+            "secrets_redacted": True,
+        },
+    }
+    return redact(record)
+
+
+def append_portfolio_audit_record(
+    base_dir: Path,
+    output_dir: Path,
+    run_id: str,
+    holdings_source: Path,
+    exposures: tuple[Any, ...],
+    evidence_packets: tuple[EvidencePacket, ...],
+    gate_decisions: tuple[GateDecision, ...],
+    risk_map_path: Path,
+    memo_path: Path,
+) -> tuple[Path, dict[str, Any]]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    audit_log_path = output_dir / "audit-log.jsonl"
+    record = build_portfolio_audit_record(
+        run_id=run_id,
+        holdings_source=holdings_source,
+        exposures=exposures,
+        evidence_packets=evidence_packets,
+        gate_decisions=gate_decisions,
+        risk_map_path=risk_map_path,
+        memo_path=memo_path,
+        base_dir=base_dir,
+    )
+    with audit_log_path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, sort_keys=True) + "\n")
+    return audit_log_path, record

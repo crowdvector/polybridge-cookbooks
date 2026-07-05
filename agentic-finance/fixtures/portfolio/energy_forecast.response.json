@@ -1,0 +1,34 @@
+{
+  "fixture_notice": "Offline, sanitized PolyBridge Forecast-shaped fixture. No live API call was made.",
+  "status": "ok",
+  "question": "Will oil-shock or shipping-disruption risk remain elevated over the next 90 days?",
+  "probability": 0.58,
+  "confidence": 0.68,
+  "confidence_interval": {
+    "lower": 0.47,
+    "upper": 0.69
+  },
+  "evidence_profile": {
+    "type": "portfolio_event_risk_fixture",
+    "proxy_only": false
+  },
+  "markets_used": [
+    {
+      "source": "offline_fixture_market",
+      "question": "Offline fixture: oil-shock risk elevated over the next 90 days?",
+      "url": "https://example.invalid/markets/oil-shock-event-90d",
+      "probability": 0.6,
+      "relevance": 0.87,
+      "is_proxy": false
+    },
+    {
+      "source": "offline_fixture_market",
+      "question": "Offline fixture: shipping-disruption risk above baseline?",
+      "url": "https://example.invalid/markets/shipping-disruption-risk",
+      "probability": 0.55,
+      "relevance": 0.76,
+      "is_proxy": true
+    }
+  ],
+  "reasoning_summary": "The offline fixture combines an oil-shock event market with a shipping-disruption proxy for read-only portfolio risk mapping."
+}

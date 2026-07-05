@@ -1,0 +1,21 @@
+{
+  "fixture_notice": "Offline, sanitized PolyBridge Search-shaped fixture. No live API call was made.",
+  "status": "ok",
+  "query": "US rates inflation Treasury volatility prediction market evidence next 90 days",
+  "results": [
+    {
+      "title": "Offline fixture: rates and inflation market cluster",
+      "url": "https://example.invalid/polybridge/offline-search/rates-inflation-cluster",
+      "source": "offline_fixture",
+      "snippet": "Sanitized fixture result for rates and inflation event-risk context.",
+      "relevance": 0.89
+    },
+    {
+      "title": "Offline fixture: Treasury volatility proxy",
+      "url": "https://example.invalid/polybridge/offline-search/treasury-volatility-proxy",
+      "source": "offline_fixture",
+      "snippet": "Sanitized fixture result for Treasury-volatility context only.",
+      "relevance": 0.72
+    }
+  ]
+}

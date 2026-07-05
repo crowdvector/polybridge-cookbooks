@@ -27,6 +27,7 @@ Run:
 PYENV_VERSION=3.13.0 python -m unittest discover agentic-finance/tests
 PYENV_VERSION=3.13.0 python agentic-finance/evidence_gate.py --offline
 PYENV_VERSION=3.13.0 python agentic-finance/run_portfolio_risk_map.py --offline --holdings agentic-finance/examples/sample_holdings.csv
+PYENV_VERSION=3.13.0 python agentic-finance/run_alpaca_paper_check.py --preview-only
 
 Inspect:
 - agentic-finance/outputs/evidence-packet.json
@@ -39,6 +40,11 @@ Optional live evidence:
 - Run PYENV_VERSION=3.13.0 python agentic-finance/evidence_gate.py --live-polybridge only when the user explicitly asks.
 - Run portfolio live mode only when the user explicitly asks.
 - Live PolyBridge mode is read-only evidence retrieval. It must not create broker connectivity.
+
+Optional Alpaca paper validation:
+- Run PYENV_VERSION=3.13.0 python agentic-finance/run_alpaca_paper_check.py --validate-paper-account only when the user explicitly asks.
+- Use paper credentials only and require APCA_API_BASE_URL=https://paper-api.alpaca.markets.
+- Validation fetches sanitized account metadata only and must not submit orders.
 
 Review discipline:
 - Report the actual command results.

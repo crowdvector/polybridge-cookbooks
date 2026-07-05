@@ -2,7 +2,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb)
 
-> Safety banner: this cookbook is research/demo software, not financial advice. Offline mode is the default. Optional live PolyBridge evidence mode is read-only, and no tier places trades or calls broker APIs.
+> Safety banner: this cookbook is research/demo software, not financial advice. Offline mode is the default. Optional live PolyBridge evidence mode is read-only. Optional Alpaca paper account validation is explicit, paper-only, and metadata-only. No tier places trades or submits orders.
 
 ## Quick Links
 
@@ -41,13 +41,15 @@ holdings CSV
 
 The demo is designed for teams evaluating agentic finance guardrails. It uses fake, sanitized fixtures by default to model how evidence can be normalized before any broker-format object is created. Optional live PolyBridge mode fetches Search and Forecast evidence, remains read-only, and still writes only local review artifacts. The portfolio tier is a read-only risk memo workflow, not a recommendation or trade/action workflow.
 
+The cookbook also includes an optional Alpaca paper validation adapter. Preview-only mode still requires no credentials and does not call Alpaca. Paper account validation must be requested explicitly, requires paper credentials, validates the paper endpoint, fetches only sanitized account metadata, and does not submit orders.
+
 ## What This Is Not
 
 - Not financial advice.
 - Not an investment recommendation system.
 - Not a trading bot.
 - Not connected to live PolyBridge APIs unless `--live-polybridge` is explicitly selected.
-- Not connected to Alpaca or any broker API.
+- Not connected to Alpaca unless the explicit paper account validation command is run.
 - Not capable of submitting orders.
 - Not a real-money workflow.
 - Not a portfolio action engine.
@@ -90,6 +92,14 @@ From the cookbook folder:
 python3 run_portfolio_risk_map.py --offline --holdings examples/sample_holdings.csv
 ```
 
+### Run Alpaca Paper Preview Only
+
+This runs the offline Evidence Gate and writes a local Alpaca-style paper preview if the gate clears. It requires no Alpaca credentials and does not call Alpaca:
+
+```bash
+python3 agentic-finance/run_alpaca_paper_check.py --preview-only
+```
+
 ### Optional Live PolyBridge Mode
 
 Live PolyBridge mode is available but is never the default:
@@ -99,6 +109,16 @@ python3 agentic-finance/evidence_gate.py --live-polybridge
 ```
 
 If `POLYBRIDGE_API_KEY` is unset, live mode omits the `Authorization` header entirely and uses anonymous PolyBridge limits. If a configured key is rejected with `401` or `403`, the run fails clearly and does not retry anonymously. Live mode is still read-only and is not financial advice.
+
+### Optional Alpaca Paper Account Validation
+
+Paper account validation is available only by explicit command:
+
+```bash
+python3 agentic-finance/run_alpaca_paper_check.py --validate-paper-account
+```
+
+This command requires paper credentials and `APCA_API_BASE_URL=https://paper-api.alpaca.markets`. It fetches sanitized paper account metadata with `GET /v2/account` only, writes `outputs/alpaca-paper-account-check.json`, and does not submit orders. Use paper keys only; live-looking base URLs are blocked.
 
 ### Open In Colab
 
@@ -118,6 +138,7 @@ Use `PROMPT.md` as the prompt index. Copy-paste workflow prompts live in `prompt
 
 - `evidence_gate.py` is the Tier 1 runnable entry point.
 - `run_portfolio_risk_map.py` is the Tier 2 runnable entry point.
+- `run_alpaca_paper_check.py` runs preview-only mode or explicit Alpaca paper account validation.
 - `agentic_finance/` contains the offline workflow package and optional live PolyBridge adapter.
 - `prompts/` contains copy-paste prompts for Claude, Cursor, MCP-style agents, broker-neutral workflows, custom agents, and portfolio review agents.
 - `fixtures/` contains sanitized PolyBridge-shaped Search and Forecast fixtures plus the thesis.
@@ -134,6 +155,7 @@ Runtime outputs are written to `agentic-finance/outputs/` by default:
 - `decision-memo.md`
 - `audit-log.jsonl`
 - `alpaca-order-preview.json`, only when the evidence gate clears
+- `alpaca-paper-account-check.json`, only when explicit paper account validation is requested
 - portfolio risk map JSON from the portfolio tier
 - portfolio risk memo Markdown from the portfolio tier
 
@@ -233,9 +255,9 @@ Portfolio audit records include:
 
 Redaction covers authorization headers, bearer tokens, known PolyBridge and Alpaca env names, and obvious token-like strings.
 
-## Alpaca-Style Preview
+## Alpaca Paper Preview And Account Check
 
-`agentic_finance/brokers/alpaca.py` does not import the Alpaca SDK and does not define any submission function. It only creates a local `PaperOrderPreview` object when the evidence gate clears.
+`agentic_finance/brokers/alpaca.py` does not import the Alpaca SDK. It creates a local `PaperOrderPreview` object when the evidence gate clears and can optionally validate an Alpaca paper account with sanitized metadata only. It does not define any submission function.
 
 The preview always includes:
 
@@ -245,6 +267,20 @@ The preview always includes:
 - `submit_supported = false`
 - `allowed_use = "research_only_not_financial_advice"`
 
+Optional paper account validation supports standard Alpaca paper environment variables:
+
+- `APCA_API_KEY_ID`
+- `APCA_API_SECRET_KEY`
+- `APCA_API_BASE_URL=https://paper-api.alpaca.markets`
+
+It also supports cookbook aliases:
+
+- `ALPACA_API_KEY`
+- `ALPACA_SECRET_KEY`
+- `ALPACA_PAPER_TRADE=true`
+
+If `ALPACA_PAPER_TRADE` is set to anything other than `true`, validation is blocked. If the base URL looks live, validation is blocked. Account IDs, buying power, headers, keys, and raw account payloads are not written to committed assets.
+
 ## Run Tests
 
 ```bash
@@ -253,4 +289,4 @@ python3 -m unittest discover agentic-finance/tests
 
 ## Disclaimer
 
-This cookbook is research/demo software. It is not financial advice, does not place trades, does not support real-money execution, and does not connect to live broker APIs. See `DISCLAIMER.md`.
+This cookbook is research/demo software. It is not financial advice, does not place trades, does not support real-money execution, and does not submit orders. Optional Alpaca paper account validation is metadata-only and simulated-paper-mode only. See `DISCLAIMER.md`.

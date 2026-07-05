@@ -1,6 +1,6 @@
 # Agentic Finance Evidence Gate Schema Contract
 
-This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a broker integration. Tier 1 is the Evidence Gate. Tier 2 is the Portfolio Event-Risk Map.
+This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a broker execution integration. Tier 1 is the Evidence Gate. Tier 2 is the Portfolio Event-Risk Map.
 
 Every public object uses:
 
@@ -469,5 +469,72 @@ Example:
   "human_approval_required": true,
   "submit_supported": false,
   "allowed_use": "research_only_not_financial_advice"
+}
+```
+
+## AlpacaPaperConfig
+
+Purpose: environment-derived configuration for explicit Alpaca paper account validation.
+
+Required runtime values:
+
+- API key from `APCA_API_KEY_ID` or `ALPACA_API_KEY`
+- API secret from `APCA_API_SECRET_KEY` or `ALPACA_SECRET_KEY`
+- paper base URL, defaulting to `https://paper-api.alpaca.markets`
+
+Optional runtime value:
+
+- `ALPACA_PAPER_TRADE=true`
+
+Safety notes:
+
+- This object is not written to committed assets.
+- Missing credentials block validation.
+- `ALPACA_PAPER_TRADE=false` blocks validation.
+- Live-looking base URLs block validation.
+- Headers and credential values must be redacted from errors and logs.
+- Paper account validation fetches sanitized account metadata only and does not submit orders.
+
+## AlpacaPaperAccountCheck
+
+Purpose: sanitized metadata output from explicit Alpaca paper account validation.
+
+Required fields:
+
+- `schema_version`
+- `broker`
+- `mode`
+- `paper_endpoint_validated`
+- `account_status`
+- `trading_blocked`
+- `transfers_blocked`
+- `account_id`
+- `buying_power`
+- `allowed_use`
+- `no_order_submission`
+
+Safety notes:
+
+- `mode` must be `paper_account_validation`.
+- `paper_endpoint_validated` must be `true`.
+- `account_id` and `buying_power` must be redacted or sample placeholders.
+- Raw account payloads, headers, API keys, secrets, bearer tokens, and local absolute paths must not be persisted.
+- This object is a paper account metadata check only. It is not an order, not execution, and not financial advice.
+
+Example:
+
+```json
+{
+  "schema_version": "alpaca_paper_account_check.v1",
+  "broker": "alpaca",
+  "mode": "paper_account_validation",
+  "paper_endpoint_validated": true,
+  "account_status": "ACTIVE",
+  "trading_blocked": false,
+  "transfers_blocked": false,
+  "account_id": "sample_redacted",
+  "buying_power": "sample_redacted",
+  "allowed_use": "research_only_not_financial_advice",
+  "no_order_submission": true
 }
 ```

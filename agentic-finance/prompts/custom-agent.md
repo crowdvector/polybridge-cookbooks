@@ -12,6 +12,7 @@ Global constraints:
 - No broker API calls.
 - No order submission.
 - No real-money trading path.
+- SimBroker is the default local paper broker for replay demos; it needs no brokerage account, no API keys, and no network calls.
 - No portfolio-action instructions.
 - Memo and redacted audit output are mandatory.
 - Human approval is required before any broker-format paper-preview object can exist.
@@ -81,12 +82,11 @@ AuditRecord
 - guardrails
 
 Optional object:
-PaperOrderPreview
-- create only when GateDecision.decision is cleared_for_paper_preview;
-- human_approval_required must be true;
-- submit_supported must be false;
-- mode must be paper_preview_only;
-- must remain a local review artifact.
+SimBrokerPreview
+- create only when the multi-leg gate verdict is PROCEED;
+- human_confirmation_required must be true;
+- no_brokerage_account_required, no_api_keys_required, no_network_calls, and no_live_trading must be true;
+- simulated fills may be appended only to outputs/paper_portfolio.jsonl after human confirmation.
 
 Failure behavior:
 - If Search or Forecast fails, add failure quality flags and let the gate block.

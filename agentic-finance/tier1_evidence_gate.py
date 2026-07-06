@@ -40,7 +40,7 @@ def run_replay(
         replay_path=replay,
         base_dir=base,
         output_dir=output,
-        create_preview=True,
+        create_preview=False,
     )
 
 

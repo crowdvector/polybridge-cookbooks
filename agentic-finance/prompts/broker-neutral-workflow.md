@@ -10,6 +10,7 @@ Architecture:
 - The cookbook normalizes evidence into EvidencePackets.
 - The Evidence Gate produces deterministic GateDecisions.
 - The cookbook writes memo and audit artifacts.
+- The cookbook's default Tier 3 paper flow uses local SimBroker, which requires no brokerage account, no API keys, and no network calls.
 - The broker or wealth platform owns accounts, suitability, approvals, execution systems, and records of execution.
 - The human approval boundary remains outside PolyBridge and outside this cookbook.
 
@@ -18,6 +19,7 @@ Safety invariants:
 - The agent cannot execute from this workflow.
 - The agent must not call broker APIs.
 - The agent must not submit orders.
+- The agent may use SimBroker only as a local simulation after a cleared gate and human confirmation.
 - The agent must not create a real-money trading path.
 - The agent must not provide portfolio-action instructions.
 - Memo and redacted audit output are required.
@@ -33,7 +35,7 @@ Implementation contract:
 4. Normalize evidence into EvidencePacket objects.
 5. Apply deterministic gate policy.
 6. Write memo and audit artifacts.
-7. Stop at local review artifacts.
+7. Stop at local review artifacts or SimBroker-only simulated paper records.
 
 Platform boundary:
 - Account identifiers do not enter EvidencePacket.

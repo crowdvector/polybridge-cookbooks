@@ -27,8 +27,8 @@ class SampleAssetTests(unittest.TestCase):
         text = (BASE_DIR / "assets" / "sample-audit-log.jsonl").read_text(encoding="utf-8")
         record = json.loads(text)
 
-        self.assertFalse(record["output_paths"]["decision_memo"].startswith("/"))
-        self.assertFalse(record["output_paths"]["paper_preview"].startswith("/"))
+        for path in record["output_paths"].values():
+            self.assertFalse(path.startswith("/"))
         self.assertNotIn("/Users/", text)
         self.assertNotIn("/home/", text)
         self.assertNotRegex(text, r"[A-Za-z]:\\\\")

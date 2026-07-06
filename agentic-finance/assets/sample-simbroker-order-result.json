@@ -1,0 +1,12 @@
+{
+  "allowed_use": "research_only_not_financial_advice",
+  "broker": "sim",
+  "no_live_trading": true,
+  "notional": "1000.00",
+  "schema_version": "simulated_paper_fill.v1",
+  "side": "buy",
+  "simulated_order_id": "sim_sample_redacted",
+  "symbol": "SPY",
+  "thesis_id": "labor-resilience-jul2026",
+  "timestamp": "2026-07-04T12:00:00Z"
+}

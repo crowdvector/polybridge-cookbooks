@@ -1,6 +1,6 @@
 # Agentic Finance Evidence Gate Schema Contract
 
-This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a live or real-money broker execution integration. Tier 1 is the multi-leg Evidence Gate. Tier 2 is the Portfolio Event-Risk Map. Tier 3 is the optional Alpaca paper-preview and guarded paper-submission layer.
+This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a live or real-money broker execution integration. Tier 1 is the multi-leg Evidence Gate. Tier 2 is the Portfolio Event-Risk Map. Tier 3 is the SimBroker paper-trader layer by default, with optional guarded Alpaca paper mode only when `--broker alpaca` is selected.
 
 Every public object uses:
 
@@ -82,7 +82,7 @@ Safety notes:
 - Leg evidence is normalized into `EvidencePacket` objects before gate evaluation.
 - Raw provider responses do not enter gate logic.
 - The gate does not consume confidence scalars.
-- A `PROCEED` verdict permits only a local paper-preview object unless the separate guarded paper submission command is explicitly run.
+- A `PROCEED` verdict permits only a local paper-preview object. Tier 3 uses SimBroker by default; guarded Alpaca paper mode is optional only with `--broker alpaca`.
 
 ## FinancialActionIntent
 
@@ -363,7 +363,7 @@ Example:
   "timestamp": "2026-07-04T12:00:00Z",
   "scenario_id": "labor-resilience-jul2026",
   "memo_path": "outputs/decision-memo.md",
-  "paper_preview_path": "outputs/alpaca-order-preview.json",
+  "paper_preview_path": "outputs/paper-order-preview.json",
   "guardrails": {
     "offline_fixture_mode": true,
     "no_live_polybridge_calls": true,
@@ -499,9 +499,108 @@ Safety notes:
 - Evidence packets may include provenance hashes, but raw PolyBridge response bodies, headers, bearer tokens, API keys, account IDs, and order IDs must not be persisted.
 - Guardrails must show read-only portfolio workflow, local holdings input, no live broker calls, no broker submission, no real-money path, no raw PolyBridge response persistence, and redaction.
 
+## BrokerOrder
+
+Purpose: broker-neutral order intent produced only after the multi-leg gate says `PROCEED`.
+
+Required fields:
+
+- `schema_version`
+- `thesis_id`
+- `symbol`
+- `side`
+- `notional`
+- `allowed_use`
+
+Safety notes:
+
+- `BrokerOrder` is not financial advice.
+- In the default path it is consumed only by SimBroker.
+- Alpaca paper mode may consume it only after `--broker alpaca`, paper credentials, exact paper endpoint, and all confirmation checks.
+
+Example:
+
+```json
+{
+  "schema_version": "broker_order.v1",
+  "thesis_id": "labor-resilience-jul2026",
+  "symbol": "SPY",
+  "side": "buy",
+  "notional": "1000.00",
+  "allowed_use": "research_only_not_financial_advice"
+}
+```
+
+## SimBrokerPreview
+
+Purpose: local preview shown by the default account-free SimBroker path.
+
+Required fields:
+
+- `schema_version`
+- `broker`
+- `broker_name`
+- `mode`
+- `thesis_id`
+- `symbol`
+- `side`
+- `notional`
+- `human_confirmation_required`
+- `no_brokerage_account_required`
+- `no_api_keys_required`
+- `no_network_calls`
+- `no_live_trading`
+- `allowed_use`
+
+Example:
+
+```json
+{
+  "schema_version": "sim_broker_preview.v1",
+  "broker": "sim",
+  "broker_name": "SimBroker",
+  "mode": "simulated_paper_preview",
+  "thesis_id": "labor-resilience-jul2026",
+  "symbol": "SPY",
+  "side": "buy",
+  "notional": "1000.00",
+  "human_confirmation_required": true,
+  "no_brokerage_account_required": true,
+  "no_api_keys_required": true,
+  "no_network_calls": true,
+  "no_live_trading": true,
+  "allowed_use": "research_only_not_financial_advice"
+}
+```
+
+## SimulatedPaperFill
+
+Purpose: sanitized JSONL record appended by SimBroker after human confirmation.
+
+Runtime path: `outputs/paper_portfolio.jsonl`.
+
+Required fields:
+
+- `schema_version`
+- `thesis_id`
+- `symbol`
+- `side`
+- `notional`
+- `timestamp`
+- `broker`
+- `simulated_order_id`
+- `allowed_use`
+- `no_live_trading`
+
+Safety notes:
+
+- SimBroker requires no signup, no brokerage account, no API keys, and no network calls.
+- `simulated_order_id` is local demo provenance, not a broker order ID.
+- The record must not include account IDs, raw broker payloads, API keys, headers, or local absolute paths.
+
 ## PaperOrderPreview
 
-Purpose: local Alpaca-style paper-preview object created only when the gate clears.
+Purpose: optional Alpaca paper-preview object created only when `--broker alpaca` is selected and guarded paper submission is requested.
 
 Allowed use: `research_only_not_financial_advice`.
 

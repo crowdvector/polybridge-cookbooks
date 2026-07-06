@@ -13,7 +13,7 @@ from unittest.mock import patch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import tier1_evidence_gate as tier1
-import tier3_alpaca_paper_trader as tier3
+import tier3_paper_trader as tier3
 from agentic_finance.brokers.alpaca import PAPER_BASE_URL, AlpacaPaperConfig, AlpacaPaperError
 from agentic_finance.multileg import (
     classify_leg,
@@ -79,36 +79,35 @@ class LaborResilienceDemoTests(unittest.TestCase):
 
     def test_labor_resilience_paper_preview_is_spy_buy_1000(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir, patch.dict(os.environ, {}, clear=True):
-            result = tier3.run_preview_or_submit(
+            result = tier3.run_paper_trader(
                 thesis_id="labor-resilience-jul2026",
                 replay_path=REPLAY_PATH,
                 theses_path=THESES_PATH,
                 output_dir=Path(temp_dir),
-                submit=False,
+                confirmation="n",
                 base_dir=BASE_DIR,
             )
-            self.assertTrue(result["paths"]["paper_preview"].exists())
+            self.assertTrue(result["paths"]["paper_order_preview"].exists())
 
-        preview = result["paper_preview"]
-        self.assertEqual(preview.symbol, "SPY")
-        self.assertEqual(preview.side, "buy")
-        self.assertEqual(preview.notional_usd, 1000.0)
+        preview = result["broker_preview"]
+        self.assertEqual(preview["symbol"], "SPY")
+        self.assertEqual(preview["side"], "buy")
+        self.assertEqual(preview["notional"], "1000.00")
 
     def test_decline_examples_do_not_create_paper_preview(self) -> None:
         for thesis_id in ("oil-shock-jul2026", "rates-fall-2026"):
             with self.subTest(thesis_id=thesis_id), tempfile.TemporaryDirectory() as temp_dir:
-                result = tier3.run_preview_or_submit(
+                result = tier3.run_paper_trader(
                     thesis_id=thesis_id,
                     replay_path=REPLAY_PATH,
                     theses_path=THESES_PATH,
                     output_dir=Path(temp_dir),
-                    submit=False,
                     base_dir=BASE_DIR,
                 )
 
                 self.assertEqual(result["multi_leg_decision"].verdict, "DECLINE")
-                self.assertIsNone(result["paper_preview"])
-                self.assertNotIn("paper_preview", result["paths"])
+                self.assertEqual(result["broker_event"], "skipped_decline")
+                self.assertNotIn("paper_order_preview", result["paths"])
 
     def test_gate_ignores_confidence_scalar_if_present(self) -> None:
         replay = copy.deepcopy(self.replay)
@@ -174,27 +173,29 @@ class LaborResilienceDemoTests(unittest.TestCase):
 
     def test_tier3_preview_only_runs_without_credentials_or_network(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir, patch.dict(os.environ, {}, clear=True):
-            result = tier3.run_preview_or_submit(
+            result = tier3.run_paper_trader(
                 thesis_id="labor-resilience-jul2026",
                 replay_path=REPLAY_PATH,
                 theses_path=THESES_PATH,
                 output_dir=Path(temp_dir),
-                submit=False,
+                confirmation="n",
                 base_dir=BASE_DIR,
             )
 
-        self.assertEqual(result["mode"], "preview_only")
-        self.assertEqual(result["paper_preview"].symbol, "SPY")
+        self.assertEqual(result["mode"], "sim_broker")
+        self.assertEqual(result["broker"], "sim")
+        self.assertEqual(result["broker_preview"]["symbol"], "SPY")
 
     def test_guarded_submission_still_requires_confirmations_before_request(self) -> None:
         session = FakeSession()
         with tempfile.TemporaryDirectory() as temp_dir, self.assertRaises(AlpacaPaperError):
-            tier3.run_preview_or_submit(
+            tier3.run_paper_trader(
                 thesis_id="labor-resilience-jul2026",
                 replay_path=REPLAY_PATH,
                 theses_path=THESES_PATH,
                 output_dir=Path(temp_dir),
-                submit=True,
+                broker_name="alpaca",
+                submit_paper_order=True,
                 config=AlpacaPaperConfig(
                     api_key="paper_key",
                     api_secret="paper_secret",
@@ -213,12 +214,13 @@ class LaborResilienceDemoTests(unittest.TestCase):
     def test_guarded_submission_blocks_live_endpoint_before_request(self) -> None:
         session = FakeSession()
         with tempfile.TemporaryDirectory() as temp_dir, self.assertRaises(AlpacaPaperError):
-            tier3.run_preview_or_submit(
+            tier3.run_paper_trader(
                 thesis_id="labor-resilience-jul2026",
                 replay_path=REPLAY_PATH,
                 theses_path=THESES_PATH,
                 output_dir=Path(temp_dir),
-                submit=True,
+                broker_name="alpaca",
+                submit_paper_order=True,
                 config=AlpacaPaperConfig(
                     api_key="paper_key",
                     api_secret="paper_secret",

@@ -19,3 +19,5 @@ agentic-finance/runs/
 *.jsonl
 !agentic-finance/assets/sample-audit-log.jsonl
 !agentic-finance/assets/sample-labor-resilience-audit-log.jsonl
+!agentic-finance/assets/sample-decisions.jsonl
+!agentic-finance/assets/sample-paper-portfolio.jsonl

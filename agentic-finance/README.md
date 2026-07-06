@@ -2,7 +2,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb)
 
-> Safety banner: this cookbook is research/demo software, not financial advice. Offline mode is the default. Optional live PolyBridge evidence mode is read-only. Optional Alpaca paper account validation is explicit, paper-only, and metadata-only. Guarded paper submission is off by default, simulated only, and requires explicit human confirmation. No live trades are placed.
+> Safety banner: this cookbook is research/demo software, not financial advice. Offline replay mode is the default. The end-to-end demo uses SimBroker, requires no brokerage account, no API keys, and no broker network dependency. Optional live PolyBridge evidence mode is read-only. Optional Alpaca paper mode is available only with `--broker alpaca`, remains paper-only, and keeps all guarded submission checks. No live trades are placed.
 
 ## Quick Links
 
@@ -14,7 +14,7 @@
 
 The most important agentic finance behavior is not trading. It is knowing when not to trade.
 
-This cookbook has three research/demo tiers for financial-agent guardrails. PolyBridge is the probability-and-evidence layer before an agent acts. Alpaca appears only as a simulated paper-trading adapter after the gate clears and explicit paper safeguards are met.
+This cookbook has three research/demo tiers for financial-agent guardrails. PolyBridge is the probability-and-evidence layer before an agent acts. SimBroker is the default simulated paper broker, so the full replay demo runs without a brokerage account, API keys, or broker network calls. Alpaca paper is an optional reference real-broker adapter selected only with `--broker alpaca`.
 
 Tier 1 is the multi-leg Evidence Gate:
 
@@ -25,7 +25,7 @@ financial thesis
   -> deterministic multi-leg Evidence Gate
   -> decision memo
   -> redacted JSONL audit log
-  -> optional Alpaca-style paper order preview object only when the gate says PROCEED
+  -> optional broker-neutral paper preview object only when the gate says PROCEED
 ```
 
 Tier 2 is the Portfolio Event-Risk Map:
@@ -43,11 +43,21 @@ holdings CSV
 
 The demo is designed for teams evaluating agentic finance guardrails. It uses fake, sanitized fixtures by default to model how evidence can be normalized before any broker-format object is created. Optional live PolyBridge mode fetches Search and Forecast evidence, remains read-only, and still writes only local review artifacts. The portfolio tier is a read-only risk memo workflow, not a recommendation or trade/action workflow.
 
-The main end-to-end demo is `labor-resilience-jul2026`: a three-leg labor-resilience thesis that produces a `PROCEED` verdict on the recorded replay and prepares an SPY long paper preview for `$1,000.00` notional. The decline examples are `oil-shock-jul2026` and `rates-fall-2026`; both write memos and audits without preparing a paper preview.
+Tier 3 is the paper-trader demo:
 
-PolyBridge supplies probabilities and evidence only. Thresholds are user configuration, not model output. Search relevance is metadata only; Forecast is the probability surface. The gate can say no.
+```text
+PROCEED gate result
+  -> SimBroker paper preview
+  -> interactive human confirmation
+  -> simulated fill written to outputs/paper_portfolio.jsonl
+  -> redacted JSONL audit event
+```
 
-The cookbook also includes an optional Alpaca paper adapter. Preview-only mode requires no credentials and does not call Alpaca. Paper account validation must be requested explicitly, requires paper credentials, validates the paper endpoint, fetches only sanitized account metadata, and does not submit orders. Guarded paper submission must be requested separately, requires all confirmation flags, enforces the paper endpoint, symbol allowlist, and demo notional cap, and remains simulated paper trading only.
+The main end-to-end demo is `labor-resilience-jul2026`: a three-leg labor-resilience thesis that produces a `PROCEED` verdict on the recorded replay and prepares an SPY simulated paper trade for `$1,000.00` notional through SimBroker. The decline examples are `oil-shock-jul2026` and `rates-fall-2026`; both write memos and audits without calling a broker step.
+
+PolyBridge supplies probabilities and evidence only. PolyBridge does not trade, move money, or give financial advice. Thresholds are user configuration, not model output. Search relevance is metadata only; Forecast is the probability surface. The gate can say no.
+
+The cookbook also includes an optional Alpaca paper adapter. Alpaca is not required for the demo. It is a reference real-broker adapter selected only with `--broker alpaca`. Paper account validation must be requested explicitly, requires paper credentials, validates the paper endpoint, fetches only sanitized account metadata, and does not submit orders. Guarded paper submission must be requested separately, requires all confirmation flags, enforces the paper endpoint, symbol allowlist, and demo notional cap, and remains paper trading only.
 
 ## What This Is Not
 
@@ -55,7 +65,7 @@ The cookbook also includes an optional Alpaca paper adapter. Preview-only mode r
 - Not an investment recommendation system.
 - Not a trading bot.
 - Not connected to live PolyBridge APIs unless `--live-polybridge` is explicitly selected.
-- Not connected to Alpaca unless an explicit paper account validation or guarded paper submission command is run.
+- Not connected to Alpaca unless `--broker alpaca` or explicit paper account validation is selected.
 - Not capable of live order submission.
 - Not capable of default or accidental order submission.
 - Not a real-money workflow.
@@ -85,7 +95,7 @@ From the repository root:
 python agentic-finance/tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 ```
 
-Expected recorded replay result: `PROCEED`, weighted support `3.0`, no full-weight contradictions, and a local SPY paper preview.
+Expected recorded replay result: `PROCEED`, weighted support `3.0`, and no full-weight contradictions. Tier 1 does not call a broker.
 
 Decline examples:
 
@@ -108,13 +118,29 @@ From the cookbook folder:
 python3 run_portfolio_risk_map.py --offline --holdings examples/sample_holdings.csv
 ```
 
-### Run Alpaca Paper Preview Only
+### Run SimBroker Paper Trader
 
-This runs the labor-resilience replay and writes a local Alpaca-style SPY paper preview if the gate clears. It requires no Alpaca credentials and does not call Alpaca:
+This runs the labor-resilience replay end to end with SimBroker. It requires no brokerage account, no API keys, and no broker network calls. If the gate says `PROCEED`, it prints a paper-order preview and asks for interactive confirmation:
 
 ```bash
-python agentic-finance/tier3_alpaca_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json --preview-only
+python tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay examples/recorded_run_2026-07-04.json
 ```
+
+Expected preview:
+
+```text
+VERDICT: PROCEED
+
+PAPER ORDER PREVIEW
+BROKER: SimBroker
+SYMBOL: SPY
+SIDE: BUY
+NOTIONAL: $1,000
+
+Confirm simulated paper trade? y/N
+```
+
+If the user enters `y`, the runner appends a simulated fill to `outputs/paper_portfolio.jsonl` and appends an audit record to `outputs/decisions.jsonl`. Any other input records `human_declined` and writes no simulated fill.
 
 ### Optional Live PolyBridge Mode
 
@@ -136,9 +162,18 @@ python3 agentic-finance/run_alpaca_paper_check.py --validate-paper-account
 
 This command requires paper credentials and `APCA_API_BASE_URL=https://paper-api.alpaca.markets`. It fetches sanitized paper account metadata with `GET /v2/account` only, writes `outputs/alpaca-paper-account-check.json`, and does not submit orders. Use paper keys only; live-looking base URLs are blocked.
 
-### Optional Guarded Alpaca Paper Submission
+### Optional Alpaca Paper Adapter
 
-This is not part of the first quickstart. Do not run it unless you understand Alpaca paper trading, have explicit human approval, and are using paper credentials only.
+Alpaca is optional only. It is not required for the main demo and is selected with `--broker alpaca`:
+
+```bash
+python tier3_paper_trader.py \
+  --thesis labor-resilience-jul2026 \
+  --replay examples/recorded_run_2026-07-04.json \
+  --broker alpaca
+```
+
+This path requires paper credentials and all paper-only protections before any paper submission can occur. Do not run it unless you understand Alpaca paper trading, have explicit human approval, and are using paper credentials only.
 
 Full Alpaca paper-trading run:
 
@@ -152,9 +187,10 @@ export ALPACA_PAPER_TRADE="true"
 Guarded paper submission is off by default and requires every confirmation flag:
 
 ```bash
-python agentic-finance/tier3_alpaca_paper_trader.py \
+python agentic-finance/tier3_paper_trader.py \
   --thesis labor-resilience-jul2026 \
   --replay agentic-finance/examples/recorded_run_2026-07-04.json \
+  --broker alpaca \
   --submit-paper-order \
   --confirm-paper-trading \
   --confirm-not-financial-advice \
@@ -180,7 +216,8 @@ Use `PROMPT.md` as the prompt index. Copy-paste workflow prompts live in `prompt
 ## Files
 
 - `tier1_evidence_gate.py` is the public Tier 1 multi-leg replay entry point.
-- `tier3_alpaca_paper_trader.py` is the public Tier 3 paper-preview and guarded paper-submission entry point.
+- `tier3_paper_trader.py` is the public Tier 3 paper-trader entry point. It uses SimBroker by default and supports optional `--broker alpaca`.
+- `tier3_alpaca_paper_trader.py` remains only as a legacy compatibility entry point.
 - `evidence_gate.py` is the legacy single-leg Tier 1 runnable entry point kept for compatibility.
 - `run_portfolio_risk_map.py` is the Tier 2 runnable entry point.
 - `run_alpaca_paper_check.py` runs preview-only mode, explicit Alpaca paper account validation, or explicit guarded Alpaca paper submission.
@@ -203,7 +240,10 @@ Runtime outputs are written to `agentic-finance/outputs/` by default:
 - `decision-memo.md`
 - `decisions.jsonl`
 - `audit-log.jsonl`
-- `alpaca-order-preview.json`, only when the evidence gate clears
+- `paper-order-preview.json`, only when the multi-leg gate clears in the SimBroker path
+- `paper_portfolio.jsonl`, only after human confirmation records a SimBroker simulated fill
+- `simbroker-order-result.json`, only after a SimBroker simulated fill
+- `alpaca-order-preview.json`, only when optional `--broker alpaca` guarded submission is selected
 - `alpaca-paper-account-check.json`, only when explicit paper account validation is requested
 - `alpaca-paper-submission-result.json`, only when explicit guarded paper submission is requested and all guardrails pass
 - portfolio risk map JSON from the portfolio tier

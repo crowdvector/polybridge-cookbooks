@@ -11,6 +11,7 @@ Scope:
 - Do not place trades.
 - Do not call broker APIs.
 - Do not submit orders.
+- SimBroker is the default local paper broker for replay demos; it needs no brokerage account, no API keys, and no network calls.
 - Do not create a real-money trading path.
 - Do not provide portfolio-action instructions.
 - Preserve EvidencePacket as the adapter boundary between PolyBridge evidence and gate logic.
@@ -32,8 +33,9 @@ Workflow:
 7. Apply the deterministic Evidence Gate to the EvidencePacket.
 8. Produce a DecisionMemo with the thesis, evidence summary, gate result, reasons, source markets, and safety language.
 9. Produce a redacted AuditRecord as JSONL.
-10. Create a local PaperOrderPreview only if the gate returns cleared_for_paper_preview. The preview must require human approval and submit_supported=false.
-11. Stop before any broker connection, order placement, or real-money workflow.
+10. Create a local SimBroker paper preview only if the gate returns `PROCEED`.
+11. Ask for human confirmation before recording any simulated fill to `outputs/paper_portfolio.jsonl`.
+12. Stop before any real broker connection, live order placement, or real-money workflow.
 
 Required outputs:
 - FinancialActionIntent
@@ -41,7 +43,7 @@ Required outputs:
 - GateDecision
 - DecisionMemo
 - AuditRecord
-- optional PaperOrderPreview only after a cleared gate result and human approval boundary
+- optional SimBroker preview and simulated fill only after a cleared gate result and human confirmation boundary
 
 If evidence is missing, weak, fetch-failed, proxy-only when direct evidence is required, or outside the configured gate policy, stop at memo and audit outputs.
 ```

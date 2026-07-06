@@ -15,6 +15,7 @@ Safety invariants:
 - Do not submit live orders.
 - Do not submit paper orders unless all guarded paper submission confirmations and checks pass.
 - Do not create a real-money trading path.
+- Use SimBroker as the default Tier 3 paper broker. It needs no brokerage account, no API keys, and no network calls.
 - Do not provide portfolio-action instructions.
 - Preserve EvidencePacket as the adapter boundary.
 - Search relevance is not probability.
@@ -30,7 +31,7 @@ PYENV_VERSION=3.13.0 python agentic-finance/tier1_evidence_gate.py --thesis labo
 PYENV_VERSION=3.13.0 python agentic-finance/tier1_evidence_gate.py --thesis oil-shock-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 PYENV_VERSION=3.13.0 python agentic-finance/tier1_evidence_gate.py --thesis rates-fall-2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 PYENV_VERSION=3.13.0 python agentic-finance/run_portfolio_risk_map.py --offline --holdings agentic-finance/examples/sample_holdings.csv
-PYENV_VERSION=3.13.0 python agentic-finance/tier3_alpaca_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json --preview-only
+printf "y\n" | PYENV_VERSION=3.13.0 python agentic-finance/tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 
 Inspect:
 - agentic-finance/outputs/evidence-packet.json
@@ -51,7 +52,7 @@ Optional Alpaca paper validation:
 
 Optional guarded Alpaca paper submission:
 - Do not run this in quickstart checks or tests.
-- Run PYENV_VERSION=3.13.0 python agentic-finance/tier3_alpaca_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json --submit-paper-order only when the user explicitly asks and provides all confirmation flags.
+- Run PYENV_VERSION=3.13.0 python agentic-finance/tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json --broker alpaca --submit-paper-order only when the user explicitly asks and provides all confirmation flags.
 - Require --confirm-paper-trading, --confirm-not-financial-advice, and --confirm-human-approval.
 - Use paper credentials only, require ALPACA_PAPER_TRADE=true, and require APCA_API_BASE_URL=https://paper-api.alpaca.markets.
 - Confirm the Evidence Gate cleared before paper submission.

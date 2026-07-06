@@ -4,14 +4,14 @@ SimBroker is a deliberately naive pretend broker for the PolyBridge agentic-fina
 
 Use it alongside the PolyBridge read-only evidence tools when an agent needs a local paper-trade target after evidence has been checked.
 
-Current version: `0.1.2`.
+Current version: `0.2.0`.
 
 ## Install
 
 Download the released bundle:
 
 ```text
-https://github.com/crowdvector/polybridge-cookbooks/releases/download/simbroker-mcpb-v0.1.2/simbroker-demo-paper-broker.mcpb
+https://github.com/crowdvector/polybridge-cookbooks/releases/download/simbroker-mcpb-v0.2.0/simbroker-demo-paper-broker.mcpb
 ```
 
 Or build it locally:
@@ -39,6 +39,18 @@ Each account has:
 - `account.json`
 
 The default account always exists. State is derived by replaying JSONL records. Starting cash is `100000` simulated dollars.
+
+## Starter Position
+
+Every account begins with a simulated $1,000 SPY position tagged:
+
+```text
+starter position: labor-resilience thesis (see cookbook)
+```
+
+This gives the cookbook demo a position to add to, exit, or hold. Resetting an account restores the starter position. This is a simulated record only; there is no market connection, no real trading, and no financial advice.
+
+After seeding, a fresh account shows `$99,000.00` cash and a `SPY $1,000.00` cost-basis position from the `sim_starter` fill.
 
 ## Tools
 

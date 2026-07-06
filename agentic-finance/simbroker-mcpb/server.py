@@ -280,16 +280,109 @@ TOOLS = {
     "reset_account": reset_account,
 }
 
+ACCOUNT_PROPERTY = {
+    "type": "string",
+    "description": "Account name (lowercase letters, digits, hyphens). Defaults to `default`.",
+}
+
+TOOL_SPECS: dict[str, dict[str, Any]] = {
+    "create_account": {
+        "description": "Create a local simulated paper account.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "name": {"type": "string", "description": "Account name (lowercase letters, digits, hyphens)."},
+                "max_order_usd": {"type": "number", "description": "Optional per-order simulated notional cap."},
+            },
+            "required": ["name"],
+        },
+    },
+    "list_accounts": {
+        "description": "List local simulated paper accounts.",
+        "inputSchema": {"type": "object", "properties": {}, "required": []},
+    },
+    "get_account": {
+        "description": "Show simulated cash and cost-basis positions for an account.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"account": ACCOUNT_PROPERTY},
+            "required": [],
+        },
+    },
+    "preview_order": {
+        "description": "Preview a simulated notional paper order before placement.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "symbol": {"type": "string", "description": "Uppercase ticker symbol, at most 5 characters."},
+                "side": {"type": "string", "enum": ["buy", "sell"], "description": "Order side."},
+                "notional_usd": {"type": "number", "description": "Simulated notional between 1 and 100000."},
+                "account": ACCOUNT_PROPERTY,
+                "reason": {"type": "string", "description": "Optional note recorded with the preview."},
+            },
+            "required": ["symbol", "side", "notional_usd"],
+        },
+    },
+    "place_simulated_order": {
+        "description": "Record a simulated fill only after a fresh preview and explicit user approval.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "preview_id": {"type": "string", "description": "Preview ID returned by preview_order."},
+                "user_approved": {"type": "boolean", "description": "Must be true; set only after the user explicitly approves."},
+            },
+            "required": ["preview_id", "user_approved"],
+        },
+    },
+    "get_portfolio": {
+        "description": "Show simulated fills and cost-basis positions.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"account": ACCOUNT_PROPERTY},
+            "required": [],
+        },
+    },
+    "reset_account": {
+        "description": "Archive and reset a local simulated paper account.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {"account": ACCOUNT_PROPERTY},
+            "required": [],
+        },
+    },
+}
+
+PROTOCOL_VERSION = "2024-11-05"
+SERVER_VERSION = "0.1.1"
+
 
 def tool_list() -> list[dict[str, Any]]:
-    return [{"name": name, "description": name.replace("_", " ")} for name in TOOLS]
+    return [
+        {"name": name, "description": spec["description"], "inputSchema": spec["inputSchema"]}
+        for name, spec in TOOL_SPECS.items()
+    ]
 
 
-def handle_request(request: dict[str, Any]) -> dict[str, Any]:
+def tool_call_result(payload: dict[str, Any]) -> dict[str, Any]:
+    structured = {key: value for key, value in payload.items() if key != "message"}
+    return {
+        "content": [{"type": "text", "text": payload["message"]}],
+        "structuredContent": structured,
+        "isError": not structured.get("ok", True),
+    }
+
+
+def handle_request(request: dict[str, Any]) -> dict[str, Any] | None:
     method = request.get("method")
-    request_id = request.get("id")
+    if "id" not in request:
+        return None
+    request_id = request["id"]
     if method == "initialize":
-        result = {"serverInfo": {"name": "SimBroker", "version": "0.1.0"}}
+        result = {
+            "protocolVersion": PROTOCOL_VERSION,
+            "capabilities": {"tools": {}},
+            "serverInfo": {"name": "SimBroker", "version": SERVER_VERSION},
+        }
     elif method == "tools/list":
         result = {"tools": tool_list()}
     elif method == "tools/call":
@@ -297,14 +390,18 @@ def handle_request(request: dict[str, Any]) -> dict[str, Any]:
         name = params.get("name")
         arguments = params.get("arguments") or {}
         if name not in TOOLS:
-            result = error_response("Unknown tool.")
+            result = tool_call_result(error_response("Unknown tool."))
         else:
             try:
-                result = TOOLS[name](**arguments)
+                result = tool_call_result(TOOLS[name](**arguments))
             except Exception as exc:
-                result = error_response(str(exc))
+                result = tool_call_result(error_response(str(exc)))
     else:
-        result = error_response("Unsupported method.")
+        return {
+            "jsonrpc": "2.0",
+            "id": request_id,
+            "error": {"code": -32601, "message": "Method not found."},
+        }
     return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
 
@@ -314,9 +411,14 @@ def main() -> None:
         if not line.strip():
             continue
         try:
-            response_payload = handle_request(json.loads(line))
-        except Exception as exc:
-            response_payload = {"jsonrpc": "2.0", "id": None, "result": error_response(str(exc))}
+            request = json.loads(line)
+        except Exception:
+            continue
+        if not isinstance(request, dict):
+            continue
+        response_payload = handle_request(request)
+        if response_payload is None:
+            continue
         sys.stdout.write(json.dumps(response_payload) + "\n")
         sys.stdout.flush()
 

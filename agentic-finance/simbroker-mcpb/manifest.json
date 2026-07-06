@@ -2,19 +2,51 @@
   "dxt_version": "0.1",
   "name": "simbroker-demo-paper-broker",
   "display_name": "SimBroker (demo paper broker)",
-  "version": "0.1.0",
-  "description": "A pretend broker for the PolyBridge agentic-finance cookbook. Records simulated fills to a local file. No real trading, no market connection, no financial advice.",
+  "version": "0.1.1",
+  "description": "A pretend broker for the PolyBridge Market Foresight cookbook. Records simulated fills to a local file. No real trading, no market connection, no financial advice.",
+  "author": {
+    "name": "PolyBridge",
+    "url": "https://www.polybridge.ai"
+  },
   "server": {
     "type": "python",
-    "entry_point": "server.py"
+    "entry_point": "server.py",
+    "mcp_config": {
+      "command": "python3",
+      "args": [
+        "${__dirname}/server.py"
+      ],
+      "env": {}
+    }
   },
   "tools": [
-    "create_account",
-    "list_accounts",
-    "get_account",
-    "preview_order",
-    "place_simulated_order",
-    "get_portfolio",
-    "reset_account"
+    {
+      "name": "create_account",
+      "description": "Create a local simulated paper account."
+    },
+    {
+      "name": "list_accounts",
+      "description": "List local simulated paper accounts."
+    },
+    {
+      "name": "get_account",
+      "description": "Show simulated cash and cost-basis positions for an account."
+    },
+    {
+      "name": "preview_order",
+      "description": "Preview a simulated notional paper order before placement."
+    },
+    {
+      "name": "place_simulated_order",
+      "description": "Record a simulated fill only after a fresh preview and explicit user approval."
+    },
+    {
+      "name": "get_portfolio",
+      "description": "Show simulated fills and cost-basis positions."
+    },
+    {
+      "name": "reset_account",
+      "description": "Archive and reset a local simulated paper account."
+    }
   ]
 }

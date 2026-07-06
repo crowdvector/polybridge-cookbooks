@@ -2,7 +2,7 @@
   "dxt_version": "0.1",
   "name": "simbroker-demo-paper-broker",
   "display_name": "SimBroker (demo paper broker)",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A pretend broker for the PolyBridge Market Foresight cookbook. Records simulated fills to a local file. No real trading, no market connection, no financial advice.",
   "author": {
     "name": "PolyBridge",

@@ -4,14 +4,14 @@ SimBroker is a deliberately naive pretend broker for the PolyBridge agentic-fina
 
 Use it alongside the PolyBridge read-only evidence tools when an agent needs a local paper-trade target after evidence has been checked.
 
-Current version: `0.1.1`.
+Current version: `0.1.2`.
 
 ## Install
 
 Download the released bundle:
 
 ```text
-https://github.com/crowdvector/polybridge-cookbooks/releases/download/simbroker-mcpb-v0.1.1/simbroker-demo-paper-broker.mcpb
+https://github.com/crowdvector/polybridge-cookbooks/releases/download/simbroker-mcpb-v0.1.2/simbroker-demo-paper-broker.mcpb
 ```
 
 Or build it locally:

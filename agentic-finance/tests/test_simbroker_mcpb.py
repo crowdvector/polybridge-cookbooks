@@ -155,7 +155,7 @@ class SimBrokerMcpbTests(unittest.TestCase):
     def test_manifest_shape_for_claude_desktop(self) -> None:
         manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
-        self.assertEqual(manifest["version"], "0.1.1")
+        self.assertEqual(manifest["version"], "0.1.2")
         self.assertIn("author", manifest)
         self.assertIn("name", manifest["author"])
         self.assertIn("server", manifest)
@@ -176,7 +176,7 @@ class SimBrokerMcpbTests(unittest.TestCase):
         self.assertEqual(result["protocolVersion"], "2024-11-05")
         self.assertIn("tools", result["capabilities"])
         self.assertEqual(result["serverInfo"]["name"], "SimBroker")
-        self.assertEqual(result["serverInfo"]["version"], "0.1.1")
+        self.assertEqual(result["serverInfo"]["version"], "0.1.2")
 
     def test_tools_list_returns_tool_objects_with_input_schema(self) -> None:
         reply = self.server.handle_request({"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})
@@ -224,7 +224,7 @@ class SimBrokerMcpbTests(unittest.TestCase):
 
         result = reply["result"]
         self.assertTrue(result["isError"])
-        self.assertIn("Preview is required before placement.", result["content"][0]["text"])
+        self.assertIn("Call preview_order first", result["content"][0]["text"])
         self.assertTrue(result["content"][0]["text"].endswith(CLOSING_LINE))
 
     def test_unknown_method_returns_jsonrpc_error(self) -> None:
@@ -232,6 +232,146 @@ class SimBrokerMcpbTests(unittest.TestCase):
 
         self.assertEqual(reply["error"]["code"], -32601)
         self.assertNotIn("result", reply)
+
+
+class SimBrokerVisibleTextTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.patch_env = patch.dict(os.environ, {"SIMBROKER_DATA_DIR": self.temp.name}, clear=True)
+        self.patch_env.start()
+        self.server = load_server()
+
+    def tearDown(self) -> None:
+        self.patch_env.stop()
+        self.temp.cleanup()
+
+    def call_text(self, name: str, arguments: dict | None = None) -> str:
+        reply = self.server.handle_request(
+            {"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": name, "arguments": arguments or {}}}
+        )
+        text = reply["result"]["content"][0]["text"]
+        self.assertTrue(text.endswith(CLOSING_LINE))
+        return text
+
+    def buy_spy(self, notional: float = 1000) -> str:
+        preview = self.server.preview_order("SPY", "buy", notional)
+        return self.server.place_simulated_order(preview["preview_id"], True)["message"]
+
+    def test_get_account_fresh_text(self) -> None:
+        text = self.call_text("get_account")
+
+        self.assertIn("SIMBROKER ACCOUNT", text)
+        self.assertIn("Cash:", text)
+        self.assertIn("$100,000.00", text)
+        self.assertIn("Positions: none", text)
+
+    def test_get_account_after_fill_text(self) -> None:
+        self.buy_spy()
+        text = self.call_text("get_account")
+
+        self.assertIn("Cash:      $99,000.00", text)
+        self.assertIn("Positions: SPY $1,000.00 (1 fill)", text)
+
+    def test_create_account_text(self) -> None:
+        text = self.call_text("create_account", {"name": "john", "max_order_usd": 5000})
+
+        self.assertIn("SIMBROKER ACCOUNT CREATED  john", text)
+        self.assertIn("Cash:  $100,000.00", text)
+        self.assertIn("Limit: $5,000.00 per order", text)
+
+    def test_list_accounts_text(self) -> None:
+        self.call_text("create_account", {"name": "john", "max_order_usd": 5000})
+        text = self.call_text("list_accounts")
+
+        self.assertIn("SIMBROKER ACCOUNTS", text)
+        self.assertIn("default", text)
+        self.assertIn("cash", text)
+        self.assertIn("fills", text)
+        self.assertIn("limit $5,000/order", text)
+        lines = text.splitlines()
+        self.assertLess(lines.index(next(l for l in lines if l.startswith("default"))),
+                        lines.index(next(l for l in lines if l.startswith("john"))))
+
+    def test_preview_order_text(self) -> None:
+        text = self.call_text(
+            "preview_order",
+            {"symbol": "SPY", "side": "buy", "notional_usd": 1000, "reason": "labor-resilience thesis, 3 of 3 passed"},
+        )
+
+        self.assertIn("SIMULATED ORDER PREVIEW", text)
+        self.assertIn("SYMBOL:   SPY", text)
+        self.assertIn("SIDE:     BUY", text)
+        self.assertIn("NOTIONAL: $1,000.00", text)
+        self.assertIn("REASON:   labor-resilience thesis, 3 of 3 passed", text)
+        self.assertIn("ACCOUNT:  default", text)
+        self.assertIn("Show this to the user", text)
+
+    def test_preview_order_text_omits_reason_when_missing(self) -> None:
+        text = self.call_text("preview_order", {"symbol": "SPY", "side": "buy", "notional_usd": 1000})
+
+        self.assertNotIn("REASON:", text)
+
+    def test_place_simulated_order_text(self) -> None:
+        preview = self.server.preview_order("SPY", "buy", 1000)
+        text = self.call_text(
+            "place_simulated_order", {"preview_id": preview["preview_id"], "user_approved": True}
+        )
+
+        self.assertIn("SIMULATED FILL", text)
+        self.assertIn("SYMBOL:   SPY", text)
+        self.assertIn("SIDE:     BUY", text)
+        self.assertIn("NOTIONAL: $1,000.00", text)
+        self.assertIn("CASH:", text)
+        self.assertIn("$99,000.00 remaining", text)
+        self.assertIn("Recorded:", text)
+        self.assertIn("paper_portfolio.jsonl", text)
+
+    def test_get_portfolio_empty_text(self) -> None:
+        text = self.call_text("get_portfolio")
+
+        self.assertIn("SIMBROKER PORTFOLIO", text)
+        self.assertIn("No fills yet.", text)
+
+    def test_get_portfolio_after_fill_text(self) -> None:
+        self.buy_spy()
+        text = self.call_text("get_portfolio")
+
+        self.assertIn("SIMBROKER PORTFOLIO", text)
+        self.assertIn("SPY", text)
+        self.assertIn("BUY", text)
+        self.assertIn("$1,000.00", text)
+        self.assertIn("Showing 1 of 1 fills", text)
+
+    def test_reset_account_text_archived_and_not(self) -> None:
+        self.buy_spy()
+        archived_text = self.call_text("reset_account")
+        empty_text = self.call_text("reset_account")
+
+        self.assertIn("Simulated account reset. Cash: $100,000.00.", archived_text)
+        self.assertIn("Previous records archived as", archived_text)
+        self.assertIn("paper_portfolio.", archived_text)
+        self.assertIn("Simulated account reset. Cash: $100,000.00.", empty_text)
+        self.assertIn("No previous records to archive.", empty_text)
+
+    def test_refusal_texts_are_explicit(self) -> None:
+        no_preview = self.call_text("place_simulated_order", {"preview_id": "prev_missing", "user_approved": True})
+        self.assertIn("Call preview_order first", no_preview)
+
+        preview = self.server.preview_order("SPY", "buy", 1000)
+        denied = self.call_text("place_simulated_order", {"preview_id": preview["preview_id"], "user_approved": False})
+        self.assertIn("user_approved was not true", denied)
+
+        self.buy_spy()
+        insufficient = self.call_text("preview_order", {"symbol": "SPY", "side": "buy", "notional_usd": 100000.0})
+        self.assertIn("Insufficient simulated cash", insufficient)
+
+        self.call_text("create_account", {"name": "small", "max_order_usd": 50})
+        capped = self.call_text("preview_order", {"symbol": "SPY", "side": "buy", "notional_usd": 75, "account": "small"})
+        self.assertIn("per-order limit", capped)
+
+        self.call_text("create_account", {"name": "empty"})
+        no_position = self.call_text("preview_order", {"symbol": "SPY", "side": "sell", "notional_usd": 100, "account": "empty"})
+        self.assertIn("No SPY position to sell", no_position)
 
 
 if __name__ == "__main__":

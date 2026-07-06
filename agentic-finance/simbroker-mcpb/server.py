@@ -22,6 +22,17 @@ def now_ts() -> str:
     return time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
 
 
+def usd(value: Any) -> str:
+    return f"${float(value):,.2f}"
+
+
+def display_path(path: Path) -> str:
+    try:
+        return "~/" + path.relative_to(Path.home()).as_posix()
+    except ValueError:
+        return str(path)
+
+
 def data_dir() -> Path:
     return Path(os.environ.get("SIMBROKER_DATA_DIR", "~/.simbroker")).expanduser()
 
@@ -129,12 +140,23 @@ def validate_order(symbol: str, side: str, notional_usd: Any, account: str) -> t
     state = replay_state(account)
     max_order = state.get("max_order_usd")
     if max_order is not None and notional > float(max_order):
-        raise ValueError("Notional exceeds this account's max_order_usd.")
+        raise ValueError(f"Not placed. Order {usd(notional)} exceeds this account's {usd(max_order)} per-order limit.")
     if normalized_side == "buy" and notional > float(state["cash"]):
-        raise ValueError("Buy notional exceeds available simulated cash.")
+        raise ValueError(f"Not placed. Insufficient simulated cash. Cash: {usd(state['cash'])}, order: {usd(notional)}.")
     if normalized_side == "sell" and notional > float(state["positions"].get(normalized_symbol, 0.0)):
-        raise ValueError("Sell requires an existing cost-basis position at least that large.")
+        raise ValueError(f"Refused. No {normalized_symbol} position to sell in the simulated account.")
     return normalized_symbol, normalized_side, notional, state
+
+
+def account_fills(account: str) -> list[dict[str, Any]]:
+    return jsonl_read(account_dir(account) / "paper_portfolio.jsonl")
+
+
+def limit_text(max_order: Any) -> str:
+    value = float(max_order)
+    if value.is_integer():
+        return f"${value:,.0f}/order"
+    return f"${value:,.2f}/order"
 
 
 def create_account(name: str, max_order_usd: float | None = None) -> dict[str, Any]:
@@ -144,19 +166,52 @@ def create_account(name: str, max_order_usd: float | None = None) -> dict[str, A
     if max_order_usd is not None:
         config["max_order_usd"] = round(float(max_order_usd), 2)
         (account_dir(account) / "account.json").write_text(json.dumps(config, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return response({"ok": True, "account": account, "max_order_usd": config.get("max_order_usd")}, f"Account `{account}` is ready.")
+    state = replay_state(account)
+    lines = [f"SIMBROKER ACCOUNT CREATED  {account}", f"Cash:  {usd(state['cash'])}"]
+    if config.get("max_order_usd") is not None:
+        lines.append(f"Limit: {usd(config['max_order_usd'])} per order")
+    return response(
+        {"ok": True, "account": account, "max_order_usd": config.get("max_order_usd")},
+        "\n".join(lines),
+    )
 
 
 def list_accounts() -> dict[str, Any]:
     ensure_account("default")
     names = sorted(path.name for path in data_dir().iterdir() if path.is_dir() and ACCOUNT_RE.fullmatch(path.name))
-    return response({"ok": True, "accounts": names}, "Accounts listed.")
+    rows = []
+    for name in names:
+        state = replay_state(name)
+        deployed = round(sum(state["positions"].values()), 2)
+        fills = len(account_fills(name))
+        row = f"{name:<8} cash {usd(state['cash']):<13} deployed {usd(deployed):<11} fills {fills}"
+        if state.get("max_order_usd") is not None:
+            row += f"   limit {limit_text(state['max_order_usd'])}"
+        rows.append(row)
+    message = "SIMBROKER ACCOUNTS (simulated, cost basis only)\n" + "\n".join(rows)
+    return response({"ok": True, "accounts": names}, message)
 
 
 def get_account(account: str = "default") -> dict[str, Any]:
     name = assert_account_name(str(account))
     state = replay_state(name)
-    return response({"ok": True, "account": name, **state}, f"Account `{name}` loaded.")
+    if state["positions"]:
+        fills = account_fills(name)
+        parts = []
+        for symbol, value in state["positions"].items():
+            count = sum(1 for record in fills if record.get("symbol") == symbol)
+            parts.append(f"{symbol} {usd(value)} ({count} fill{'s' if count != 1 else ''})")
+        positions_text = ", ".join(parts)
+    else:
+        positions_text = "none"
+    message = "\n".join(
+        [
+            "SIMBROKER ACCOUNT (simulated)",
+            f"Cash:      {usd(state['cash'])}",
+            f"Positions: {positions_text}",
+        ]
+    )
+    return response({"ok": True, "account": name, **state}, message)
 
 
 def preview_order(symbol: str, side: str, notional_usd: float, account: str = "default", reason: str | None = None) -> dict[str, Any]:
@@ -177,7 +232,18 @@ def preview_order(symbol: str, side: str, notional_usd: float, account: str = "d
         "no_real_trading": True,
     }
     jsonl_append(account_dir(name) / "orders.jsonl", preview)
-    return response({"ok": True, **preview}, f"Preview `{preview_id}` created.")
+    lines = [
+        f"SIMULATED ORDER PREVIEW  {preview_id}",
+        f"SYMBOL:   {normalized_symbol}",
+        f"SIDE:     {normalized_side.upper()}",
+        f"NOTIONAL: {usd(notional)}",
+    ]
+    if reason:
+        lines.append(f"REASON:   {reason}")
+    lines.append(f"ACCOUNT:  {name}")
+    lines.append("")
+    lines.append("Show this to the user and ask for approval before placing.")
+    return response({"ok": True, **preview}, "\n".join(lines))
 
 
 def find_preview(preview_id: str) -> tuple[str, dict[str, Any]] | None:
@@ -200,19 +266,19 @@ def preview_used(account: str, preview_id: str) -> bool:
 def place_simulated_order(preview_id: str, user_approved: bool) -> dict[str, Any]:
     preview_ref = find_preview(str(preview_id))
     if preview_ref is None:
-        return error_response("Preview is required before placement.")
+        return error_response("Not placed. No valid preview_id. Call preview_order first and show the user the preview.")
     account, preview = preview_ref
     if preview_used(account, str(preview_id)):
-        return error_response("Preview has already been used.")
+        return error_response(f"Not placed. Preview {preview_id} was already used. Create a new preview.")
     if user_approved is not True:
         jsonl_append(
             account_dir(account) / "orders.jsonl",
             {"event": "place_attempt", "ts": now_ts(), "preview_id": preview_id, "approved": False},
         )
-        return error_response("Placement requires user_approved=true.")
+        return error_response("Not placed. user_approved was not true. Ask the user and place only after an explicit yes.")
     created_epoch = int(str(preview_id).split("_")[1])
     if int(time.time()) - created_epoch > PREVIEW_TTL_SECONDS:
-        return error_response("Preview is no longer fresh.")
+        return error_response(f"Not placed. Preview {preview_id} is no longer fresh. Create a new preview.")
     symbol, side, notional, state = validate_order(
         preview["symbol"],
         preview["side"],
@@ -245,14 +311,38 @@ def place_simulated_order(preview_id: str, user_approved: bool) -> dict[str, Any
         },
     )
     after = replay_state(account)
-    return response({"ok": True, **fill, "cash_after": after["cash"]}, f"Simulated order `{order_id}` recorded.")
+    message = "\n".join(
+        [
+            f"SIMULATED FILL  {order_id}",
+            f"SYMBOL:   {symbol}",
+            f"SIDE:     {side.upper()}",
+            f"NOTIONAL: {usd(notional)}",
+            f"CASH:     {usd(after['cash'])} remaining",
+            f"Recorded: {display_path(account_dir(account) / 'paper_portfolio.jsonl')}",
+        ]
+    )
+    return response({"ok": True, **fill, "cash_after": after["cash"]}, message)
+
+
+MAX_PORTFOLIO_ROWS = 20
 
 
 def get_portfolio(account: str = "default") -> dict[str, Any]:
     name = assert_account_name(str(account))
     state = replay_state(name)
     fills = jsonl_read(account_dir(name) / "paper_portfolio.jsonl")
-    return response({"ok": True, "account": name, **state, "fills": fills}, f"Portfolio for `{name}` loaded at cost basis.")
+    if not fills:
+        body = "No fills yet."
+    else:
+        shown = fills[-MAX_PORTFOLIO_ROWS:]
+        rows = [
+            f"{record['symbol']:<5} {str(record['side']).upper():<5} {usd(record['notional_usd']):<12} {record['order_id']}   {record['ts']}"
+            for record in shown
+        ]
+        rows.append(f"Showing {len(shown)} of {len(fills)} fills.")
+        body = "\n".join(rows)
+    message = "SIMBROKER PORTFOLIO (simulated)\n" + body
+    return response({"ok": True, "account": name, **state, "fills": fills}, message)
 
 
 def reset_account(account: str = "default") -> dict[str, Any]:
@@ -267,7 +357,13 @@ def reset_account(account: str = "default") -> dict[str, Any]:
             path.rename(archive_path)
             archived.append(archive_path.name)
         path.write_text("", encoding="utf-8")
-    return response({"ok": True, "account": name, "archived": archived, **replay_state(name)}, f"Account `{name}` reset.")
+    state = replay_state(name)
+    if archived:
+        detail = "Previous records archived as " + ", ".join(archived)
+    else:
+        detail = "No previous records to archive."
+    message = f"Simulated account reset. Cash: {usd(state['cash'])}.\n{detail}"
+    return response({"ok": True, "account": name, "archived": archived, **state}, message)
 
 
 TOOLS = {
@@ -353,7 +449,7 @@ TOOL_SPECS: dict[str, dict[str, Any]] = {
 }
 
 PROTOCOL_VERSION = "2024-11-05"
-SERVER_VERSION = "0.1.1"
+SERVER_VERSION = "0.1.2"
 
 
 def tool_list() -> list[dict[str, Any]]:

@@ -1,0 +1,20 @@
+{
+  "dxt_version": "0.1",
+  "name": "simbroker-demo-paper-broker",
+  "display_name": "SimBroker (demo paper broker)",
+  "version": "0.1.0",
+  "description": "A pretend broker for the PolyBridge agentic-finance cookbook. Records simulated fills to a local file. No real trading, no market connection, no financial advice.",
+  "server": {
+    "type": "python",
+    "entry_point": "server.py"
+  },
+  "tools": [
+    "create_account",
+    "list_accounts",
+    "get_account",
+    "preview_order",
+    "place_simulated_order",
+    "get_portfolio",
+    "reset_account"
+  ]
+}

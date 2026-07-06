@@ -1,0 +1,210 @@
+{
+  "schema_version": "recorded_polybridge_replay.v1",
+  "recorded_at": "2026-07-04T12:00:00Z",
+  "allowed_use": "research_only_not_financial_advice",
+  "theses": {
+    "labor-resilience-jul2026": {
+      "expected_verdict": "PROCEED",
+      "expected_weighted_support": 3.0,
+      "expected_trade": {
+        "symbol": "SPY",
+        "side": "buy",
+        "notional_usd": 1000
+      },
+      "legs": [
+        {
+          "question": "Will the US lose jobs in July 2026?",
+          "probability": 0.12,
+          "interval": [
+            0.08,
+            0.15
+          ],
+          "evidence_profile": "direct_mixed",
+          "direct_market_count": 5,
+          "proxy_market_count": 1,
+          "expected_classification": "SUPPORTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture shows job losses below the configured threshold.",
+          "source_markets": [
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: US payrolls negative for July 2026?",
+              "url": "https://example.invalid/markets/us-payrolls-july-2026-negative",
+              "probability": 0.12,
+              "relevance": 0.97,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: July payroll growth below zero?",
+              "url": "https://example.invalid/markets/july-payroll-growth-negative",
+              "probability": 0.13,
+              "relevance": 0.94,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: private payrolls contract in July 2026?",
+              "url": "https://example.invalid/markets/private-payrolls-contract-july-2026",
+              "probability": 0.1,
+              "relevance": 0.91,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: nonfarm payrolls below zero after revisions?",
+              "url": "https://example.invalid/markets/nonfarm-payrolls-revisions-negative",
+              "probability": 0.11,
+              "relevance": 0.89,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: July jobs report shows net job loss?",
+              "url": "https://example.invalid/markets/july-jobs-net-loss",
+              "probability": 0.14,
+              "relevance": 0.87,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded proxy: labor stress increases materially in July 2026?",
+              "url": "https://example.invalid/markets/labor-stress-proxy-july-2026",
+              "probability": 0.19,
+              "relevance": 0.61,
+              "is_proxy": true
+            }
+          ]
+        },
+        {
+          "question": "Will the US unemployment rate for July 2026 be above 4.3%?",
+          "probability": 0.28,
+          "interval": [
+            0.22,
+            0.35
+          ],
+          "evidence_profile": "direct_only",
+          "direct_market_count": 6,
+          "proxy_market_count": 0,
+          "expected_classification": "SUPPORTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture keeps unemployment above 4.3% below the configured threshold.",
+          "source_markets": [
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: July 2026 unemployment rate above 4.3%?",
+              "url": "https://example.invalid/markets/july-unemployment-above-4-3",
+              "probability": 0.28,
+              "relevance": 0.98,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: unemployment rate at least 4.4% in July 2026?",
+              "url": "https://example.invalid/markets/unemployment-at-least-4-4-july-2026",
+              "probability": 0.24,
+              "relevance": 0.93,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: household survey unemployment jumps in July 2026?",
+              "url": "https://example.invalid/markets/household-survey-unemployment-jump",
+              "probability": 0.31,
+              "relevance": 0.9,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: unemployment above consensus in July 2026?",
+              "url": "https://example.invalid/markets/unemployment-above-consensus-july",
+              "probability": 0.29,
+              "relevance": 0.86,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: July jobless rate crosses 4.3%?",
+              "url": "https://example.invalid/markets/jobless-rate-crosses-4-3",
+              "probability": 0.27,
+              "relevance": 0.84,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: labor-force report shows unemployment above 4.3%?",
+              "url": "https://example.invalid/markets/labor-force-unemployment-above-4-3",
+              "probability": 0.3,
+              "relevance": 0.8,
+              "is_proxy": false
+            }
+          ]
+        },
+        {
+          "question": "Will the Fed cut rates at its September 2026 meeting?",
+          "probability": 0.06,
+          "interval": [
+            0.03,
+            0.08
+          ],
+          "evidence_profile": "direct_mixed",
+          "direct_market_count": 4,
+          "proxy_market_count": 2,
+          "expected_classification": "SUPPORTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture shows a September cut below the configured threshold.",
+          "source_markets": [
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: Fed cuts rates at September 2026 meeting?",
+              "url": "https://example.invalid/markets/fed-september-2026-cut",
+              "probability": 0.06,
+              "relevance": 0.98,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: September meeting target range lower after decision?",
+              "url": "https://example.invalid/markets/september-target-range-lower",
+              "probability": 0.07,
+              "relevance": 0.91,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: FOMC eases policy in September 2026?",
+              "url": "https://example.invalid/markets/fomc-eases-september-2026",
+              "probability": 0.05,
+              "relevance": 0.9,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded market: Fed funds upper bound falls in September 2026?",
+              "url": "https://example.invalid/markets/fed-funds-upper-bound-falls",
+              "probability": 0.06,
+              "relevance": 0.88,
+              "is_proxy": false
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded proxy: recession concern triggers near-term policy easing?",
+              "url": "https://example.invalid/markets/recession-policy-easing-proxy",
+              "probability": 0.11,
+              "relevance": 0.62,
+              "is_proxy": true
+            },
+            {
+              "source": "polybridge_recorded_fixture",
+              "question": "Recorded proxy: market-implied easing pressure rises before September?",
+              "url": "https://example.invalid/markets/easing-pressure-proxy",
+              "probability": 0.09,
+              "relevance": 0.57,
+              "is_proxy": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

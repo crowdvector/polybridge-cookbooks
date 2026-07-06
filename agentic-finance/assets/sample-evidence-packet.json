@@ -1,0 +1,56 @@
+{
+  "allowed_use": "research_only_not_financial_advice",
+  "confidence": 0.91,
+  "confidence_interval": {
+    "lower": 0.08,
+    "upper": 0.15
+  },
+  "created_at": "2026-07-04T12:00:00Z",
+  "evidence_profile": {
+    "direct_market_count": 5,
+    "fixture_mode": true,
+    "forecast_evidence_type": "direct_mixed",
+    "forecast_status": "ok",
+    "live_polybridge": false,
+    "probability_source": "forecast_only",
+    "proxy_market_count": 1,
+    "proxy_only": false,
+    "recorded_replay": true,
+    "search_relevance_use": "metadata_only",
+    "search_status": "ok",
+    "selected_direct_evidence_missing": false,
+    "source_market_count": 6
+  },
+  "packet_id": "ep_sample_labor_jobs",
+  "probability": 0.12,
+  "quality_flags": [
+    "offline_fixture",
+    "recorded_replay",
+    "sanitized_fixture"
+  ],
+  "question": "Will the US lose jobs in July 2026?",
+  "raw_response_sha256": "sample_sanitized_hash",
+  "reasoning_summary": "Recorded fixture shows low odds of July job losses across direct labor-market contracts with one contextual proxy.",
+  "scenario_id": "labor-resilience-jul2026",
+  "schema_version": "evidence_packet.v1",
+  "source_markets": [
+    {
+      "is_proxy": false,
+      "probability": 0.11,
+      "question": "US payrolls negative in July 2026?",
+      "relevance": 0.98,
+      "schema_version": "source_market.v1",
+      "source": "recorded_fixture_market",
+      "url": "https://example.invalid/markets/us-payrolls-july-2026-negative"
+    },
+    {
+      "is_proxy": true,
+      "probability": 0.18,
+      "question": "Labor-market nowcast proxy for July 2026",
+      "relevance": 0.7,
+      "schema_version": "source_market.v1",
+      "source": "recorded_fixture_search",
+      "url": "https://example.invalid/search/labor-nowcast-july-2026"
+    }
+  ]
+}

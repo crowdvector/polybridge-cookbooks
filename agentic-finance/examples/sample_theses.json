@@ -1,0 +1,27 @@
+{
+  "thesis_id": "labor-resilience-jul2026",
+  "as_of": "2026-07-04",
+  "demo": true,
+  "evergreen": true,
+  "thesis": "US labor market stays resilient through July 2026",
+  "instrument": "SPY",
+  "direction": "long",
+  "notional_usd": 1000,
+  "questions": [
+    {
+      "q": "Will the US lose jobs in July 2026?",
+      "supports_when": "NO",
+      "threshold": 0.25
+    },
+    {
+      "q": "Will the US unemployment rate for July 2026 be above 4.3%?",
+      "supports_when": "NO",
+      "threshold": 0.4
+    },
+    {
+      "q": "Will the Fed cut rates at its September 2026 meeting?",
+      "supports_when": "NO",
+      "threshold": 0.3
+    }
+  ]
+}

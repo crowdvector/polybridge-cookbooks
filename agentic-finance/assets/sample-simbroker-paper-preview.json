@@ -1,0 +1,16 @@
+{
+  "allowed_use": "research_only_not_financial_advice",
+  "broker": "sim",
+  "broker_name": "SimBroker",
+  "human_confirmation_required": true,
+  "mode": "simulated_paper_preview",
+  "no_api_keys_required": true,
+  "no_brokerage_account_required": true,
+  "no_live_trading": true,
+  "no_network_calls": true,
+  "notional_usd": 1000.0,
+  "schema_version": "sim_broker_preview.v1",
+  "side": "buy",
+  "symbol": "SPY",
+  "thesis_id": "labor-resilience-jul2026"
+}

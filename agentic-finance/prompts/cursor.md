@@ -26,9 +26,11 @@ Offline checks:
 Run:
 
 PYENV_VERSION=3.13.0 python -m unittest discover agentic-finance/tests
-PYENV_VERSION=3.13.0 python agentic-finance/evidence_gate.py --offline
+PYENV_VERSION=3.13.0 python agentic-finance/tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
+PYENV_VERSION=3.13.0 python agentic-finance/tier1_evidence_gate.py --thesis oil-shock-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
+PYENV_VERSION=3.13.0 python agentic-finance/tier1_evidence_gate.py --thesis rates-fall-2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 PYENV_VERSION=3.13.0 python agentic-finance/run_portfolio_risk_map.py --offline --holdings agentic-finance/examples/sample_holdings.csv
-PYENV_VERSION=3.13.0 python agentic-finance/run_alpaca_paper_check.py --preview-only
+PYENV_VERSION=3.13.0 python agentic-finance/tier3_alpaca_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json --preview-only
 
 Inspect:
 - agentic-finance/outputs/evidence-packet.json
@@ -49,7 +51,7 @@ Optional Alpaca paper validation:
 
 Optional guarded Alpaca paper submission:
 - Do not run this in quickstart checks or tests.
-- Run PYENV_VERSION=3.13.0 python agentic-finance/run_alpaca_paper_check.py --submit-paper-order only when the user explicitly asks and provides all confirmation flags.
+- Run PYENV_VERSION=3.13.0 python agentic-finance/tier3_alpaca_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json --submit-paper-order only when the user explicitly asks and provides all confirmation flags.
 - Require --confirm-paper-trading, --confirm-not-financial-advice, and --confirm-human-approval.
 - Use paper credentials only, require ALPACA_PAPER_TRADE=true, and require APCA_API_BASE_URL=https://paper-api.alpaca.markets.
 - Confirm the Evidence Gate cleared before paper submission.

@@ -1,0 +1,88 @@
+{
+  "schema_version": "agentic_finance_sample_theses.v1",
+  "allowed_use": "research_only_not_financial_advice",
+  "theses": [
+    {
+      "thesis_id": "labor-resilience-jul2026",
+      "as_of": "2026-07-04",
+      "demo": true,
+      "evergreen": true,
+      "thesis": "US labor market stays resilient through July 2026",
+      "instrument": "SPY",
+      "direction": "long",
+      "notional_usd": 1000,
+      "questions": [
+        {
+          "q": "Will the US lose jobs in July 2026?",
+          "supports_when": "NO",
+          "threshold": 0.25
+        },
+        {
+          "q": "Will the US unemployment rate for July 2026 be above 4.3%?",
+          "supports_when": "NO",
+          "threshold": 0.4
+        },
+        {
+          "q": "Will the Fed cut rates at its September 2026 meeting?",
+          "supports_when": "NO",
+          "threshold": 0.3
+        }
+      ]
+    },
+    {
+      "thesis_id": "oil-shock-jul2026",
+      "as_of": "2026-07-04",
+      "demo": false,
+      "evergreen": false,
+      "note": "Topical snapshot during the July 2026 Hormuz disruption. Constituent markets resolve mid-July 2026; after that the gate will report stale/insufficient evidence, which is correct behavior.",
+      "thesis": "Energy supply risk is rising (oil shock)",
+      "instrument": "XLE",
+      "direction": "long",
+      "notional_usd": 1000,
+      "questions": [
+        {
+          "q": "Will Strait of Hormuz traffic return to normal by July 15, 2026?",
+          "supports_when": "NO",
+          "threshold": 0.3
+        },
+        {
+          "q": "Will Iran's average daily crude oil production for June 2026 be at least 2.0 million barrels per day?",
+          "supports_when": "NO",
+          "threshold": 0.4
+        },
+        {
+          "q": "Will WTI crude oil settle above $80 per barrel on July 31, 2026?",
+          "supports_when": "YES",
+          "threshold": 0.3
+        }
+      ]
+    },
+    {
+      "thesis_id": "rates-fall-2026",
+      "as_of": "2026-07-04",
+      "demo": false,
+      "evergreen": true,
+      "thesis": "US rates are likely to fall / recession risk rising",
+      "instrument": "TLT",
+      "direction": "long",
+      "notional_usd": 1000,
+      "questions": [
+        {
+          "q": "Will the Fed cut rates at its September 2026 meeting?",
+          "supports_when": "YES",
+          "threshold": 0.3
+        },
+        {
+          "q": "Will the US unemployment rate for July 2026 be above 4.3%?",
+          "supports_when": "YES",
+          "threshold": 0.4
+        },
+        {
+          "q": "Will the US lose jobs in July 2026?",
+          "supports_when": "YES",
+          "threshold": 0.25
+        }
+      ]
+    }
+  ]
+}

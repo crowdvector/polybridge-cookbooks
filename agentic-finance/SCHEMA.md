@@ -1,6 +1,6 @@
 # Agentic Finance Evidence Gate Schema Contract
 
-This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a live or real-money broker execution integration. Tier 1 is the Evidence Gate. Tier 2 is the Portfolio Event-Risk Map.
+This document describes the public schema contract for the Agentic Finance Evidence Gate cookbook. The cookbook is research/demo software, not financial advice, not a trading system, and not a live or real-money broker execution integration. Tier 1 is the multi-leg Evidence Gate. Tier 2 is the Portfolio Event-Risk Map. Tier 3 is the optional Alpaca paper-preview and guarded paper-submission layer.
 
 Every public object uses:
 
@@ -11,6 +11,78 @@ Every public object uses:
 ```
 
 The prompt pack in `prompts/` is documentation only. Prompt outputs must still conform to the objects below, keep `EvidencePacket` as the adapter boundary, treat Search relevance as metadata only, use Forecast as the probability surface, and write memo plus redacted audit artifacts.
+
+## MultiLegThesis
+
+Purpose: configures a deterministic, multi-question thesis gate. Thresholds are user configuration, not model output.
+
+Required fields:
+
+- `thesis_id`
+- `as_of`
+- `demo`
+- `evergreen`
+- `thesis`
+- `instrument`
+- `direction`
+- `notional_usd`
+- `questions`
+
+Each question includes:
+
+- `q`
+- `supports_when`, either `YES` or `NO`
+- `threshold`
+
+Safety notes:
+
+- A thesis is not an order and not a recommendation.
+- Search relevance is never a probability.
+- Forecast probability is the only probability surface.
+- The gate must not use a confidence scalar.
+
+Example:
+
+```json
+{
+  "thesis_id": "labor-resilience-jul2026",
+  "as_of": "2026-07-04",
+  "demo": true,
+  "evergreen": true,
+  "thesis": "US labor market stays resilient through July 2026",
+  "instrument": "SPY",
+  "direction": "long",
+  "notional_usd": 1000,
+  "questions": [
+    {
+      "q": "Will the US lose jobs in July 2026?",
+      "supports_when": "NO",
+      "threshold": 0.25
+    }
+  ]
+}
+```
+
+## MultiLegGateDecision
+
+Purpose: deterministic replay gate result for a thesis with multiple evidence legs.
+
+Rules:
+
+- Margin `M = 0.15`.
+- If `supports_when = NO`, probability at or below the threshold supports the thesis and probability at or above `threshold + M` contradicts it.
+- If `supports_when = YES`, probability at or above the threshold supports the thesis and probability at or below `threshold - M` contradicts it.
+- `direct_only` and `direct_mixed` legs have weight `1.0`.
+- `proxy_only` legs have weight `0.5`.
+- insufficient or failed legs have weight `0.0`.
+- Verdict is `PROCEED` only when weighted support is at least `2.0`, at least two legs have direct evidence, no full-weight contradiction exists, and no full-weight leg has insufficient data.
+
+Safety notes:
+
+- Leg evidence is normalized into `EvidencePacket` objects before gate evaluation.
+- Raw provider responses do not enter gate logic.
+- The gate does not consume confidence scalars.
+- A `PROCEED` verdict permits only a local paper-preview object unless the separate guarded paper submission command is explicitly run.
 
 ## FinancialActionIntent
 
@@ -39,13 +111,13 @@ Example:
 ```json
 {
   "schema_version": "financial_action_intent.v1",
-  "scenario_id": "offline-demo-aapl-margin-resilience",
-  "thesis": "Evaluate whether evidence is strong enough for a paper-only preview.",
-  "symbol": "AAPL",
+  "scenario_id": "labor-resilience-jul2026",
+  "thesis": "US labor market stays resilient through July 2026",
+  "symbol": "SPY",
   "exposure_direction": "increase_long_exposure",
   "notional_usd": 1000.0,
-  "forecast_question": "Will Apple report gross margin above 45% for fiscal Q4 2026?",
-  "search_query": "Apple fiscal Q4 2026 gross margin prediction market evidence",
+  "forecast_question": "Will the US lose jobs in July 2026? | Will the US unemployment rate for July 2026 be above 4.3%? | Will the Fed cut rates at its September 2026 meeting?",
+  "search_query": "US labor market stays resilient through July 2026 prediction market evidence",
   "allowed_use": "research_only_not_financial_advice"
 }
 ```
@@ -80,11 +152,11 @@ Example:
 ```json
 {
   "schema_version": "source_market.v1",
-  "source": "offline_fixture_market",
-  "question": "Offline fixture: Apple gross margin above 45% for fiscal Q4 2026?",
-  "url": "https://example.invalid/markets/apple-gross-margin-q4-2026",
-  "probability": 0.68,
-  "relevance": 0.92,
+  "source": "recorded_fixture_market",
+  "question": "US payrolls negative in July 2026?",
+  "url": "https://example.invalid/markets/us-payrolls-july-2026-negative",
+  "probability": 0.12,
+  "relevance": 0.98,
   "is_proxy": false
 }
 ```
@@ -127,15 +199,15 @@ Example:
 ```json
 {
   "schema_version": "evidence_packet.v1",
-  "packet_id": "ep_9e8dc8d275b77a98",
-  "created_at": "2026-07-03T12:00:00Z",
-  "scenario_id": "offline-demo-aapl-margin-resilience",
-  "question": "Will Apple report gross margin above 45% for fiscal Q4 2026?",
-  "probability": 0.66,
-  "confidence": 0.72,
+  "packet_id": "ep_sample_labor_jobs",
+  "created_at": "2026-07-04T12:00:00Z",
+  "scenario_id": "labor-resilience-jul2026",
+  "question": "Will the US lose jobs in July 2026?",
+  "probability": 0.12,
+  "confidence": 0.91,
   "confidence_interval": {
-    "lower": 0.56,
-    "upper": 0.78
+    "lower": 0.08,
+    "upper": 0.15
   },
   "evidence_profile": {
     "fixture_mode": true,
@@ -144,7 +216,7 @@ Example:
     "search_status": "ok",
     "search_result_count": 2,
     "search_max_relevance": 0.99,
-    "source_market_count": 2,
+    "source_market_count": 6,
     "proxy_only": false
   },
   "source_markets": [],
@@ -288,8 +360,8 @@ Example:
 {
   "schema_version": "audit_record.v1",
   "run_id": "sample_run_sanitized",
-  "timestamp": "2026-07-03T12:00:00Z",
-  "scenario_id": "offline-demo-aapl-margin-resilience",
+  "timestamp": "2026-07-04T12:00:00Z",
+  "scenario_id": "labor-resilience-jul2026",
   "memo_path": "outputs/decision-memo.md",
   "paper_preview_path": "outputs/alpaca-order-preview.json",
   "guardrails": {
@@ -462,10 +534,10 @@ Example:
   "schema_version": "paper_order_preview.v1",
   "broker": "alpaca",
   "mode": "paper_preview_only",
-  "symbol": "AAPL",
+  "symbol": "SPY",
   "side": "buy",
   "notional_usd": 1000.0,
-  "created_at": "2026-07-03T12:00:00Z",
+  "created_at": "2026-07-04T12:00:00Z",
   "human_approval_required": true,
   "submit_supported": false,
   "allowed_use": "research_only_not_financial_advice"

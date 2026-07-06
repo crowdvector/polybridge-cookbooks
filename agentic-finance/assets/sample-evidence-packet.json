@@ -1,50 +1,56 @@
 {
   "allowed_use": "research_only_not_financial_advice",
-  "confidence": 0.72,
+  "confidence": 0.91,
   "confidence_interval": {
-    "lower": 0.56,
-    "upper": 0.78
+    "lower": 0.08,
+    "upper": 0.15
   },
-  "created_at": "2026-07-03T12:00:00Z",
+  "created_at": "2026-07-04T12:00:00Z",
   "evidence_profile": {
-    "confidence_interval_width": 0.22,
+    "direct_market_count": 5,
     "fixture_mode": true,
-    "forecast_evidence_type": "direct_and_proxy_market_evidence",
+    "forecast_evidence_type": "direct_mixed",
     "forecast_status": "ok",
+    "live_polybridge": false,
+    "probability_source": "forecast_only",
+    "proxy_market_count": 1,
     "proxy_only": false,
-    "search_result_count": 2,
+    "recorded_replay": true,
+    "search_relevance_use": "metadata_only",
     "search_status": "ok",
-    "source_market_count": 2
+    "selected_direct_evidence_missing": false,
+    "source_market_count": 6
   },
-  "packet_id": "ep_9e8dc8d275b77a98",
-  "probability": 0.66,
+  "packet_id": "ep_sample_labor_jobs",
+  "probability": 0.12,
   "quality_flags": [
     "offline_fixture",
+    "recorded_replay",
     "sanitized_fixture"
   ],
-  "question": "Will Apple report gross margin above 45% for fiscal Q4 2026?",
-  "raw_response_sha256": "9e8dc8d275b77a982a3bc1c4767d78b53b785b6b8337e086568d5c9abc14cb2e",
-  "reasoning_summary": "The offline fixture combines one direct margin-style market and one contextual earnings-quality proxy. The normalized confidence and interval pass the deterministic evidence gate for a paper-preview object only.",
-  "scenario_id": "offline-demo-aapl-margin-resilience",
+  "question": "Will the US lose jobs in July 2026?",
+  "raw_response_sha256": "sample_sanitized_hash",
+  "reasoning_summary": "Recorded fixture shows low odds of July job losses across direct labor-market contracts with one contextual proxy.",
+  "scenario_id": "labor-resilience-jul2026",
   "schema_version": "evidence_packet.v1",
   "source_markets": [
     {
       "is_proxy": false,
-      "probability": 0.68,
-      "question": "Offline fixture: Apple gross margin above 45% for fiscal Q4 2026?",
-      "relevance": 0.92,
+      "probability": 0.11,
+      "question": "US payrolls negative in July 2026?",
+      "relevance": 0.98,
       "schema_version": "source_market.v1",
-      "source": "offline_fixture_market",
-      "url": "https://example.invalid/markets/apple-gross-margin-q4-2026"
+      "source": "recorded_fixture_market",
+      "url": "https://example.invalid/markets/us-payrolls-july-2026-negative"
     },
     {
       "is_proxy": true,
-      "probability": 0.61,
-      "question": "Offline fixture: Apple fiscal Q4 2026 earnings quality above baseline?",
-      "relevance": 0.74,
+      "probability": 0.18,
+      "question": "Labor-market nowcast proxy for July 2026",
+      "relevance": 0.7,
       "schema_version": "source_market.v1",
-      "source": "offline_fixture_market",
-      "url": "https://example.invalid/markets/apple-earnings-quality-q4-2026"
+      "source": "recorded_fixture_search",
+      "url": "https://example.invalid/search/labor-nowcast-july-2026"
     }
   ]
 }

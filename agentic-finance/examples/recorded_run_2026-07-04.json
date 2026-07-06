@@ -1,0 +1,209 @@
+{
+  "schema_version": "agentic_finance_recorded_run.v1",
+  "allowed_use": "research_only_not_financial_advice",
+  "as_of": "2026-07-04",
+  "fixture_mode": true,
+  "notes": "Sanitized recorded replay fixture. Probabilities are fake demo values shaped like normalized PolyBridge Forecast/Search evidence.",
+  "theses": {
+    "labor-resilience-jul2026": {
+      "expected_verdict": "PROCEED",
+      "expected_weighted_support": 3.0,
+      "expected_direct_legs": 3,
+      "expected_contradictions": 0,
+      "expected_paper_preview": {
+        "symbol": "SPY",
+        "side": "buy",
+        "notional": "1000.00"
+      },
+      "legs": [
+        {
+          "q": "Will the US lose jobs in July 2026?",
+          "probability": 0.12,
+          "interval": [0.08, 0.15],
+          "confidence": 0.91,
+          "evidence_profile": "direct_mixed",
+          "direct_market_count": 5,
+          "proxy_market_count": 1,
+          "expected_classification": "SUPPORTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture shows low odds of July job losses across direct labor-market contracts with one contextual proxy.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "US payrolls negative in July 2026?", "url": "https://example.invalid/markets/us-payrolls-july-2026-negative", "probability": 0.11, "relevance": 0.98, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "July 2026 nonfarm payrolls below zero?", "url": "https://example.invalid/markets/nfp-july-2026-below-zero", "probability": 0.12, "relevance": 0.97, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "US employment contracts in July 2026?", "url": "https://example.invalid/markets/us-employment-contracts-july-2026", "probability": 0.13, "relevance": 0.94, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Private payrolls negative July 2026?", "url": "https://example.invalid/markets/private-payrolls-negative-july-2026", "probability": 0.1, "relevance": 0.91, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Household survey employment falls in July 2026?", "url": "https://example.invalid/markets/household-employment-falls-july-2026", "probability": 0.14, "relevance": 0.89, "is_proxy": false},
+            {"source": "recorded_fixture_search", "question": "Labor-market nowcast proxy for July 2026", "url": "https://example.invalid/search/labor-nowcast-july-2026", "probability": 0.18, "relevance": 0.7, "is_proxy": true}
+          ]
+        },
+        {
+          "q": "Will the US unemployment rate for July 2026 be above 4.3%?",
+          "probability": 0.28,
+          "interval": [0.22, 0.35],
+          "confidence": 0.88,
+          "evidence_profile": "direct_only",
+          "direct_market_count": 6,
+          "proxy_market_count": 0,
+          "expected_classification": "SUPPORTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture keeps the July unemployment-above-4.3% probability below the configured resilience threshold.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "July 2026 unemployment above 4.3%?", "url": "https://example.invalid/markets/unemployment-july-2026-above-43", "probability": 0.28, "relevance": 0.99, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "U-3 unemployment exceeds 4.3 in July 2026?", "url": "https://example.invalid/markets/u3-july-2026-exceeds-43", "probability": 0.29, "relevance": 0.96, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "BLS July unemployment over 4.3?", "url": "https://example.invalid/markets/bls-july-2026-over-43", "probability": 0.27, "relevance": 0.95, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "US jobless rate July 2026 at least 4.4%?", "url": "https://example.invalid/markets/jobless-rate-july-2026-at-least-44", "probability": 0.26, "relevance": 0.93, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "July 2026 unemployment threshold contract", "url": "https://example.invalid/markets/july-2026-unemployment-threshold", "probability": 0.3, "relevance": 0.91, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Unemployment high-side July 2026 basket", "url": "https://example.invalid/markets/unemployment-high-side-july-2026", "probability": 0.31, "relevance": 0.9, "is_proxy": false}
+          ]
+        },
+        {
+          "q": "Will the Fed cut rates at its September 2026 meeting?",
+          "probability": 0.06,
+          "interval": [0.03, 0.08],
+          "confidence": 0.9,
+          "evidence_profile": "direct_mixed",
+          "direct_market_count": 4,
+          "proxy_market_count": 1,
+          "expected_classification": "SUPPORTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture shows low probability of a September 2026 Fed cut, consistent with resilient labor evidence.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "Fed cuts at September 2026 FOMC?", "url": "https://example.invalid/markets/fed-cut-september-2026", "probability": 0.06, "relevance": 0.99, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "September 2026 target range lower after FOMC?", "url": "https://example.invalid/markets/september-2026-target-range-lower", "probability": 0.05, "relevance": 0.95, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Fed easing by September meeting?", "url": "https://example.invalid/markets/fed-easing-september-2026", "probability": 0.07, "relevance": 0.92, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "FOMC September rate cut yes/no", "url": "https://example.invalid/markets/fomc-september-2026-cut", "probability": 0.06, "relevance": 0.9, "is_proxy": false},
+            {"source": "recorded_fixture_search", "question": "Rates market proxy for September 2026 easing", "url": "https://example.invalid/search/rates-proxy-september-2026", "probability": 0.08, "relevance": 0.71, "is_proxy": true}
+          ]
+        }
+      ]
+    },
+    "oil-shock-jul2026": {
+      "expected_verdict": "DECLINE",
+      "expected_reason": "Weighted support 1.0 < 2.0",
+      "memo_line": "Hormuz normalization unlikely (8%), Iranian supply genuinely uncertain (42%), but oil is not pricing a spike (<1% above $80). Evidence mixed; thesis noted, no trade prepared.",
+      "legs": [
+        {
+          "q": "Will Strait of Hormuz traffic return to normal by July 15, 2026?",
+          "probability": 0.08,
+          "interval": [0.02, 0.12],
+          "confidence": 0.84,
+          "evidence_profile": "direct_mixed",
+          "direct_market_count": 3,
+          "proxy_market_count": 1,
+          "expected_classification": "SUPPORTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture shows normalization as unlikely, which supports the oil-shock thesis leg.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "Hormuz traffic normal by July 15 2026?", "url": "https://example.invalid/markets/hormuz-traffic-normal-july-15-2026", "probability": 0.08, "relevance": 0.98, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Strait shipping restored by mid-July 2026?", "url": "https://example.invalid/markets/strait-shipping-restored-mid-july-2026", "probability": 0.09, "relevance": 0.94, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Hormuz disruption resolved before July 15?", "url": "https://example.invalid/markets/hormuz-resolved-before-july-15", "probability": 0.07, "relevance": 0.92, "is_proxy": false},
+            {"source": "recorded_fixture_search", "question": "Shipping disruption proxy", "url": "https://example.invalid/search/hormuz-shipping-proxy", "probability": 0.13, "relevance": 0.66, "is_proxy": true}
+          ]
+        },
+        {
+          "q": "Will Iran's average daily crude oil production for June 2026 be at least 2.0 million barrels per day?",
+          "probability": 0.42,
+          "interval": [0.38, 0.45],
+          "confidence": 0.82,
+          "evidence_profile": "direct_only",
+          "direct_market_count": 6,
+          "proxy_market_count": 0,
+          "expected_classification": "NEUTRAL",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture is near the configured threshold and remains neutral for the oil-shock thesis.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "Iran June 2026 crude output at least 2.0M bpd?", "url": "https://example.invalid/markets/iran-june-2026-crude-at-least-2m", "probability": 0.42, "relevance": 0.99, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Iran crude production June average >= 2M bpd?", "url": "https://example.invalid/markets/iran-crude-production-june-average-2m", "probability": 0.43, "relevance": 0.96, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Iran output threshold June 2026", "url": "https://example.invalid/markets/iran-output-threshold-june-2026", "probability": 0.41, "relevance": 0.94, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "June 2026 Iranian crude production yes/no", "url": "https://example.invalid/markets/iranian-crude-june-2026-yes-no", "probability": 0.42, "relevance": 0.92, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Iran monthly production over 2M barrels per day", "url": "https://example.invalid/markets/iran-monthly-production-over-2m", "probability": 0.4, "relevance": 0.9, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Iran supply disruption threshold June 2026", "url": "https://example.invalid/markets/iran-supply-threshold-june-2026", "probability": 0.44, "relevance": 0.88, "is_proxy": false}
+          ]
+        },
+        {
+          "q": "Will WTI crude oil settle above $80 per barrel on July 31, 2026?",
+          "probability": 0.005,
+          "interval": [0.002, 0.015],
+          "confidence": 0.8,
+          "evidence_profile": "proxy_only",
+          "selected_direct_evidence_missing": true,
+          "direct_market_count": 0,
+          "proxy_market_count": 3,
+          "expected_classification": "CONTRADICTS",
+          "expected_weight": 0.5,
+          "reasoning_summary": "Recorded fixture has only proxy evidence and does not price an oil spike.",
+          "source_markets": [
+            {"source": "recorded_fixture_search", "question": "WTI July 31 2026 high-price proxy basket", "url": "https://example.invalid/search/wti-july-2026-proxy-basket", "probability": 0.005, "relevance": 0.74, "is_proxy": true},
+            {"source": "recorded_fixture_search", "question": "Oil volatility proxy above 80", "url": "https://example.invalid/search/oil-volatility-above-80", "probability": 0.01, "relevance": 0.64, "is_proxy": true},
+            {"source": "recorded_fixture_search", "question": "Energy price spike proxy", "url": "https://example.invalid/search/energy-price-spike-proxy", "probability": 0.004, "relevance": 0.61, "is_proxy": true}
+          ]
+        }
+      ]
+    },
+    "rates-fall-2026": {
+      "expected_verdict": "DECLINE",
+      "expected_reason": "The same evidence that supports labor resilience contradicts rates-fall. Fed-cut leg is 0.06 versus YES threshold 0.30, so it is a full-weight contradiction and absolute block.",
+      "legs": [
+        {
+          "q": "Will the Fed cut rates at its September 2026 meeting?",
+          "probability": 0.06,
+          "interval": [0.03, 0.08],
+          "confidence": 0.9,
+          "evidence_profile": "direct_mixed",
+          "direct_market_count": 4,
+          "proxy_market_count": 1,
+          "expected_classification": "CONTRADICTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture shows the Fed-cut leg far below the YES threshold for a rates-fall thesis.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "Fed cuts at September 2026 FOMC?", "url": "https://example.invalid/markets/fed-cut-september-2026", "probability": 0.06, "relevance": 0.99, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "September 2026 target range lower after FOMC?", "url": "https://example.invalid/markets/september-2026-target-range-lower", "probability": 0.05, "relevance": 0.95, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Fed easing by September meeting?", "url": "https://example.invalid/markets/fed-easing-september-2026", "probability": 0.07, "relevance": 0.92, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "FOMC September rate cut yes/no", "url": "https://example.invalid/markets/fomc-september-2026-cut", "probability": 0.06, "relevance": 0.9, "is_proxy": false},
+            {"source": "recorded_fixture_search", "question": "Rates market proxy for September 2026 easing", "url": "https://example.invalid/search/rates-proxy-september-2026", "probability": 0.08, "relevance": 0.71, "is_proxy": true}
+          ]
+        },
+        {
+          "q": "Will the US unemployment rate for July 2026 be above 4.3%?",
+          "probability": 0.28,
+          "interval": [0.22, 0.35],
+          "confidence": 0.88,
+          "evidence_profile": "direct_only",
+          "direct_market_count": 6,
+          "proxy_market_count": 0,
+          "expected_classification": "CONTRADICTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture is below the YES threshold for a recession-style rates thesis.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "July 2026 unemployment above 4.3%?", "url": "https://example.invalid/markets/unemployment-july-2026-above-43", "probability": 0.28, "relevance": 0.99, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "U-3 unemployment exceeds 4.3 in July 2026?", "url": "https://example.invalid/markets/u3-july-2026-exceeds-43", "probability": 0.29, "relevance": 0.96, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "BLS July unemployment over 4.3?", "url": "https://example.invalid/markets/bls-july-2026-over-43", "probability": 0.27, "relevance": 0.95, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "US jobless rate July 2026 at least 4.4%?", "url": "https://example.invalid/markets/jobless-rate-july-2026-at-least-44", "probability": 0.26, "relevance": 0.93, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "July 2026 unemployment threshold contract", "url": "https://example.invalid/markets/july-2026-unemployment-threshold", "probability": 0.3, "relevance": 0.91, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Unemployment high-side July 2026 basket", "url": "https://example.invalid/markets/unemployment-high-side-july-2026", "probability": 0.31, "relevance": 0.9, "is_proxy": false}
+          ]
+        },
+        {
+          "q": "Will the US lose jobs in July 2026?",
+          "probability": 0.12,
+          "interval": [0.08, 0.15],
+          "confidence": 0.91,
+          "evidence_profile": "direct_mixed",
+          "direct_market_count": 5,
+          "proxy_market_count": 1,
+          "expected_classification": "CONTRADICTS",
+          "expected_weight": 1.0,
+          "reasoning_summary": "Recorded fixture puts job losses below the YES threshold for the rates-fall thesis.",
+          "source_markets": [
+            {"source": "recorded_fixture_market", "question": "US payrolls negative in July 2026?", "url": "https://example.invalid/markets/us-payrolls-july-2026-negative", "probability": 0.11, "relevance": 0.98, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "July 2026 nonfarm payrolls below zero?", "url": "https://example.invalid/markets/nfp-july-2026-below-zero", "probability": 0.12, "relevance": 0.97, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "US employment contracts in July 2026?", "url": "https://example.invalid/markets/us-employment-contracts-july-2026", "probability": 0.13, "relevance": 0.94, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Private payrolls negative July 2026?", "url": "https://example.invalid/markets/private-payrolls-negative-july-2026", "probability": 0.1, "relevance": 0.91, "is_proxy": false},
+            {"source": "recorded_fixture_market", "question": "Household survey employment falls in July 2026?", "url": "https://example.invalid/markets/household-employment-falls-july-2026", "probability": 0.14, "relevance": 0.89, "is_proxy": false},
+            {"source": "recorded_fixture_search", "question": "Labor-market nowcast proxy for July 2026", "url": "https://example.invalid/search/labor-nowcast-july-2026", "probability": 0.18, "relevance": 0.7, "is_proxy": true}
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -19,15 +19,16 @@ class SampleAssetTests(unittest.TestCase):
 
         self.assertEqual(len(lines), 1)
         record = json.loads(lines[0])
-        self.assertEqual(record["schema_version"], "audit_record.v1")
-        self.assertEqual(record["guardrails"]["paper_preview_only"], True)
+        self.assertEqual(record["schema_version"], "multi_leg_decision_audit_record.v1")
+        self.assertEqual(record["tier"], "multi_leg_evidence_gate")
+        self.assertTrue(record["guardrails"]["paper_preview_requires_gate_proceed"])
 
     def test_sample_audit_log_has_no_absolute_local_paths(self) -> None:
         text = (BASE_DIR / "assets" / "sample-audit-log.jsonl").read_text(encoding="utf-8")
         record = json.loads(text)
 
-        self.assertFalse(record["memo_path"].startswith("/"))
-        self.assertFalse(record["paper_preview_path"].startswith("/"))
+        self.assertFalse(record["output_paths"]["decision_memo"].startswith("/"))
+        self.assertFalse(record["output_paths"]["paper_preview"].startswith("/"))
         self.assertNotIn("/Users/", text)
         self.assertNotIn("/home/", text)
         self.assertNotRegex(text, r"[A-Za-z]:\\\\")

@@ -35,6 +35,8 @@ All prompt variants must preserve these rules:
 - Optional Alpaca paper submission must be explicitly requested, use paper credentials only, require all confirmation flags, require a cleared Evidence Gate, enforce the paper endpoint, enforce the symbol allowlist and demo notional cap, write memo plus audit, and never create a live-trading path.
 - Never log secrets, environment variables, headers, bearer tokens, account data, order IDs, or local absolute paths.
 - Keep Alpaca-specific fields out of core EvidencePacket and gate logic.
+- Tier 1's primary demo is `labor-resilience-jul2026`, a multi-leg replay that may produce an SPY paper preview only after the gate says `PROCEED`.
+- Tier 1 decline examples are `oil-shock-jul2026` and `rates-fall-2026`; they must write memo and audit artifacts without preparing a paper preview.
 - Tier 2 is the Portfolio Event-Risk Map for a local holdings CSV.
 - For Tier 2, use deterministic exposure mapping only; do not call an LLM.
 - For Tier 2, write a portfolio risk map JSON, portfolio risk memo Markdown, and redacted audit record.
@@ -55,6 +57,8 @@ Rules:
 - Do not create a live-trading path.
 - Use evidence first.
 - Use offline fixtures by default.
+- For the primary demo, run `python agentic-finance/tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json`.
+- For the paper preview demo, run `python agentic-finance/tier3_alpaca_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json --preview-only`.
 - Use live PolyBridge mode only when explicitly requested; it is read-only.
 - If POLYBRIDGE_API_KEY is unset, omit Authorization for live PolyBridge calls.
 - If a configured POLYBRIDGE_API_KEY is rejected, fail clearly and do not retry anonymously.

@@ -18,3 +18,4 @@ agentic-finance/outputs/
 agentic-finance/runs/
 *.jsonl
 !agentic-finance/assets/sample-audit-log.jsonl
+!agentic-finance/assets/sample-labor-resilience-audit-log.jsonl

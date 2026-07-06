@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import argparse
 import sys
+
+MIN_PYTHON = (3, 9)
+if sys.version_info < MIN_PYTHON:
+    sys.stderr.write(
+        "This demo needs Python 3.9 or newer. Try python3 --version, install a newer Python, "
+        "or run the notebook in Colab.\n"
+    )
+    raise SystemExit(1)
+
+import argparse
 from pathlib import Path
 from typing import Any
 
@@ -45,7 +54,10 @@ def run_replay(
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Tier 1 multi-leg Agentic Finance Evidence Gate replay")
+    parser = argparse.ArgumentParser(
+        prog="python3 tier1_evidence_gate.py",
+        description="Tier 1 multi-leg Agentic Finance Evidence Gate replay",
+    )
     parser.add_argument("--thesis", required=True, help="Thesis ID from examples/sample_theses.json.")
     parser.add_argument("--replay", type=Path, default=None, help="Recorded replay fixture path.")
     parser.add_argument("--theses", type=Path, default=None, help="Thesis config JSON path.")

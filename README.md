@@ -10,7 +10,7 @@ The Forecast blog articles use dated snapshots. Running those notebooks or scrip
 | --- | --- | --- | --- | --- | --- |
 | `vix-forecast/` | A five-call VIX stress monitor over the next quarter (next 90 days), with one headline VIX signal and four highlighted macro drivers: oil, SPX drawdown, gold, and Hormuz regular traffic. | PolyBridge Forecast, Python 3.10+, `requests`, `matplotlib` | [Forecast VIX from prediction markets](https://polybridge.ai/research/vix-forecast) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast) |
 | `longshort-portfolio/` | Reconstruct market-implied price distributions from Forecast price thresholds, size via half-Kelly, and output Hyperliquid 1x perp order instructions. | PolyBridge Forecast, Python 3.10+, `requests` | [Long-short portfolio on Hyperliquid from prediction market prices](https://polybridge.ai/research/longshort-portfolio) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio) |
-| `agentic-finance/` | Market Foresight Before Trading: replay a labor-market thesis through PolyBridge-style probabilities, an Evidence Gate, and a SimBroker SPY paper trade. | Offline replay, SimBroker, Python 3.10+, stdlib `unittest` |  | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/agentic-finance) |
+| `agentic-finance/` | Market Foresight Before Trading: replay a labor-market thesis through PolyBridge-style probabilities, an Evidence Gate, and a SimBroker SPY paper trade. | Offline replay, SimBroker, Python 3.9+, stdlib `unittest` |  | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/agentic-finance) |
 
 ## Repo Layout
 
@@ -24,7 +24,7 @@ The Forecast blog articles use dated snapshots. Running those notebooks or scrip
 
 These cookbooks run without an API key.
 
-Python 3.10+ is required.
+Python 3.10+ is required (the `agentic-finance` recorded demo runs on Python 3.9+ with no extra packages).
 
 Choose a cookbook and run it from its own directory.
 
@@ -46,9 +46,7 @@ python3 portfolio.py
 ```bash
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/agentic-finance
-bash setup.sh
-python tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay examples/recorded_run_2026-07-04.json
-python tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay examples/recorded_run_2026-07-04.json
+bash demo.sh
 ```
 
 ## Operational Note

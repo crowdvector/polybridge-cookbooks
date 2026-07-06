@@ -23,22 +23,21 @@ PolyBridge is the probability-and-evidence layer before an agent acts. PolyBridg
 
 ## Quickstart
 
+One command runs the recorded demo. No setup, no pip, no API key, no account, no real trading. It needs only Python 3.9+ (on Windows, use WSL or Git Bash):
+
 ```bash
 git clone https://github.com/crowdvector/polybridge-cookbooks.git
 cd polybridge-cookbooks/agentic-finance
-bash setup.sh
+bash demo.sh
 ```
 
-Run the evidence gate:
+`demo.sh` runs the Tier 1 Evidence Gate replay, then the Tier 3 SimBroker paper trader, which asks for y/N confirmation before recording a simulated fill.
+
+To run the tiers individually:
 
 ```bash
-python tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay examples/recorded_run_2026-07-04.json
-```
-
-Run the full SimBroker paper-trader demo:
-
-```bash
-python tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay examples/recorded_run_2026-07-04.json
+python3 tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay examples/recorded_run_2026-07-04.json
+python3 tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay examples/recorded_run_2026-07-04.json
 ```
 
 Expected preview:
@@ -65,6 +64,22 @@ Expected runtime outputs:
 
 Runtime outputs are ignored by git.
 
+## Live Mode And Custom Theses
+
+The recorded demo needs nothing beyond stock Python. Live PolyBridge evidence mode and custom workflows use optional dependencies — install them once with:
+
+```bash
+bash setup.sh
+```
+
+To gate a different thesis, add it to `examples/sample_theses.json` with matching replay legs, then run:
+
+```bash
+python3 tier1_evidence_gate.py --thesis your-thesis-id
+```
+
+Live mode remains read-only evidence fetching; it does not add any real trading path.
+
 ## SimBroker
 
 SimBroker is intentionally small:
@@ -82,7 +97,7 @@ The CLI runner writes simulated fills to `outputs/paper_portfolio.jsonl`.
 The MCPB package lives in `simbroker-mcpb/` and exposes SimBroker as a local demo paper broker for agent workflows. Build it with:
 
 ```bash
-python simbroker-mcpb/build.py
+python3 simbroker-mcpb/build.py
 ```
 
 The generated bundle path is:

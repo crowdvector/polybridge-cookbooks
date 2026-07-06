@@ -1,9 +1,18 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import sys
+
+MIN_PYTHON = (3, 9)
+if sys.version_info < MIN_PYTHON:
+    sys.stderr.write(
+        "This demo needs Python 3.9 or newer. Try python3 --version, install a newer Python, "
+        "or run the notebook in Colab.\n"
+    )
+    raise SystemExit(1)
+
 import argparse
 import json
-import sys
 from pathlib import Path
 from typing import Any, Callable
 
@@ -155,7 +164,10 @@ def run_paper_trader(
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Tier 3 SimBroker paper trader for the Agentic Finance replay demo")
+    parser = argparse.ArgumentParser(
+        prog="python3 tier3_paper_trader.py",
+        description="Tier 3 SimBroker paper trader for the Agentic Finance replay demo",
+    )
     parser.add_argument("--thesis", required=True, help="Thesis ID from examples/sample_theses.json.")
     parser.add_argument("--replay", type=Path, default=None, help="Recorded replay fixture path.")
     parser.add_argument("--theses", type=Path, default=None, help="Thesis config JSON path.")

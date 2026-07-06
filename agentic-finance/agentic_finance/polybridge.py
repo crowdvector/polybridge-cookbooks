@@ -72,7 +72,10 @@ class PolyBridgeClient:
         self.max_retries = max_retries
         self.sleep = sleep
         if session is None:
-            import requests
+            try:
+                import requests
+            except ImportError as exc:
+                raise PolyBridgeError("Live mode needs the requests package: run bash setup.sh") from exc
 
             self.session = requests.Session()
         else:

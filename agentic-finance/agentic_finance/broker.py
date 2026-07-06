@@ -21,7 +21,7 @@ class BrokerOrder:
     thesis_id: str
     symbol: str
     side: str
-    notional: str
+    notional_usd: float
     schema_version: str = "broker_order.v1"
     allowed_use: str = ALLOWED_USE
 
@@ -51,7 +51,7 @@ def order_from_intent(intent: FinancialActionIntent) -> BrokerOrder:
         thesis_id=intent.scenario_id,
         symbol=intent.symbol.strip().upper(),
         side=side_for_intent(intent),
-        notional=f"{float(intent.notional_usd):.2f}",
+        notional_usd=round(float(intent.notional_usd), 2),
     )
 
 
@@ -78,7 +78,7 @@ class SimBroker:
             "thesis_id": order.thesis_id,
             "symbol": order.symbol,
             "side": order.side,
-            "notional": order.notional,
+            "notional_usd": order.notional_usd,
             "allowed_use": ALLOWED_USE,
             "no_api_keys_required": True,
             "no_brokerage_account_required": True,
@@ -91,15 +91,16 @@ class SimBroker:
         timestamp = self.now or utc_now_iso()
         record = {
             "schema_version": "simulated_paper_fill.v1",
+            "ts": timestamp,
+            "order_id": f"sim_{uuid.uuid4().hex[:12]}",
             "thesis_id": order.thesis_id,
             "symbol": order.symbol,
             "side": order.side,
-            "notional": order.notional,
-            "timestamp": timestamp,
+            "notional_usd": order.notional_usd,
             "broker": "sim",
-            "simulated_order_id": f"sim_{uuid.uuid4().hex[:12]}",
+            "simulated": True,
+            "no_real_trading": True,
             "allowed_use": ALLOWED_USE,
-            "no_live_trading": True,
         }
         write_jsonl(self.output_dir / "paper_portfolio.jsonl", record)
         return record
@@ -110,30 +111,42 @@ def build_sim_broker_audit_record(
     base_dir: Path,
     run_id: str,
     thesis_id: str,
+    mode: str,
+    verdict: str,
+    leg_summaries: list[dict[str, Any]],
     order: BrokerOrder,
     preview: dict[str, Any],
-    event: str,
+    human_decision: str,
     paper_portfolio_path: Path | None = None,
     simulated_result: dict[str, Any] | None = None,
+    output_paths: dict[str, Path] | None = None,
 ) -> dict[str, Any]:
     return redact(
         {
             "schema_version": "sim_broker_audit_record.v1",
             "run_id": run_id,
-            "timestamp": utc_now_iso(),
+            "ts": utc_now_iso(),
             "tier": "sim_broker_paper_trade",
-            "scenario_id": thesis_id,
+            "thesis_id": thesis_id,
+            "mode": mode,
+            "verdict": verdict,
+            "leg_summaries": leg_summaries,
             "broker": "sim",
-            "event": event,
+            "human_decision": human_decision,
+            "order_id": simulated_result.get("order_id") if simulated_result else None,
             "order": to_jsonable(order),
-            "preview": preview,
+            "order_preview": preview,
             "paper_portfolio_path": audit_path(paper_portfolio_path, base_dir),
+            "paths": {
+                label: audit_path(path, base_dir)
+                for label, path in (output_paths or {}).items()
+            },
             "simulated_result": simulated_result,
             "guardrails": {
                 "no_brokerage_account_required": True,
                 "no_api_keys_required": True,
                 "no_network_calls": True,
-                "no_live_trading": True,
+                "no_real_trading": True,
                 "human_confirmation_required": True,
                 "secrets_redacted": True,
             },

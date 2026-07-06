@@ -1,6 +1,0 @@
-symbol,name,quantity,notional_usd,sector
-SPY,SPDR S&P 500 ETF Trust,10,6500,broad_equity
-QQQ,Invesco QQQ Trust,5,2800,technology
-TLT,iShares 20+ Year Treasury Bond ETF,20,1800,rates
-XLE,Energy Select Sector SPDR Fund,15,1300,energy
-GLD,SPDR Gold Shares,4,950,gold

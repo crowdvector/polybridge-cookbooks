@@ -85,8 +85,8 @@ class PaperOrderPreview:
     side: str
     notional_usd: float
     created_at: str
-    broker: str = "alpaca"
-    mode: str = "paper_preview_only"
+    broker: str = "sim"
+    mode: str = "simulated_paper_preview"
     human_approval_required: bool = True
     submit_supported: bool = False
     schema_version: str = "paper_order_preview.v1"

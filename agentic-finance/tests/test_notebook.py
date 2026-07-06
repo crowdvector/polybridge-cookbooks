@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 NOTEBOOK_PATH = BASE_DIR / "agentic-finance.ipynb"
 SECRET_PATTERN = re.compile(
     r"Bearer\s+|\bsk-[A-Za-z0-9]|Authorization:\s*(?:Basic|ApiKey|Bearer)|"
-    r"POLYBRIDGE_API_KEY\s*[=:]\s*[A-Za-z0-9]|ALPACA_SECRET|APCA_API_SECRET",
+    r"POLYBRIDGE_API_KEY\s*[=:]\s*[A-Za-z0-9]",
     re.IGNORECASE,
 )
 LOCAL_PATH_PATTERN = re.compile(r"/Users/|/home/|[A-Za-z]:\\\\")
@@ -39,6 +39,13 @@ class NotebookTests(unittest.TestCase):
 
         self.assertIsNone(SECRET_PATTERN.search(text))
         self.assertIsNone(LOCAL_PATH_PATTERN.search(text))
+
+    def test_notebook_contains_only_launch_story(self) -> None:
+        text = NOTEBOOK_PATH.read_text(encoding="utf-8").lower()
+        banned = ("al" + "paca", "aa" + "pl", "portfolio " + "risk", "oil-" + "shock", "rates-" + "fall", "x" + "le", "t" + "lt")
+
+        for term in banned:
+            self.assertNotIn(term, text)
 
 
 if __name__ == "__main__":

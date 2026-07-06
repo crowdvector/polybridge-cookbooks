@@ -8,7 +8,7 @@
   "no_brokerage_account_required": true,
   "no_live_trading": true,
   "no_network_calls": true,
-  "notional": "1000.00",
+  "notional_usd": 1000.0,
   "schema_version": "sim_broker_preview.v1",
   "side": "buy",
   "symbol": "SPY",

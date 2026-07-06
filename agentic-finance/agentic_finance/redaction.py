@@ -7,21 +7,17 @@ REDACTED = "[REDACTED]"
 
 SENSITIVE_NAMES = {
     "POLYBRIDGE_API_KEY",
-    "ALPACA_API_KEY",
-    "ALPACA_SECRET_KEY",
-    "APCA_API_KEY_ID",
-    "APCA_API_SECRET_KEY",
 }
 
 BEARER_RE = re.compile(r"\bBearer\s+[A-Za-z0-9._~+/=-]{8,}", re.IGNORECASE)
 ENV_ASSIGN_RE = re.compile(
-    r"\b(POLYBRIDGE_API_KEY|ALPACA_API_KEY|ALPACA_SECRET_KEY|APCA_API_KEY_ID|APCA_API_SECRET_KEY)"
+    r"\b(POLYBRIDGE_API_KEY)"
     r"\s*[:=]\s*['\"]?[^'\"\s,}]+",
     re.IGNORECASE,
 )
 AUTHORIZATION_RE = re.compile(r"\b(Authorization)\s*[:=]\s*['\"]?[^'\"\r\n,}]+", re.IGNORECASE)
 JWT_RE = re.compile(r"\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b")
-PREFIXED_TOKEN_RE = re.compile(r"\b(?:sk|pk|alpaca|polybridge|apca)[_-]?[A-Za-z0-9_-]{16,}\b", re.IGNORECASE)
+PREFIXED_TOKEN_RE = re.compile(r"\b(?:sk|pk|polybridge)[_-]?[A-Za-z0-9_-]{16,}\b", re.IGNORECASE)
 GENERIC_TOKEN_RE = re.compile(r"\b(?=[A-Za-z0-9._~+/-]{32,}\b)(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z0-9._~+/-]{32,}\b")
 
 

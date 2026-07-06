@@ -14,7 +14,6 @@ from .models import (
     EvidencePacket,
     FinancialActionIntent,
     GateDecision,
-    PaperOrderPreview,
     SourceMarket,
     to_jsonable,
 )
@@ -134,9 +133,12 @@ def parse_thesis(raw: dict[str, Any]) -> ThesisConfig:
 
 def load_theses(path: Path) -> dict[str, ThesisConfig]:
     raw = load_json(path)
-    theses = raw.get("theses", [])
+    if "thesis_id" in raw:
+        theses = [raw]
+    else:
+        theses = raw.get("theses", [])
     if not isinstance(theses, list):
-        raise ValueError("sample_theses.json must contain a theses list.")
+        raise ValueError("sample_theses.json must contain a thesis object or theses list.")
     parsed = {thesis.thesis_id: thesis for thesis in (parse_thesis(item) for item in theses)}
     if not parsed:
         raise ValueError("sample_theses.json did not contain any theses.")
@@ -420,15 +422,7 @@ def build_multileg_memo(thesis: ThesisConfig, decision: MultiLegDecision) -> str
             f"weight {leg.weight:.1f}."
         )
     reasons = "\n".join(f"- {reason}" for reason in decision.reasons)
-    oil_line = ""
-    if thesis.thesis_id == "oil-shock-jul2026":
-        oil_line = (
-            "\nHormuz normalization unlikely (8%), Iranian supply genuinely uncertain (42%), "
-            "but oil is not pricing a spike (<1% above $80). Evidence mixed; thesis noted, "
-            "no trade prepared.\n"
-        )
-
-    return f"""# Agentic Finance Multi-Leg Evidence Gate Memo
+    return f"""# Market Foresight Evidence Gate Memo
 
 ## Thesis
 {thesis.thesis}
@@ -454,14 +448,13 @@ def build_multileg_memo(thesis: ThesisConfig, decision: MultiLegDecision) -> str
 
 ## Reasons
 {reasons}
-{oil_line}
 ## Allowed Use
 `{ALLOWED_USE}`
 
 ## Disclaimer
-This memo is research/demo software output, not financial advice. It does not place live trades,
-does not support real-money execution, and permits only guarded paper-preview review by a human
-when the deterministic gate says `PROCEED`.
+This memo is research/demo software output, not financial advice. It does not place real trades,
+does not support real-money execution, and permits only a local simulated paper-trade review by
+a human when the gate says `PROCEED`.
 """
 
 
@@ -494,7 +487,7 @@ def build_multileg_risk_map(thesis: ThesisConfig, decision: MultiLegDecision) ->
             "no_network_calls": True,
             "no_live_broker_calls": True,
             "no_live_trading_path": True,
-            "paper_preview_only_until_guarded_submission": True,
+            "simulated_paper_only": True,
             "secrets_redacted": True,
         },
     }
@@ -508,7 +501,7 @@ def build_multileg_audit_record(
     replay_path: Path,
     decision: MultiLegDecision,
     output_paths: dict[str, Path],
-    paper_preview: PaperOrderPreview | None,
+    paper_preview: dict[str, Any] | None,
 ) -> dict[str, Any]:
     return redact(
         {
@@ -529,8 +522,8 @@ def build_multileg_audit_record(
                 "no_network_calls": True,
                 "no_live_broker_calls": True,
                 "no_live_trading": True,
-                "paper_preview_requires_gate_proceed": True,
-                "guarded_submission_off_by_default": True,
+                "simulated_paper_requires_gate_proceed": True,
+                "human_approval_required_before_simulated_fill": True,
                 "secrets_redacted": True,
             },
         }
@@ -589,11 +582,6 @@ def run_multileg_replay_workflow(
     }
 
     paper_preview = None
-    if create_preview and decision.cleared_for_paper_preview:
-        from .brokers.alpaca import create_paper_order_preview
-
-        paper_preview = create_paper_order_preview(intent_from_thesis(thesis), gate_decision)
-        paths["paper_preview"] = write_json(output_dir / "alpaca-order-preview.json", paper_preview)
 
     audit_record = build_multileg_audit_record(
         base_dir=base_dir,

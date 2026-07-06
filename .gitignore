@@ -16,6 +16,7 @@ node_modules/
 .ruff_cache/
 agentic-finance/outputs/
 agentic-finance/runs/
+agentic-finance/simbroker-mcpb/dist/
 *.jsonl
 !agentic-finance/assets/sample-audit-log.jsonl
 !agentic-finance/assets/sample-labor-resilience-audit-log.jsonl

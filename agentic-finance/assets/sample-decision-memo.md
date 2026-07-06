@@ -1,4 +1,4 @@
-# Agentic Finance Multi-Leg Evidence Gate Memo
+# Market Foresight Evidence Gate Memo
 
 ## Thesis
 US labor market stays resilient through July 2026
@@ -31,4 +31,6 @@ US labor market stays resilient through July 2026
 `research_only_not_financial_advice`
 
 ## Disclaimer
-This memo is research/demo software output, not financial advice. It does not place live trades, does not support real-money execution, and permits only guarded paper-preview review by a human when the deterministic gate says `PROCEED`.
+This memo is research/demo software output, not financial advice. It does not place real trades,
+does not support real-money execution, and permits only a local simulated paper-trade review by
+a human when the gate says `PROCEED`.

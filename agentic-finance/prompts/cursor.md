@@ -22,9 +22,9 @@ Safety:
 
 Run:
 
-PYENV_VERSION=3.13.0 python -m unittest discover agentic-finance/tests
-PYENV_VERSION=3.13.0 python agentic-finance/tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
-printf "y\n" | PYENV_VERSION=3.13.0 python agentic-finance/tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
+python3 -m unittest discover agentic-finance/tests
+python3 agentic-finance/tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
+printf "y\n" | python3 agentic-finance/tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 
 Inspect:
 - agentic-finance/outputs/decision-memo.md

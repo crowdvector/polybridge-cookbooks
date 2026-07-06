@@ -51,10 +51,10 @@ Rules:
 - Record SimBroker fills only to outputs/paper_portfolio.jsonl.
 
 Run:
-python agentic-finance/tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
+python3 agentic-finance/tier1_evidence_gate.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 
 Then run:
-python agentic-finance/tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
+python3 agentic-finance/tier3_paper_trader.py --thesis labor-resilience-jul2026 --replay agentic-finance/examples/recorded_run_2026-07-04.json
 
 Report the actual command results. Do not invent evidence, output files, or test results.
 ```

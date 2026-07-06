@@ -318,7 +318,7 @@ def evaluate_thesis(thesis: ThesisConfig, recorded_run: dict[str, Any]) -> Multi
 
     leg_decisions = tuple(
         classify_leg(thesis, leg, recorded_leg)
-        for leg, recorded_leg in zip(thesis.questions, recorded_legs, strict=True)
+        for leg, recorded_leg in zip(thesis.questions, recorded_legs)
     )
     weighted_support = round(sum(item.weighted_support for item in leg_decisions), 6)
     direct_evidence_legs = sum(1 for item in leg_decisions if item.direct_evidence)

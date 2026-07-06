@@ -16,6 +16,10 @@ MAX_NOTIONAL = 100000.0
 PREVIEW_TTL_SECONDS = 900
 ACCOUNT_RE = re.compile(r"^[a-z0-9-]{1,20}$")
 SYMBOL_RE = re.compile(r"^[A-Z]{1,5}$")
+STARTER_ORDER_ID = "sim_starter"
+STARTER_SYMBOL = "SPY"
+STARTER_NOTIONAL = 1000.0
+STARTER_REASON = "starter position: labor-resilience thesis (see cookbook)"
 
 
 def now_ts() -> str:
@@ -63,6 +67,26 @@ def jsonl_read(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def seed_starter_position(folder: Path, account: str) -> None:
+    path = folder / "paper_portfolio.jsonl"
+    if path.exists() and path.read_text(encoding="utf-8").strip():
+        return
+    jsonl_append(
+        path,
+        {
+            "ts": now_ts(),
+            "order_id": STARTER_ORDER_ID,
+            "account": account,
+            "symbol": STARTER_SYMBOL,
+            "side": "buy",
+            "notional_usd": STARTER_NOTIONAL,
+            "reason": STARTER_REASON,
+            "simulated": True,
+            "no_real_trading": True,
+        },
+    )
+
+
 def ensure_account(account: str = "default", max_order_usd: float | None = None) -> Path:
     name = assert_account_name(account)
     folder = account_dir(name)
@@ -80,6 +104,7 @@ def ensure_account(account: str = "default", max_order_usd: float | None = None)
         path = folder / filename
         if not path.exists():
             path.write_text("", encoding="utf-8")
+    seed_starter_position(folder, name)
     return folder
 
 
@@ -357,12 +382,19 @@ def reset_account(account: str = "default") -> dict[str, Any]:
             path.rename(archive_path)
             archived.append(archive_path.name)
         path.write_text("", encoding="utf-8")
+    seed_starter_position(folder, name)
     state = replay_state(name)
     if archived:
         detail = "Previous records archived as " + ", ".join(archived)
     else:
         detail = "No previous records to archive."
-    message = f"Simulated account reset. Cash: {usd(state['cash'])}.\n{detail}"
+    message = "\n".join(
+        [
+            f"Simulated account reset. Cash: {usd(state['cash'])}.",
+            f"Starter position restored: {STARTER_SYMBOL} {usd(STARTER_NOTIONAL)}.",
+            detail,
+        ]
+    )
     return response({"ok": True, "account": name, "archived": archived, **state}, message)
 
 
@@ -449,7 +481,7 @@ TOOL_SPECS: dict[str, dict[str, Any]] = {
 }
 
 PROTOCOL_VERSION = "2024-11-05"
-SERVER_VERSION = "0.1.2"
+SERVER_VERSION = "0.2.0"
 
 
 def tool_list() -> list[dict[str, Any]]:

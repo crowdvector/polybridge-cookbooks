@@ -95,7 +95,9 @@ class SimBrokerMcpbTests(unittest.TestCase):
 
     def test_buy_reduces_cash_and_sell_requires_position(self) -> None:
         with self.assertRaises(ValueError):
-            self.server.preview_order("SPY", "sell", 100)
+            self.server.preview_order("SPY", "sell", 2000)
+        with self.assertRaises(ValueError):
+            self.server.preview_order("QQQ", "sell", 100)
 
     def test_buy_and_sell_flow(self) -> None:
         buy_preview = self.server.preview_order("SPY", "buy", 100)
@@ -103,16 +105,16 @@ class SimBrokerMcpbTests(unittest.TestCase):
         account = self.server.get_account()
 
         self.assertTrue(buy["ok"])
-        self.assertEqual(account["cash"], 99900.0)
-        self.assertEqual(account["positions"]["SPY"], 100.0)
+        self.assertEqual(account["cash"], 98900.0)
+        self.assertEqual(account["positions"]["SPY"], 1100.0)
 
         sell_preview = self.server.preview_order("SPY", "sell", 50)
         sell = self.server.place_simulated_order(sell_preview["preview_id"], True)
         after = self.server.get_account()
 
         self.assertTrue(sell["ok"])
-        self.assertEqual(after["cash"], 99950.0)
-        self.assertEqual(after["positions"]["SPY"], 50.0)
+        self.assertEqual(after["cash"], 98950.0)
+        self.assertEqual(after["positions"]["SPY"], 1050.0)
 
     def test_per_account_limit_and_independent_accounts(self) -> None:
         self.server.create_account("small", max_order_usd=50)
@@ -123,8 +125,8 @@ class SimBrokerMcpbTests(unittest.TestCase):
         preview = self.server.preview_order("SPY", "buy", 100, account="other")
         self.server.place_simulated_order(preview["preview_id"], True)
 
-        self.assertEqual(self.server.get_account("default")["cash"], 100000.0)
-        self.assertEqual(self.server.get_account("other")["cash"], 99900.0)
+        self.assertEqual(self.server.get_account("default")["cash"], 99000.0)
+        self.assertEqual(self.server.get_account("other")["cash"], 98900.0)
 
     def test_reset_archives_and_resets(self) -> None:
         preview = self.server.preview_order("SPY", "buy", 100)
@@ -132,7 +134,8 @@ class SimBrokerMcpbTests(unittest.TestCase):
 
         reset = self.server.reset_account()
 
-        self.assertEqual(reset["cash"], 100000.0)
+        self.assertEqual(reset["cash"], 99000.0)
+        self.assertEqual(reset["positions"]["SPY"], 1000.0)
         self.assertTrue(reset["archived"])
         self.assert_closing(reset)
 
@@ -155,7 +158,7 @@ class SimBrokerMcpbTests(unittest.TestCase):
     def test_manifest_shape_for_claude_desktop(self) -> None:
         manifest = json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
-        self.assertEqual(manifest["version"], "0.1.2")
+        self.assertEqual(manifest["version"], "0.2.0")
         self.assertIn("author", manifest)
         self.assertIn("name", manifest["author"])
         self.assertIn("server", manifest)
@@ -176,7 +179,7 @@ class SimBrokerMcpbTests(unittest.TestCase):
         self.assertEqual(result["protocolVersion"], "2024-11-05")
         self.assertIn("tools", result["capabilities"])
         self.assertEqual(result["serverInfo"]["name"], "SimBroker")
-        self.assertEqual(result["serverInfo"]["version"], "0.1.2")
+        self.assertEqual(result["serverInfo"]["version"], "0.2.0")
 
     def test_tools_list_returns_tool_objects_with_input_schema(self) -> None:
         reply = self.server.handle_request({"jsonrpc": "2.0", "id": 2, "method": "tools/list", "params": {}})
@@ -261,22 +264,21 @@ class SimBrokerVisibleTextTests(unittest.TestCase):
         text = self.call_text("get_account")
 
         self.assertIn("SIMBROKER ACCOUNT", text)
-        self.assertIn("Cash:", text)
-        self.assertIn("$100,000.00", text)
-        self.assertIn("Positions: none", text)
+        self.assertIn("Cash:      $99,000.00", text)
+        self.assertIn("Positions: SPY $1,000.00 (1 fill)", text)
 
     def test_get_account_after_fill_text(self) -> None:
         self.buy_spy()
         text = self.call_text("get_account")
 
-        self.assertIn("Cash:      $99,000.00", text)
-        self.assertIn("Positions: SPY $1,000.00 (1 fill)", text)
+        self.assertIn("Cash:      $98,000.00", text)
+        self.assertIn("Positions: SPY $2,000.00 (2 fills)", text)
 
     def test_create_account_text(self) -> None:
         text = self.call_text("create_account", {"name": "john", "max_order_usd": 5000})
 
         self.assertIn("SIMBROKER ACCOUNT CREATED  john", text)
-        self.assertIn("Cash:  $100,000.00", text)
+        self.assertIn("Cash:  $99,000.00", text)
         self.assertIn("Limit: $5,000.00 per order", text)
 
     def test_list_accounts_text(self) -> None:
@@ -286,7 +288,8 @@ class SimBrokerVisibleTextTests(unittest.TestCase):
         self.assertIn("SIMBROKER ACCOUNTS", text)
         self.assertIn("default", text)
         self.assertIn("cash", text)
-        self.assertIn("fills", text)
+        self.assertIn("deployed $1,000.00", text)
+        self.assertIn("fills 1", text)
         self.assertIn("limit $5,000/order", text)
         lines = text.splitlines()
         self.assertLess(lines.index(next(l for l in lines if l.startswith("default"))),
@@ -322,15 +325,19 @@ class SimBrokerVisibleTextTests(unittest.TestCase):
         self.assertIn("SIDE:     BUY", text)
         self.assertIn("NOTIONAL: $1,000.00", text)
         self.assertIn("CASH:", text)
-        self.assertIn("$99,000.00 remaining", text)
+        self.assertIn("$98,000.00 remaining", text)
         self.assertIn("Recorded:", text)
         self.assertIn("paper_portfolio.jsonl", text)
 
-    def test_get_portfolio_empty_text(self) -> None:
+    def test_get_portfolio_fresh_text_shows_starter(self) -> None:
         text = self.call_text("get_portfolio")
 
         self.assertIn("SIMBROKER PORTFOLIO", text)
-        self.assertIn("No fills yet.", text)
+        self.assertIn("SPY", text)
+        self.assertIn("BUY", text)
+        self.assertIn("$1,000.00", text)
+        self.assertIn("sim_starter", text)
+        self.assertIn("Showing 1 of 1 fills", text)
 
     def test_get_portfolio_after_fill_text(self) -> None:
         self.buy_spy()
@@ -340,18 +347,16 @@ class SimBrokerVisibleTextTests(unittest.TestCase):
         self.assertIn("SPY", text)
         self.assertIn("BUY", text)
         self.assertIn("$1,000.00", text)
-        self.assertIn("Showing 1 of 1 fills", text)
+        self.assertIn("Showing 2 of 2 fills", text)
 
-    def test_reset_account_text_archived_and_not(self) -> None:
+    def test_reset_account_text_mentions_starter_and_archives(self) -> None:
         self.buy_spy()
-        archived_text = self.call_text("reset_account")
-        empty_text = self.call_text("reset_account")
+        text = self.call_text("reset_account")
 
-        self.assertIn("Simulated account reset. Cash: $100,000.00.", archived_text)
-        self.assertIn("Previous records archived as", archived_text)
-        self.assertIn("paper_portfolio.", archived_text)
-        self.assertIn("Simulated account reset. Cash: $100,000.00.", empty_text)
-        self.assertIn("No previous records to archive.", empty_text)
+        self.assertIn("Simulated account reset. Cash: $99,000.00.", text)
+        self.assertIn("Starter position restored: SPY $1,000.00.", text)
+        self.assertIn("Previous records archived as", text)
+        self.assertIn("paper_portfolio.", text)
 
     def test_refusal_texts_are_explicit(self) -> None:
         no_preview = self.call_text("place_simulated_order", {"preview_id": "prev_missing", "user_approved": True})
@@ -370,8 +375,82 @@ class SimBrokerVisibleTextTests(unittest.TestCase):
         self.assertIn("per-order limit", capped)
 
         self.call_text("create_account", {"name": "empty"})
-        no_position = self.call_text("preview_order", {"symbol": "SPY", "side": "sell", "notional_usd": 100, "account": "empty"})
-        self.assertIn("No SPY position to sell", no_position)
+        no_position = self.call_text("preview_order", {"symbol": "QQQ", "side": "sell", "notional_usd": 100, "account": "empty"})
+        self.assertIn("No QQQ position to sell", no_position)
+
+
+class SimBrokerStarterPositionTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory()
+        self.patch_env = patch.dict(os.environ, {"SIMBROKER_DATA_DIR": self.temp.name}, clear=True)
+        self.patch_env.start()
+        self.server = load_server()
+
+    def tearDown(self) -> None:
+        self.patch_env.stop()
+        self.temp.cleanup()
+
+    def test_fresh_default_account_is_seeded(self) -> None:
+        account = self.server.get_account()
+        portfolio = self.server.get_portfolio()
+
+        self.assertEqual(account["cash"], 99000.0)
+        self.assertEqual(account["positions"]["SPY"], 1000.0)
+        self.assertEqual(len(portfolio["fills"]), 1)
+        starter = portfolio["fills"][0]
+        self.assertEqual(starter["order_id"], "sim_starter")
+        self.assertEqual(starter["symbol"], "SPY")
+        self.assertEqual(starter["side"], "buy")
+        self.assertEqual(starter["notional_usd"], 1000.0)
+        self.assertEqual(starter["reason"], "starter position: labor-resilience thesis (see cookbook)")
+        self.assertTrue(starter["simulated"])
+        self.assertTrue(starter["no_real_trading"])
+        self.assertTrue(starter["ts"])
+
+    def test_create_account_is_seeded_and_limit_does_not_block_seed(self) -> None:
+        self.server.create_account("tiny", max_order_usd=50)
+        account = self.server.get_account("tiny")
+        portfolio = self.server.get_portfolio("tiny")
+
+        self.assertEqual(account["cash"], 99000.0)
+        self.assertEqual(account["positions"]["SPY"], 1000.0)
+        self.assertEqual(len(portfolio["fills"]), 1)
+        self.assertEqual(portfolio["fills"][0]["order_id"], "sim_starter")
+
+        listing = self.server.list_accounts()["message"]
+        tiny_row = next(line for line in listing.splitlines() if line.startswith("tiny"))
+        self.assertIn("deployed $1,000.00", tiny_row)
+        self.assertIn("fills 1", tiny_row)
+
+    def test_reset_restores_starter_position(self) -> None:
+        preview = self.server.preview_order("SPY", "buy", 500)
+        self.server.place_simulated_order(preview["preview_id"], True)
+
+        reset = self.server.reset_account()
+        portfolio = self.server.get_portfolio()
+
+        self.assertEqual(reset["cash"], 99000.0)
+        self.assertEqual(reset["positions"]["SPY"], 1000.0)
+        self.assertTrue(reset["archived"])
+        self.assertIn("Starter position restored: SPY $1,000.00.", reset["message"])
+        self.assertIn("Previous records archived as", reset["message"])
+        self.assertEqual(len(portfolio["fills"]), 1)
+        self.assertEqual(portfolio["fills"][0]["order_id"], "sim_starter")
+
+    def test_selling_starter_position_flow(self) -> None:
+        preview = self.server.preview_order("SPY", "sell", 1000)
+        fill = self.server.place_simulated_order(preview["preview_id"], True)
+        account = self.server.get_account()
+
+        self.assertTrue(fill["ok"])
+        self.assertEqual(account["cash"], 100000.0)
+        self.assertEqual(account["positions"], {})
+        self.assertIn("Positions: none", account["message"])
+
+    def test_overselling_starter_position_refuses(self) -> None:
+        with self.assertRaises(ValueError) as ctx:
+            self.server.preview_order("SPY", "sell", 2000)
+        self.assertIn("No SPY position to sell", str(ctx.exception))
 
 
 if __name__ == "__main__":

@@ -661,6 +661,25 @@ def fetch_live_forecast(client: Any, question: str) -> dict[str, Any]:
         raise
 
 
+def extract_profile_value(value: Any) -> str | None:
+    if isinstance(value, str):
+        candidate = value.strip().lower()
+    elif isinstance(value, dict):
+        candidate = str(first_present(value, ("profile", "type", "name")) or "").strip().lower()
+    else:
+        return None
+    return candidate if candidate in KNOWN_EVIDENCE_PROFILES else None
+
+
+def nested_metadata_profile(response: dict[str, Any]) -> str | None:
+    node: Any = response.get("metadata")
+    for key in ("oracle_port", "relevance_filter_summary", "selected_evidence_profile"):
+        if not isinstance(node, dict):
+            return None
+        node = node.get(key)
+    return extract_profile_value(node)
+
+
 def live_leg_record(question: str, response: dict[str, Any]) -> dict[str, Any]:
     probability = normalize_unit_interval(first_present(response, ("probability", "forecast", "p")))
     interval = normalize_interval(
@@ -675,9 +694,10 @@ def live_leg_record(question: str, response: dict[str, Any]) -> dict[str, Any]:
     direct_count = sum(1 for market in markets if not market.is_proxy)
     proxy_count = len(markets) - direct_count
 
-    raw_profile = response.get("evidence_profile")
-    profile = raw_profile.get("type") if isinstance(raw_profile, dict) else None
-    if profile not in KNOWN_EVIDENCE_PROFILES:
+    profile = extract_profile_value(response.get("evidence_profile"))
+    if profile is None:
+        profile = nested_metadata_profile(response)
+    if profile is None:
         if not markets:
             profile = "unspecified"
         elif direct_count == 0:

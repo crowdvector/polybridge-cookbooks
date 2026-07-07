@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import tier1_evidence_gate as tier1
 import tier3_paper_trader as tier3
-from agentic_finance.multileg import LIVE_MODE_NOTICE
+from agentic_finance.multileg import LIVE_MODE_NOTICE, live_leg_record
 from agentic_finance.polybridge import PolyBridgeClient, PolyBridgeError
 
 
@@ -244,6 +244,109 @@ class LiveModeFailureTests(unittest.TestCase):
 
             self.assertEqual(len(client.questions), 3)
             self.assertEqual(result["multi_leg_decision"].leg_decisions[0].classification, "INSUFFICIENT")
+
+
+def flagless_markets(count: int) -> list[dict]:
+    return [
+        {
+            "source": "fake_live_market",
+            "question": f"Flagless market {index}?",
+            "url": "https://example.invalid/markets/flagless",
+            "probability": 0.4,
+            "relevance": 0.8,
+        }
+        for index in range(count)
+    ]
+
+
+class LiveEvidenceProfileTests(unittest.TestCase):
+    def test_nested_metadata_profile_string_beats_market_count_fallback(self) -> None:
+        response = {
+            "status": "ok",
+            "probability": 0.4,
+            "markets_used": flagless_markets(4),
+            "metadata": {
+                "oracle_port": {
+                    "relevance_filter_summary": {"selected_evidence_profile": "proxy_only"}
+                }
+            },
+        }
+        record = live_leg_record("Q?", response)
+
+        self.assertEqual(record["evidence_profile"], "proxy_only")
+
+    def test_nested_metadata_profile_dict_is_accepted(self) -> None:
+        response = {
+            "status": "ok",
+            "probability": 0.4,
+            "markets_used": flagless_markets(4),
+            "metadata": {
+                "oracle_port": {
+                    "relevance_filter_summary": {
+                        "selected_evidence_profile": {"profile": "proxy_only", "reason": "proxy-heavy"}
+                    }
+                }
+            },
+        }
+        record = live_leg_record("Q?", response)
+
+        self.assertEqual(record["evidence_profile"], "proxy_only")
+
+    def test_valid_top_level_profile_still_wins_over_nested(self) -> None:
+        response = {
+            "status": "ok",
+            "probability": 0.4,
+            "markets_used": flagless_markets(4),
+            "evidence_profile": {"type": "direct_mixed"},
+            "metadata": {
+                "oracle_port": {
+                    "relevance_filter_summary": {"selected_evidence_profile": "proxy_only"}
+                }
+            },
+        }
+        record = live_leg_record("Q?", response)
+
+        self.assertEqual(record["evidence_profile"], "direct_mixed")
+
+    def test_market_count_fallback_when_no_profiles_present(self) -> None:
+        flagless = live_leg_record("Q?", {"probability": 0.4, "markets_used": flagless_markets(3)})
+        self.assertEqual(flagless["evidence_profile"], "direct_only")
+
+        mixed_markets = flagless_markets(2) + [
+            {"source": "fake_live_market", "question": "Proxy?", "probability": 0.4, "is_proxy": True}
+        ]
+        mixed = live_leg_record("Q?", {"probability": 0.4, "markets_used": mixed_markets})
+        self.assertEqual(mixed["evidence_profile"], "direct_mixed")
+
+        no_markets = live_leg_record("Q?", {"probability": 0.4})
+        self.assertEqual(no_markets["evidence_profile"], "unspecified")
+
+    def test_proxy_only_profile_from_metadata_gets_half_weight_end_to_end(self) -> None:
+        proxy_metadata_response = {
+            "status": "ok",
+            "probability": 0.05,
+            "confidence_interval": {"lower": 0.03, "upper": 0.08},
+            "markets_used": flagless_markets(4),
+            "metadata": {
+                "oracle_port": {
+                    "relevance_filter_summary": {"selected_evidence_profile": "proxy_only"}
+                }
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            client = FakeClient([live_response(0.1), live_response(0.2), proxy_metadata_response])
+            with contextlib.redirect_stdout(io.StringIO()):
+                result = tier1.run_replay(
+                    thesis_id="labor-resilience-jul2026",
+                    output_dir=tmp,
+                    client=client,
+                )
+
+            fed_leg = result["multi_leg_decision"].leg_decisions[2]
+            self.assertEqual(fed_leg.evidence_profile, "proxy_only")
+            self.assertEqual(fed_leg.weight, 0.5)
+            self.assertEqual(result["multi_leg_decision"].direct_evidence_legs, 2)
+            self.assertEqual(result["multi_leg_decision"].weighted_support, 2.5)
 
 
 class MissingRequestsTests(unittest.TestCase):

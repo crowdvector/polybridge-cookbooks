@@ -66,19 +66,22 @@ Runtime outputs are ignored by git.
 
 ## Live Mode And Custom Theses
 
-The recorded demo needs nothing beyond stock Python. Live PolyBridge evidence mode and custom workflows use optional dependencies — install them once with:
+The recorded demo needs nothing beyond stock Python. Live mode asks PolyBridge fresh and uses one optional dependency. Install it once with:
 
 ```bash
 bash setup.sh
 ```
 
-To gate a different thesis, add it to `examples/sample_theses.json` with matching replay legs, then run:
+Run the shipped thesis live by dropping the --replay flag:
 
 ```bash
-python3 tier1_evidence_gate.py --thesis your-thesis-id
+python3 tier1_evidence_gate.py --thesis labor-resilience-jul2026
+python3 tier3_paper_trader.py --thesis labor-resilience-jul2026
 ```
 
-Live mode remains read-only evidence fetching; it does not add any real trading path.
+To run your own idea, add a thesis to examples/sample_theses.json with a new thesis_id and run it the same way. Custom theses always run live; no recorded data is needed.
+
+Live answers take 30 to 50 seconds per question. Live mode remains read-only evidence fetching; it does not add any real trading path. Tier 3 still previews and asks y/N before any simulated fill.
 
 ## SimBroker
 

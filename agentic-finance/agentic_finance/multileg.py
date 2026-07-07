@@ -8,7 +8,13 @@ from pathlib import Path
 from typing import Any
 
 from .audit import audit_path
-from .evidence import canonical_sha256, normalize_unit_interval
+from .evidence import (
+    canonical_sha256,
+    first_present,
+    normalize_interval,
+    normalize_source_market,
+    normalize_unit_interval,
+)
 from .models import (
     ALLOWED_USE,
     EvidencePacket,
@@ -24,6 +30,8 @@ MARGIN = 0.15
 MIN_WEIGHTED_SUPPORT = 2.0
 DIRECT_EVIDENCE_PROFILES = {"direct_only", "direct_mixed"}
 PROXY_ONLY_PROFILE = "proxy_only"
+KNOWN_EVIDENCE_PROFILES = DIRECT_EVIDENCE_PROFILES | {PROXY_ONLY_PROFILE}
+LIVE_MODE_NOTICE = "Live mode: asking PolyBridge fresh. 30 to 50 seconds per question."
 
 
 @dataclass(frozen=True)
@@ -225,7 +233,8 @@ def build_leg_evidence_packet(
     failure = bool(recorded_leg.get("failed", False))
     insufficient = bool(recorded_leg.get("insufficient_data", False))
     selected_direct_missing = bool(recorded_leg.get("selected_direct_evidence_missing", False))
-    quality_flags = ["offline_fixture", "sanitized_fixture", "recorded_replay"]
+    live = bool(recorded_leg.get("live_polybridge", False))
+    quality_flags = ["live_polybridge"] if live else ["offline_fixture", "sanitized_fixture", "recorded_replay"]
     if failure:
         quality_flags.append("forecast_error")
     if insufficient:
@@ -253,9 +262,9 @@ def build_leg_evidence_packet(
         confidence=normalize_unit_interval(recorded_leg.get("confidence")),
         confidence_interval=interval,
         evidence_profile={
-            "fixture_mode": True,
-            "live_polybridge": False,
-            "recorded_replay": True,
+            "fixture_mode": not live,
+            "live_polybridge": live,
+            "recorded_replay": not live,
             "forecast_status": "error" if failure else "ok",
             "search_status": "ok",
             "forecast_evidence_type": profile,
@@ -458,7 +467,26 @@ a human when the gate says `PROCEED`.
 """
 
 
-def build_multileg_risk_map(thesis: ThesisConfig, decision: MultiLegDecision) -> dict[str, Any]:
+def build_multileg_risk_map(thesis: ThesisConfig, decision: MultiLegDecision, live: bool = False) -> dict[str, Any]:
+    if live:
+        guardrails = {
+            "offline_replay": False,
+            "live_polybridge_evidence": True,
+            "read_only_evidence": True,
+            "no_live_broker_calls": True,
+            "no_live_trading_path": True,
+            "simulated_paper_only": True,
+            "secrets_redacted": True,
+        }
+    else:
+        guardrails = {
+            "offline_replay": True,
+            "no_network_calls": True,
+            "no_live_broker_calls": True,
+            "no_live_trading_path": True,
+            "simulated_paper_only": True,
+            "secrets_redacted": True,
+        }
     return {
         "schema_version": "multi_leg_evidence_gate_result.v1",
         "allowed_use": ALLOWED_USE,
@@ -482,14 +510,7 @@ def build_multileg_risk_map(thesis: ThesisConfig, decision: MultiLegDecision) ->
             "threshold_source": "thesis_config",
         },
         "leg_decisions": [to_jsonable(item) for item in decision.leg_decisions],
-        "guardrails": {
-            "offline_replay": True,
-            "no_network_calls": True,
-            "no_live_broker_calls": True,
-            "no_live_trading_path": True,
-            "simulated_paper_only": True,
-            "secrets_redacted": True,
-        },
+        "guardrails": guardrails,
     }
 
 
@@ -498,11 +519,33 @@ def build_multileg_audit_record(
     base_dir: Path,
     run_id: str,
     thesis: ThesisConfig,
-    replay_path: Path,
+    replay_path: Path | None = None,
     decision: MultiLegDecision,
     output_paths: dict[str, Path],
     paper_preview: dict[str, Any] | None,
+    live: bool = False,
 ) -> dict[str, Any]:
+    if live:
+        guardrails = {
+            "offline_replay": False,
+            "live_polybridge_evidence": True,
+            "read_only_evidence": True,
+            "no_live_broker_calls": True,
+            "no_live_trading": True,
+            "simulated_paper_requires_gate_proceed": True,
+            "human_approval_required_before_simulated_fill": True,
+            "secrets_redacted": True,
+        }
+    else:
+        guardrails = {
+            "offline_replay": True,
+            "no_network_calls": True,
+            "no_live_broker_calls": True,
+            "no_live_trading": True,
+            "simulated_paper_requires_gate_proceed": True,
+            "human_approval_required_before_simulated_fill": True,
+            "secrets_redacted": True,
+        }
     return redact(
         {
             "schema_version": "multi_leg_decision_audit_record.v1",
@@ -510,22 +553,14 @@ def build_multileg_audit_record(
             "timestamp": utc_now_iso(),
             "tier": "multi_leg_evidence_gate",
             "scenario_id": thesis.thesis_id,
-            "replay_source": audit_path(replay_path, base_dir),
+            "replay_source": "live_polybridge" if live else audit_path(replay_path, base_dir),
             "verdict": decision.verdict,
             "weighted_support": decision.weighted_support,
             "direct_evidence_legs": decision.direct_evidence_legs,
             "leg_decisions": [to_jsonable(item) for item in decision.leg_decisions],
             "paper_preview": to_jsonable(paper_preview) if paper_preview else None,
             "output_paths": {label: audit_path(path, base_dir) for label, path in output_paths.items()},
-            "guardrails": {
-                "offline_replay": True,
-                "no_network_calls": True,
-                "no_live_broker_calls": True,
-                "no_live_trading": True,
-                "simulated_paper_requires_gate_proceed": True,
-                "human_approval_required_before_simulated_fill": True,
-                "secrets_redacted": True,
-            },
+            "guardrails": guardrails,
         }
     )
 
@@ -591,6 +626,180 @@ def run_multileg_replay_workflow(
         decision=decision,
         output_paths=paths,
         paper_preview=paper_preview,
+    )
+    paths["decisions_log"] = append_jsonl(output_dir / "decisions.jsonl", audit_record)
+
+    return {
+        "run_id": run_id,
+        "thesis": thesis,
+        "intent": intent_from_thesis(thesis),
+        "multi_leg_decision": decision,
+        "gate_decision": gate_decision,
+        "memo_markdown": memo,
+        "paper_preview": paper_preview,
+        "audit_record": audit_record,
+        "paths": paths,
+    }
+
+
+def _looks_like_timeout(exc: Exception) -> bool:
+    text = str(exc).lower()
+    if "timed out" in text or "timeout" in text:
+        return True
+    cause = getattr(exc, "__cause__", None)
+    return cause is not None and "timeout" in type(cause).__name__.lower()
+
+
+def fetch_live_forecast(client: Any, question: str) -> dict[str, Any]:
+    from .polybridge import PolyBridgeError
+
+    try:
+        return client.forecast(question)
+    except PolyBridgeError as exc:
+        if _looks_like_timeout(exc):
+            return client.forecast(question)
+        raise
+
+
+def extract_profile_value(value: Any) -> str | None:
+    if isinstance(value, str):
+        candidate = value.strip().lower()
+    elif isinstance(value, dict):
+        candidate = str(first_present(value, ("profile", "type", "name")) or "").strip().lower()
+    else:
+        return None
+    return candidate if candidate in KNOWN_EVIDENCE_PROFILES else None
+
+
+def nested_metadata_profile(response: dict[str, Any]) -> str | None:
+    node: Any = response.get("metadata")
+    for key in ("oracle_port", "relevance_filter_summary", "selected_evidence_profile"):
+        if not isinstance(node, dict):
+            return None
+        node = node.get(key)
+    return extract_profile_value(node)
+
+
+def live_leg_record(question: str, response: dict[str, Any]) -> dict[str, Any]:
+    probability = normalize_unit_interval(first_present(response, ("probability", "forecast", "p")))
+    interval = normalize_interval(
+        first_present(response, ("confidence_interval", "confidenceInterval", "probability_range"))
+    )
+    raw_markets = response.get("markets_used")
+    markets = (
+        [normalize_source_market(item) for item in raw_markets if isinstance(item, dict)]
+        if isinstance(raw_markets, list)
+        else []
+    )
+    direct_count = sum(1 for market in markets if not market.is_proxy)
+    proxy_count = len(markets) - direct_count
+
+    profile = extract_profile_value(response.get("evidence_profile"))
+    if profile is None:
+        profile = nested_metadata_profile(response)
+    if profile is None:
+        if not markets:
+            profile = "unspecified"
+        elif direct_count == 0:
+            profile = PROXY_ONLY_PROFILE
+        elif proxy_count == 0:
+            profile = "direct_only"
+        else:
+            profile = "direct_mixed"
+
+    reasoning = first_present(response, ("reasoning_summary", "reasoning", "summary"))
+    return {
+        "question": question,
+        "live_polybridge": True,
+        "probability": probability,
+        "confidence": first_present(response, ("confidence", "confidence_score")),
+        "interval": [interval["lower"], interval["upper"]] if interval else None,
+        "evidence_profile": profile,
+        "direct_market_count": direct_count,
+        "proxy_market_count": proxy_count,
+        "source_markets": [to_jsonable(market) for market in markets],
+        "reasoning_summary": str(reasoning) if reasoning else "Live PolyBridge forecast.",
+        "insufficient_data": probability is None,
+    }
+
+
+def failed_live_leg(question: str, error_text: str) -> dict[str, Any]:
+    return {
+        "question": question,
+        "live_polybridge": True,
+        "failed": True,
+        "insufficient_data": True,
+        "probability": None,
+        "evidence_profile": "unspecified",
+        "source_markets": [],
+        "reasoning_summary": f"Live PolyBridge forecast failed: {redact(error_text)}",
+    }
+
+
+def fetch_live_legs(thesis: ThesisConfig, client: Any) -> list[dict[str, Any]]:
+    from .polybridge import PolyBridgeAuthError, PolyBridgeError
+
+    legs: list[dict[str, Any]] = []
+    for leg in thesis.questions:
+        try:
+            response = fetch_live_forecast(client, leg.question)
+        except PolyBridgeAuthError:
+            raise
+        except PolyBridgeError as exc:
+            legs.append(failed_live_leg(leg.question, str(exc)))
+            continue
+        legs.append(live_leg_record(leg.question, response))
+    return legs
+
+
+def run_multileg_live_workflow(
+    *,
+    thesis_id: str,
+    theses_path: Path,
+    base_dir: Path,
+    output_dir: Path | None = None,
+    create_preview: bool = True,
+    client: Any | None = None,
+) -> dict[str, Any]:
+    output_dir = output_dir or (base_dir / "outputs")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    theses = load_theses(theses_path)
+    if thesis_id not in theses:
+        raise ValueError(f"Unknown thesis ID: {thesis_id}")
+    thesis = theses[thesis_id]
+
+    if client is None:
+        from .polybridge import PolyBridgeClient
+
+        client = PolyBridgeClient()
+
+    recorded_run = {"theses": {thesis_id: {"legs": fetch_live_legs(thesis, client)}}}
+    decision = evaluate_thesis(thesis, recorded_run)
+    gate_decision = gate_decision_from_multileg(decision)
+    memo = build_multileg_memo(thesis, decision)
+    result = build_multileg_risk_map(thesis, decision, live=True)
+    run_id = f"run_{uuid.uuid4().hex[:12]}"
+
+    paths = {
+        "evidence_packet": write_json(
+            output_dir / "evidence-packet.json",
+            {"schema_version": "multi_leg_evidence_packets.v1", "evidence_packets": [item.evidence_packet for item in decision.leg_decisions]},
+        ),
+        "gate_decision": write_json(output_dir / "gate-decision.json", gate_decision),
+        "decision_result": write_json(output_dir / "decision-result.json", result),
+        "decision_memo": write_text(output_dir / "decision-memo.md", memo),
+    }
+
+    paper_preview = None
+
+    audit_record = build_multileg_audit_record(
+        base_dir=base_dir,
+        run_id=run_id,
+        thesis=thesis,
+        decision=decision,
+        output_paths=paths,
+        paper_preview=paper_preview,
+        live=True,
     )
     paths["decisions_log"] = append_jsonl(output_dir / "decisions.jsonl", audit_record)
 

@@ -22,7 +22,13 @@ from agentic_finance.broker import (
     order_from_intent,
 )
 from agentic_finance.models import to_jsonable
-from agentic_finance.multileg import append_jsonl, run_multileg_replay_workflow
+from agentic_finance.multileg import (
+    LIVE_MODE_NOTICE,
+    append_jsonl,
+    run_multileg_live_workflow,
+    run_multileg_replay_workflow,
+)
+from agentic_finance.polybridge import PolyBridgeError
 from agentic_finance.redaction import redact
 
 
@@ -76,17 +82,30 @@ def run_paper_trader(
     input_fn: Callable[[str], str] = input,
     confirmation_fn: Callable[[dict[str, Any], dict[str, Any]], str] | None = None,
     base_dir: Path | None = None,
+    client: Any | None = None,
 ) -> dict[str, Any]:
     base = base_dir or default_base_dir()
     output = Path(output_dir) if output_dir is not None else base / "outputs"
-    workflow = run_multileg_replay_workflow(
-        thesis_id=thesis_id,
-        theses_path=Path(theses_path) if theses_path is not None else default_theses_path(base),
-        replay_path=Path(replay_path) if replay_path is not None else default_replay_path(base),
-        base_dir=base,
-        output_dir=output,
-        create_preview=False,
-    )
+    theses = Path(theses_path) if theses_path is not None else default_theses_path(base)
+    if replay_path is None:
+        print(LIVE_MODE_NOTICE)
+        workflow = run_multileg_live_workflow(
+            thesis_id=thesis_id,
+            theses_path=theses,
+            base_dir=base,
+            output_dir=output,
+            create_preview=False,
+            client=client,
+        )
+    else:
+        workflow = run_multileg_replay_workflow(
+            thesis_id=thesis_id,
+            theses_path=theses,
+            replay_path=Path(replay_path),
+            base_dir=base,
+            output_dir=output,
+            create_preview=False,
+        )
     decision = workflow["multi_leg_decision"]
     if not decision.cleared_for_paper_preview:
         return {"mode": "sim_broker", "broker": "sim", "broker_event": "skipped_decline", **workflow}
@@ -169,7 +188,12 @@ def build_parser() -> argparse.ArgumentParser:
         description="Tier 3 SimBroker paper trader for the Agentic Finance replay demo",
     )
     parser.add_argument("--thesis", required=True, help="Thesis ID from examples/sample_theses.json.")
-    parser.add_argument("--replay", type=Path, default=None, help="Recorded replay fixture path.")
+    parser.add_argument(
+        "--replay",
+        type=Path,
+        default=None,
+        help="Recorded replay fixture path. Omit to fetch live PolyBridge evidence (read-only).",
+    )
     parser.add_argument("--theses", type=Path, default=None, help="Thesis config JSON path.")
     parser.add_argument("--output-dir", type=Path, default=None, help="Optional runtime output directory.")
     return parser
@@ -205,7 +229,11 @@ def main(argv: list[str] | None = None) -> int:
             confirmation_fn=prompt_for_sim_confirmation,
         )
     except Exception as exc:
-        print(f"Tier 3 paper trader failed: {redact(str(exc))}", file=sys.stderr)
+        message = redact(str(exc))
+        if isinstance(exc, PolyBridgeError):
+            print(message, file=sys.stderr)
+        else:
+            print(f"Tier 3 paper trader failed: {message}", file=sys.stderr)
         return 1
 
     decision = result["multi_leg_decision"]

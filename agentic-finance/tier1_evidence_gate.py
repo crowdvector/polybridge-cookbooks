@@ -15,7 +15,12 @@ import argparse
 from pathlib import Path
 from typing import Any
 
-from agentic_finance.multileg import run_multileg_replay_workflow
+from agentic_finance.multileg import (
+    LIVE_MODE_NOTICE,
+    run_multileg_live_workflow,
+    run_multileg_replay_workflow,
+)
+from agentic_finance.polybridge import PolyBridgeError
 from agentic_finance.redaction import redact
 
 
@@ -38,15 +43,25 @@ def run_replay(
     theses_path: str | Path | None = None,
     output_dir: str | Path | None = None,
     base_dir: Path | None = None,
+    client: Any | None = None,
 ) -> dict[str, Any]:
     base = base_dir or default_base_dir()
-    replay = Path(replay_path) if replay_path is not None else default_replay_path(base)
     theses = Path(theses_path) if theses_path is not None else default_theses_path(base)
     output = Path(output_dir) if output_dir is not None else None
+    if replay_path is None:
+        print(LIVE_MODE_NOTICE)
+        return run_multileg_live_workflow(
+            thesis_id=thesis_id,
+            theses_path=theses,
+            base_dir=base,
+            output_dir=output,
+            create_preview=False,
+            client=client,
+        )
     return run_multileg_replay_workflow(
         thesis_id=thesis_id,
         theses_path=theses,
-        replay_path=replay,
+        replay_path=Path(replay_path),
         base_dir=base,
         output_dir=output,
         create_preview=False,
@@ -59,7 +74,12 @@ def build_parser() -> argparse.ArgumentParser:
         description="Tier 1 multi-leg Agentic Finance Evidence Gate replay",
     )
     parser.add_argument("--thesis", required=True, help="Thesis ID from examples/sample_theses.json.")
-    parser.add_argument("--replay", type=Path, default=None, help="Recorded replay fixture path.")
+    parser.add_argument(
+        "--replay",
+        type=Path,
+        default=None,
+        help="Recorded replay fixture path. Omit to fetch live PolyBridge evidence (read-only).",
+    )
     parser.add_argument("--theses", type=Path, default=None, help="Thesis config JSON path.")
     parser.add_argument("--output-dir", type=Path, default=None, help="Optional runtime output directory.")
     return parser
@@ -76,7 +96,11 @@ def main(argv: list[str] | None = None) -> int:
             output_dir=args.output_dir,
         )
     except Exception as exc:
-        print(f"Tier 1 replay failed: {redact(str(exc))}", file=sys.stderr)
+        message = redact(str(exc))
+        if isinstance(exc, PolyBridgeError):
+            print(message, file=sys.stderr)
+        else:
+            print(f"Tier 1 replay failed: {message}", file=sys.stderr)
         return 1
 
     decision = result["multi_leg_decision"]

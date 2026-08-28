@@ -1,6 +1,6 @@
 # PolyBridge Cookbooks
 
-Runnable PolyBridge cookbooks for market-implied workflows, Colab notebooks, and developer examples. Each cookbook is self-contained and includes a standalone `README.md`, a runnable notebook, a `setup.sh` installer, helper code, and public-facing generated assets.
+Runnable PolyBridge cookbooks for market-implied workflows and developer examples. Each cookbook is self-contained, with its own `README.md`, setup path, implementation, and supporting assets where needed.
 
 The Forecast blog articles use dated snapshots. Running those notebooks or scripts calls the live Forecast API, so values may differ. The Agentic Finance cookbook is offline-first and uses SimBroker for an account-free simulated paper workflow.
 
@@ -8,6 +8,7 @@ The Forecast blog articles use dated snapshots. Running those notebooks or scrip
 
 | Cookbook | What it builds | APIs / tools used | Article | Colab | GitHub folder |
 | --- | --- | --- | --- | --- | --- |
+| `us-macro-news-to-forecast/` | Calls the all-in-one US Macro News demo to turn a story into a selected question, quantitative forecast, and review-only X draft. | PolyBridge US Macro News demo, Python 3.10+, `requests` |  | — | [View GitHub](https://github.com/crowdvector/polybridge-cookbooks/tree/main/us-macro-news-to-forecast) |
 | `vix-forecast/` | A five-call VIX stress monitor over the next quarter (next 90 days), with one headline VIX signal and four highlighted macro drivers: oil, SPX drawdown, gold, and Hormuz regular traffic. | PolyBridge Forecast, Python 3.10+, `requests`, `matplotlib` | [Forecast VIX from prediction markets](https://polybridge.ai/research/vix-forecast) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/vix-forecast/vix-forecast.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/vix-forecast) |
 | `longshort-portfolio/` | Reconstruct market-implied price distributions from Forecast price thresholds, size via half-Kelly, and output Hyperliquid 1x perp order instructions. | PolyBridge Forecast, Python 3.10+, `requests` | [Long-short portfolio on Hyperliquid from prediction market prices](https://polybridge.ai/research/longshort-portfolio) | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/longshort-portfolio/longshort-portfolio.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/longshort-portfolio) |
 | `agentic-finance/` | Market Foresight Before Trading: replay a labor-market thesis through PolyBridge-style probabilities, an Evidence Gate, and a SimBroker SPY paper trade. | Offline replay, SimBroker, Python 3.9+, stdlib `unittest` |  | [Open notebook](https://colab.research.google.com/github/crowdvector/polybridge-cookbooks/blob/main/agentic-finance/agentic-finance.ipynb) | [View folder](https://github.com/crowdvector/polybridge-cookbooks/tree/main/agentic-finance) |

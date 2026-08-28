@@ -1,0 +1,50 @@
+{
+  "schema_version": "polybridge.us-macro-news-demo.examples.v3",
+  "examples": [
+    {
+      "id": "inflation-ap",
+      "label": "Inflation",
+      "publisher": "Associated Press",
+      "title": "Inflation slows but prices remain elevated as Iran war and spending on AI push up prices",
+      "publication_date": "2026-08-12",
+      "canonical_url": "https://apnews.com/article/consumer-prices-inflation-fed-interest-rates-150e179a6c6b3182ba05cedf0188394b",
+      "relationship": "direct",
+      "relationship_note": "The story directly concerns the forecast quantity.",
+      "selected_question": "What are the chances US headline inflation rises above 4% at any point from September through December 2026?",
+      "result": "18.4%",
+      "result_type": "Probability/path-hit forecast",
+      "unit": "Probability",
+      "x_draft": "Inflation has eased, but price pressures haven't disappeared.\n\nDid America declare victory over inflation too soon?\n\nPolyBridge puts the chance of US headline inflation rising above 4% at any point from September through December at 18.4%.\n\nhttps://apnews.com/article/consumer-prices-inflation-fed-interest-rates-150e179a6c6b3182ba05cedf0188394b"
+    },
+    {
+      "id": "jobs-axios",
+      "label": "Jobs",
+      "publisher": "Axios",
+      "title": "U.S. economy surprisingly lost 23,000 jobs in July",
+      "publication_date": "2026-08-07",
+      "canonical_url": "https://www.axios.com/2026/08/07/july-jobs-report-employment-losses",
+      "relationship": "direct",
+      "relationship_note": "The story directly concerns the forecast quantity.",
+      "selected_question": "How high does PolyBridge expect the US unemployment rate to get between September 2026 and March 2027?",
+      "result": "4.93%",
+      "result_type": "Maximum/extremum forecast across the window",
+      "unit": "US unemployment rate",
+      "x_draft": "The US unexpectedly lost 23,000 jobs in July.\n\nDoes the wider jobs market weaken too?\n\nPolyBridge expects unemployment to peak around 4.93% by the end of March '27.\n\nhttps://www.axios.com/2026/08/07/july-jobs-report-employment-losses"
+    },
+    {
+      "id": "treasury-markets-guardian",
+      "label": "Treasury markets",
+      "publisher": "The Guardian",
+      "title": "US treasury doubles debt buyback to steady bond market amid inflation fears",
+      "publication_date": "2026-08-19",
+      "canonical_url": "https://www.theguardian.com/business/2026/aug/19/us-treasury-doubles-debt-buyback-bond-market",
+      "relationship": "related",
+      "relationship_note": "The story helped choose the question. It did not update the model.",
+      "selected_question": "How strong does PolyBridge expect US economic growth to be in the fourth quarter of 2026?",
+      "result": "2.37%",
+      "result_type": "Quarterly baseline forecast",
+      "unit": "Annualized percentage change in real GDP during Q4 2026",
+      "x_draft": "Treasury is doubling long-end buybacks as pressure remains in bond markets.\n\nHow much does the economy slow?\n\nPolyBridge's baseline for Q4 US real GDP growth is 2.37%.\n\nhttps://www.theguardian.com/business/2026/aug/19/us-treasury-doubles-debt-buyback-bond-market"
+    }
+  ]
+}
